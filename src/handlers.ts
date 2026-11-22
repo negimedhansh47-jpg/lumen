@@ -34,8 +34,10 @@ export async function reviewChat(req: Request, env: Env): Promise<Response> {
   await spendLlmCall(env, req);
   const out = await callLLM(env, chatReview.build(chat, level));
   const haystack = norm(chat);
+  const seen = new Set<string>();
   const items = out.items
     .filter((i) => i.excerpt.trim() && haystack.includes(norm(i.excerpt))) // drop excerpts the model made up
+    .filter((i) => !seen.has(norm(i.excerpt)) && seen.add(norm(i.excerpt))) // one finding per excerpt
     .slice(0, 8)
     .map((i, n) => ({ id: `item-${n + 1}`, ...i }));
   return Response.json({ overview: out.overview, items });

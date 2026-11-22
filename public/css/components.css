@@ -71,6 +71,9 @@ button.chip:hover { background: var(--accent-2); color: #fff; }
 .peek q { quotes: none; font-family: var(--font-mono); font-size: 0.88rem; }
 .entries { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s5); }
 .entry { display: grid; gap: var(--s3); align-content: start; text-decoration: none; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: var(--s6); transition: transform var(--ease), box-shadow var(--ease), border-color var(--ease); }
+.entry { position: relative; overflow: hidden; }
+.entry::before { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity var(--ease); background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 50%), rgba(228, 87, 46, 0.12), transparent 70%); }
+.entry:hover::before { opacity: 1; }
 .entry:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: var(--ink); color: var(--ink); }
 .entry .num { font: 400 3rem/1 var(--font-serif); color: var(--accent); }
 .entry h3 { font-size: 1.75rem; }

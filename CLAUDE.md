@@ -5,7 +5,7 @@ Lumen (working title): a website that teaches software engineering to vibecoders
 
 Built for the Roxten Studios "Build Your Own Website" hackathon. Deadline Nov 25 2026, 9 PM IST (internal submit by 3 PM IST). Judged on creativity, design, functionality, technical execution, presentation.
 
-The full plan is in SPEC.md. Read it before any task. It is the source of truth.
+The full plan is in SPEC.md. Read it before any task. It is the source of truth. CONTEXT.md holds the current state, decisions and known gaps: read it too, and update it when state changes.
 
 ## How to work
 - Build ONE step from SPEC.md section 12 per session. Do not build ahead or add features that are not in SPEC.md. If you think something is missing, tell me, don't build it.
