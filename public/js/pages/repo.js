@@ -1,4 +1,4 @@
-import { ApiError, api, demo } from "../api.js";
+﻿import { ApiError, api, demo } from "../api.js";
 import { conceptChips, loadConcepts } from "../concepts.js";
 import { renderMap } from "../map.js";
 import { emptyBox, errorBox, h, loading, para, setBusy } from "../render.js";
@@ -65,7 +65,7 @@ function commitRow(c, source, mini = false) {
     "div",
     { class: mini ? "" : "commit" },
     h("div", { class: "commit-top" }, h("span", { class: "commit-msg" }, c.message), button),
-    h("div", { class: "commit-meta" }, h("code", {}, c.sha.slice(0, 7)), ` · ${c.author} · ${date}`),
+    h("div", { class: "commit-meta" }, h("code", {}, c.sha.slice(0, 7)), ` Â· ${c.author} Â· ${date}`),
     slot,
   );
 }
@@ -86,7 +86,7 @@ function makeDrawer(source, onClose) {
   const title = h("h3");
   const layer = h("span", { class: "badge" });
   const body = h("div", { class: "drawer-body" });
-  const closeBtn = h("button", { type: "button", class: "close", "aria-label": "Close details" }, "×");
+  const closeBtn = h("button", { type: "button", class: "close", "aria-label": "Close details" }, "Ã—");
   const drawer = h("aside", { class: "drawer", role: "dialog", "aria-modal": "false", "aria-label": "Module details", "aria-hidden": "true" }, h("div", { class: "drawer-head" }, h("div", {}, layer, title), closeBtn), body);
   const scrim = h("div", { class: "scrim" });
   let opener = null;
@@ -102,7 +102,7 @@ function makeDrawer(source, onClose) {
   scrim.addEventListener("click", close);
   document.addEventListener("keydown", (e) => e.key === "Escape" && drawer.classList.contains("open") && close());
 
-  function open(m) {
+  function open(m, connections) {
     opener = document.activeElement;
     title.textContent = m.name;
     layer.textContent = m.layer;
@@ -112,6 +112,7 @@ function makeDrawer(source, onClose) {
     body.replaceChildren(
       section("Role", para(m.role)),
       section("Why it exists", para(m.whyItExists)),
+      connections.length ? section("Connections", h("ul", {}, connections.map((c) => h("li", {}, c)))) : null,
       m.concepts.length ? section("Concepts", conceptChips(m.concepts)) : null,
       section("Evidence", h("ul", { class: "evidence" }, m.evidence.map((v) => h("li", {}, v.lines ? `${v.path}:${v.lines}` : v.path)))),
       h("div", {}, seeCommits, commitsSlot),
@@ -134,7 +135,9 @@ function render(o, source) {
   drawerHandle?.close();
   document.querySelectorAll(".drawer, .scrim").forEach((el) => el.remove());
 
-  const map = o.modules.length ? renderMap(o.modules, o.edges, (m) => drawerHandle.open(m)) : null;
+  const name = (id) => o.modules.find((m) => m.id === id)?.name ?? id;
+  const connectionsOf = (m) => o.edges.flatMap((e) => (e.from === m.id ? [`Sends to ${name(e.to)} (${e.label})`] : e.to === m.id ? [`Receives from ${name(e.from)} (${e.label})`] : []));
+  const map = o.modules.length ? renderMap(o.modules, o.edges, (m) => drawerHandle.open(m, connectionsOf(m))) : null;
   drawerHandle = makeDrawer(source, () => map?.select(null));
 
   const commitsSlot = h("div", { class: "commits" });
@@ -202,3 +205,4 @@ else exampleRow.remove();
 const params = new URLSearchParams(location.search);
 if (params.get("repo")) load(params.get("repo"));
 else if (params.has("example") && examples.length) loadDemo(examples[0].id);
+
