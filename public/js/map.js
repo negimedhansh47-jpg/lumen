@@ -1,4 +1,4 @@
-﻿import { h } from "./render.js";
+import { h } from "./render.js";
 
 // Deterministic layout: one column per layer, left to right. No force simulation.
 const ORDER = ["ui", "api", "logic", "data", "external"];
@@ -79,7 +79,7 @@ export function renderMap(modules, edges, onSelect) {
       const text = svg("text", { x: label.x, y: label.y - 6, "text-anchor": "middle" });
       text.textContent = e.label;
       const title = svg("title");
-      title.textContent = `${byId.get(e.from).name} â†’ ${byId.get(e.to).name}: ${e.label}`;
+      title.textContent = `${byId.get(e.from).name} → ${byId.get(e.to).name}: ${e.label}`;
       g.append(svg("path", { class: "hit", d }), svg("path", { class: "line", d, "marker-end": "url(#arrow)" }), text, title);
       edgesEl.append(g);
     });

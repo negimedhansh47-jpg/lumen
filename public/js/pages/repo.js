@@ -1,4 +1,4 @@
-﻿import { ApiError, api, demo } from "../api.js";
+import { ApiError, api, demo } from "../api.js";
 import { conceptChips, loadConcepts } from "../concepts.js";
 import { renderMap } from "../map.js";
 import { emptyBox, errorBox, h, loading, para, setBusy } from "../render.js";
@@ -65,7 +65,7 @@ function commitRow(c, source, mini = false) {
     "div",
     { class: mini ? "" : "commit" },
     h("div", { class: "commit-top" }, h("span", { class: "commit-msg" }, c.message), button),
-    h("div", { class: "commit-meta" }, h("code", {}, c.sha.slice(0, 7)), ` Â· ${c.author} Â· ${date}`),
+    h("div", { class: "commit-meta" }, h("code", {}, c.sha.slice(0, 7)), ` · ${c.author} · ${date}`),
     slot,
   );
 }
@@ -86,7 +86,7 @@ function makeDrawer(source, onClose) {
   const title = h("h3");
   const layer = h("span", { class: "badge" });
   const body = h("div", { class: "drawer-body" });
-  const closeBtn = h("button", { type: "button", class: "close", "aria-label": "Close details" }, "Ã—");
+  const closeBtn = h("button", { type: "button", class: "close", "aria-label": "Close details" }, "×");
   const drawer = h("aside", { class: "drawer", role: "dialog", "aria-modal": "false", "aria-label": "Module details", "aria-hidden": "true" }, h("div", { class: "drawer-head" }, h("div", {}, layer, title), closeBtn), body);
   const scrim = h("div", { class: "scrim" });
   let opener = null;
