@@ -8,7 +8,7 @@
     "run_worker_first": ["/api/*"]
   },
   "ai": { "binding": "AI" },
-  "vars": { "LLM_MODEL": "nvidia/nemotron-3.5-super-vl-120b-a12b" },
+  "vars": { "LLM_MODEL": "nvidia/nemotron-3.5-super-vl-120b-a12b", "DAILY_LLM_CAP": "1500" },
   "d1_databases": [
     {
       "binding": "DB",
@@ -17,6 +17,7 @@
     }
   ]
 }
+
 
 
 

@@ -1,4 +1,4 @@
-import { z } from "zod";
+﻿import { z } from "zod";
 
 export interface LlmEnv {
   NVIDIA_API_KEY?: string;
@@ -12,10 +12,11 @@ const NIM_URL = "https://integrate.api.nvidia.com/v1/chat/completions";
 const FALLBACK_MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast";
 const TIMEOUT_MS = 25_000;
 
-interface Call<T> {
+export interface Call<T> {
   system: string;
   user: string;
   schema: z.ZodType<T>;
+  maxTokens?: number;
 }
 
 /** Extract the first balanced JSON object (models add fences or trailing text). */
@@ -36,7 +37,7 @@ function parseJson(text: string): unknown {
   throw new LlmError("Unterminated JSON in model output");
 }
 
-async function nim(env: LlmEnv, system: string, user: string): Promise<string> {
+async function nim(env: LlmEnv, { system, user, maxTokens = 2000 }: Call<unknown>): Promise<string> {
   if (!env.NVIDIA_API_KEY) throw new LlmError("NVIDIA_API_KEY is not set");
   const res = await fetch(NIM_URL, {
     method: "POST",
@@ -44,7 +45,7 @@ async function nim(env: LlmEnv, system: string, user: string): Promise<string> {
     body: JSON.stringify({
       model: env.LLM_MODEL,
       temperature: 0.2,
-      max_tokens: 2000,
+      max_tokens: maxTokens,
       chat_template_kwargs: { enable_thinking: false }, // reasoning models otherwise spend the budget thinking
       messages: [{ role: "system", content: system }, { role: "user", content: user }],
     }),
@@ -55,11 +56,11 @@ async function nim(env: LlmEnv, system: string, user: string): Promise<string> {
   return data.choices?.[0]?.message?.content ?? "";
 }
 
-async function workersAi(env: LlmEnv, system: string, user: string): Promise<string> {
+async function workersAi(env: LlmEnv, { system, user, maxTokens = 2000 }: Call<unknown>): Promise<string> {
   if (!env.AI) throw new LlmError("Workers AI binding missing");
   const out = (await env.AI.run(FALLBACK_MODEL as keyof AiModels, {
     messages: [{ role: "system", content: system }, { role: "user", content: user }],
-    max_tokens: 2000,
+    max_tokens: maxTokens,
     temperature: 0.2,
   } as never)) as { response?: unknown };
   // Workers AI may return an already-parsed object instead of text.
@@ -71,11 +72,11 @@ async function attempt<T>(ask: () => Promise<string>, schema: z.ZodType<T>): Pro
 }
 
 /** NIM, retry once, then Workers AI, then a friendly error. */
-export async function callLLM<T>(env: LlmEnv, { system, user, schema }: Call<T>): Promise<T> {
-  const providers = [() => nim(env, system, user), () => nim(env, system, user), () => workersAi(env, system, user)];
+export async function callLLM<T>(env: LlmEnv, call: Call<T>): Promise<T> {
+  const providers = [() => nim(env, call), () => nim(env, call), () => workersAi(env, call)];
   for (const ask of providers) {
     try {
-      return await attempt(ask, schema);
+      return await attempt(ask, call.schema);
     } catch {
       // try the next provider
     }
@@ -83,7 +84,6 @@ export async function callLLM<T>(env: LlmEnv, { system, user, schema }: Call<T>)
   throw new LlmError("The explainer is busy right now. Please try again in a moment.");
 }
 
-export async function callOnce<T>(env: LlmEnv, provider: "nim" | "workers-ai", c: Call<T>) {
-  const ask = provider === "nim" ? () => nim(env, c.system, c.user) : () => workersAi(env, c.system, c.user);
-  return attempt(ask, c.schema);
+export async function callOnce<T>(env: LlmEnv, provider: "nim" | "workers-ai", call: Call<T>) {
+  return attempt(() => (provider === "nim" ? nim(env, call) : workersAi(env, call)), call.schema);
 }
