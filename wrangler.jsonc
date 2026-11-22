@@ -1,5 +1,5 @@
-{
-  "name": "lumen",
+﻿{
+  "name": "lumen-learn",
   "main": "src/index.ts",
   "compatibility_date": "2026-11-01",
   "assets": {
@@ -11,7 +11,9 @@
     {
       "binding": "DB",
       "database_name": "lumen-db",
-      "database_id": "REPLACE_WITH_REAL_ID_AFTER_CREATE"
+      "database_id": "38499967-fad8-4a74-a308-7b690d789722"
     }
   ]
 }
+
+
