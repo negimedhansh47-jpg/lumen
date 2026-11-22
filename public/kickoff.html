@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Start a project · Lumen</title>
+  <meta name="description" content="Describe a new idea. Lumen explains the key decisions before you write code and gives you a CLAUDE.md for your AI.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/tokens.css">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/components.css">
+</head>
+<body>
+  <main id="main" class="page tool">
+    <p class="eyebrow">Start a project</p>
+    <h1>Decide well before you build.</h1>
+    <p class="lede">Describe what you want to make. Lumen walks through the key decisions, explains each one, and writes a CLAUDE.md so your AI follows your plan.</p>
+    <form id="form" class="stack" style="margin-top: var(--s6)">
+      <div class="field">
+        <label for="idea">Your idea</label>
+        <textarea id="idea" name="idea" maxlength="500" style="min-height: 140px; font-family: var(--font-sans); font-size: 1rem" placeholder="A website where my gym friends log workouts and see a leaderboard" aria-describedby="idea-hint"></textarea>
+        <span id="idea-hint" class="hint"><span id="count">0</span> / 500 characters</span>
+      </div>
+      <div class="row">
+        <button class="btn" type="submit" id="run">Explain the decisions</button>
+        <button class="btn ghost" type="button" id="example">Use an example idea</button>
+      </div>
+      <p class="privacy">Your idea is sent to an AI model to be explained, then forgotten. It is never stored or logged.</p>
+    </form>
+    <div id="results" class="results" aria-live="polite"></div>
+  </main>
+  <script type="module" src="/js/pages/kickoff.js"></script>
+</body>
+</html>

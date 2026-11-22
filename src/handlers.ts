@@ -1,4 +1,4 @@
-import { z } from "zod";
+﻿import { z } from "zod";
 import { getCached, putCached } from "./cache.ts";
 import { getCommit, getFile, getHeadSha, getMeta, getTree, isReadable, listCommits, pickKeyFiles, type GhEnv } from "./github.ts";
 import { callLLM, type LlmEnv } from "./llm.ts";
@@ -10,6 +10,15 @@ import { spendLlmCall, type LimitEnv } from "./ratelimit.ts";
 import { levelSchema, parseLevel, parseRepo, parseSha, readBody } from "./validate.ts";
 
 export interface Env extends LlmEnv, GhEnv, LimitEnv {}
+
+/** Keep a line range only if it lies inside the text we actually fetched for that file. */
+function seenLines(lines: string | undefined, content: string | undefined): string | undefined {
+  const m = lines?.match(/^(\d+)(?:-(\d+))?$/);
+  if (!m || content === undefined) return undefined;
+  const start = Number(m[1]);
+  const end = Number(m[2] ?? m[1]);
+  return start >= 1 && start <= end && end <= content.split("\n").length ? lines : undefined;
+}
 
 const norm = (s: string) => s.replace(/\s+/g, " ").trim().toLowerCase();
 
@@ -61,7 +70,7 @@ export async function overview(req: Request, env: Env): Promise<Response> {
     .map((m) => ({
       ...m,
       paths: m.paths.map(tidy).filter(exists),
-      evidence: m.evidence.map((e) => ({ path: tidy(e.path), lines: e.lines && /^\d+(-\d+)?$/.test(e.lines) ? e.lines : undefined })).filter((e) => exists(e.path)),
+      evidence: m.evidence.map((e) => ({ path: tidy(e.path), lines: seenLines(e.lines, keyFiles[tidy(e.path)]) })).filter((e) => exists(e.path)),
     }))
     .filter((m) => m.evidence.length > 0) // evidence is required: drop modules we cannot ground
     .filter((m, i, all) => all.findIndex((o) => o.id === m.id) === i);
@@ -125,3 +134,4 @@ export async function kickoffHandler(req: Request, env: Env): Promise<Response> 
   const out = await callLLM(env, kickoff.build(idea, level));
   return Response.json({ restatement: out.restatement, decisions: out.decisions, firstSteps: out.firstSteps, claudeMd: kickoff.claudeMd(out) });
 }
+

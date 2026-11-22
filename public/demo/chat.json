@@ -1,0 +1,58 @@
+{
+ "chat": "User: build me an app to track my expenses\nAI: Sure! I'll set up a simple expense tracker with React and a small Express server. Here is the code...\nUser: it's not working\nAI: Could you tell me what is happening? An error message or what you expected would help.\nUser: the page is blank. fix it\nAI: A blank page often means a JavaScript error. Please open the browser console and share what it says.\nUser: idk how. just make it work and also add charts and login and dark mode\nAI: That is a lot at once. Let's fix the blank page first, then add features one by one.\nUser: now it shows but when I add an expense and refresh it's gone\nAI: The data lives in memory, so a refresh loses it. You need to store it somewhere permanent.\nUser: ok add a database",
+ "result": {
+  "overview": {
+   "patterns": [
+    "User gives no error details",
+    "User asks for many features at once",
+    "User provides no goal or context",
+    "User omits reproduction steps",
+    "User does not share code or file locations"
+   ],
+   "strongest": "The data lives in memory, so a refresh loses it. You need to store it somewhere permanent.",
+   "weakest": "build me an app to track my expenses"
+  },
+  "items": [
+   {
+    "id": "item-1",
+    "excerpt": "build me an app to track my expenses",
+    "problem": "vague",
+    "why": "No stack, features, or goal are given, so the AI must guess everything and may build something unusable.",
+    "rewrite": "Build an expense tracker using [React/Express/etc]. It should let users add, view, and delete expenses. Goal: [personal use / team tool / learning project].",
+    "concept": null
+   },
+   {
+    "id": "item-2",
+    "excerpt": "it's not working",
+    "problem": "no-context",
+    "why": "There is no description of what is broken, what was expected, or where to look, making it impossible to help.",
+    "rewrite": "I am trying to [do X] in [file name]. I expected [Y], but [Z] happened instead.",
+    "concept": null
+   },
+   {
+    "id": "item-3",
+    "excerpt": "the page is blank. fix it",
+    "problem": "no-error",
+    "why": "A blank page has many causes; without the browser console error the AI cannot know which one to fix.",
+    "rewrite": "The page is blank. I opened the browser console and saw: [paste the exact error here]. Please fix it.",
+    "concept": null
+   },
+   {
+    "id": "item-4",
+    "excerpt": "idk how. just make it work and also add charts and login and dark mode",
+    "problem": "too-big",
+    "why": "Asking for a fix plus three large features at once overwhelms the model and produces low-quality, untested code.",
+    "rewrite": "First fix the blank page. After that works, we will add charts, then login, then dark mode one at a time.",
+    "concept": null
+   },
+   {
+    "id": "item-5",
+    "excerpt": "ok add a database",
+    "problem": "vague",
+    "why": "No database type, schema, or connection details are given, so the AI cannot know how to store the data safely.",
+    "rewrite": "Add a [PostgreSQL/SQLite/MongoDB] database to persist expenses. Use this schema: [paste schema or describe fields].",
+    "concept": "database"
+   }
+  ]
+ }
+}

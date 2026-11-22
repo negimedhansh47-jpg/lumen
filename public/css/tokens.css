@@ -1,0 +1,29 @@
+:root {
+  --bg: #FAF7F2;
+  --surface: #FFFFFF;
+  --ink: #14120F;
+  --muted: #6B655C;
+  --line: #E5DFD3;
+  --accent: #E4572E;        /* decorative */
+  --accent-strong: #C4411D; /* text and buttons: passes AA on --bg and with white text */
+  --accent-2: #1F3A5F;
+  --code-bg: #F1ECE2;
+
+  --tint-ui: #F4D9CF;
+  --tint-api: #D8E3F0;
+  --tint-logic: #E7E0F1;
+  --tint-data: #DDEBDD;
+  --tint-external: #EFE6C9;
+  --tint-config: #F1ECE2;
+
+  --font-serif: "Instrument Serif", Georgia, "Times New Roman", serif;
+  --font-sans: "Inter Tight", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px; --s8: 72px; --s9: 112px;
+  --radius: 10px;
+  --shadow: 0 1px 2px rgba(20, 18, 15, 0.05), 0 8px 24px rgba(20, 18, 15, 0.06);
+  --ease: 200ms ease-out;
+  --measure: 68ch;
+  --page: 1120px;
+}

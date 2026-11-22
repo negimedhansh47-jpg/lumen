@@ -1,0 +1,302 @@
+[
+  {
+    "id": "client-server",
+    "name": "Client and server",
+    "oneLine": "Your app is split into the part users see and the part that does the work elsewhere.",
+    "explain": "The client is the program on the user's device, usually the browser, that shows pages and collects input. The server is a program running on another computer that stores data, applies rules and answers requests. They talk over the network by sending requests and responses. Keeping the two apart lets you change one without rewriting the other, and keeps secrets on the server where users cannot read them.",
+    "analogy": "A restaurant: the dining room is the client, the kitchen is the server, and the waiter carries requests between them.",
+    "whenToUse": "Any time data must be shared between users, stored permanently, or kept private.",
+    "tradeoffs": "Every interaction that needs the server costs a network round trip, and you now have two things to deploy and keep in sync.",
+    "related": ["api-route", "http-methods", "routing"]
+  },
+  {
+    "id": "api-route",
+    "name": "API route",
+    "oneLine": "A named address on your server that does one specific job when called.",
+    "explain": "An API route pairs a URL path with code. When the client requests `/api/health`, the server runs the function attached to that path and sends back data, usually JSON. Routes give your backend a clear menu of things it can do. Each route should have one purpose, check its input, and return a predictable shape.",
+    "analogy": "A numbered window at a government office: each window handles exactly one kind of request.",
+    "whenToUse": "Whenever the frontend needs data or needs the server to do something it cannot do safely itself.",
+    "tradeoffs": "Every route is a public door that must be validated and protected. Too many tiny routes get messy, too few big ones become hard to understand.",
+    "related": ["http-methods", "routing", "validation"]
+  },
+  {
+    "id": "http-methods",
+    "name": "HTTP methods",
+    "oneLine": "Verbs like GET and POST that say what a request wants to do.",
+    "explain": "Every HTTP request carries a method. GET asks to read something and should not change anything. POST sends data to create or trigger something. PUT and PATCH update, DELETE removes. Using the right verb lets browsers, caches and other developers predict what a request does without reading your code.",
+    "analogy": "Library actions: looking at a book (GET), donating a book (POST), replacing a page (PUT), removing a book (DELETE).",
+    "whenToUse": "Choose GET for reading and POST for anything that changes data or costs money to run.",
+    "tradeoffs": "GET responses can be cached and bookmarked but put data in the URL, which is visible. POST hides data from the URL but is not cached by default.",
+    "related": ["api-route", "cache", "client-server"]
+  },
+  {
+    "id": "routing",
+    "name": "Routing",
+    "oneLine": "Deciding which code handles which URL.",
+    "explain": "A router looks at an incoming request, usually its method and path, and picks the function that should answer it. It can also pull values out of the path, such as the id in `/users/42`. A router can be a tiny lookup table or a full framework feature. Either way it keeps the entry point of your app readable.",
+    "analogy": "A receptionist who reads each visitor's destination and points them to the right office.",
+    "whenToUse": "As soon as your app has more than one page or endpoint.",
+    "tradeoffs": "A hand-written lookup table is simple and fast but you must add features like path parameters yourself. A framework router gives more but adds a dependency.",
+    "related": ["api-route", "http-methods", "separation-of-concerns"]
+  },
+  {
+    "id": "database",
+    "name": "Database",
+    "oneLine": "A program whose job is to store data safely and let you find it again.",
+    "explain": "Files on disk disappear when a server restarts or scales out to several machines. A database keeps data durable, lets many requests read and write at once without corrupting it, and offers a query language to search it. Relational databases store rows in tables with a defined shape. Other kinds store documents or key-value pairs.",
+    "analogy": "A well-run filing room with a clerk who never loses a folder and can find any of them quickly.",
+    "whenToUse": "Whenever data must survive restarts or be shared between users, such as accounts, posts or scores.",
+    "tradeoffs": "You gain durability and querying but add something to host, back up and secure. Reads and writes cost time and, on hosted plans, money.",
+    "related": ["schema", "query", "index"]
+  },
+  {
+    "id": "schema",
+    "name": "Schema",
+    "oneLine": "The agreed shape of your data: which tables, columns and types exist.",
+    "explain": "A schema describes what your data looks like: a `users` table with an `email` text column, a `created_at` number, and so on. The database can then reject data that does not fit. Writing the schema down early forces you to decide what you actually need to store and how things relate.",
+    "analogy": "A form template: every submitted form has the same boxes, so anyone can read any of them.",
+    "whenToUse": "Before you write code that saves data. Changing it later is possible but needs a migration.",
+    "tradeoffs": "A strict schema catches mistakes early but is harder to change. A loose one is flexible but lets messy data in.",
+    "related": ["database", "migration", "validation"]
+  },
+  {
+    "id": "index",
+    "name": "Index",
+    "oneLine": "A lookup structure that makes searching a column fast.",
+    "explain": "Without an index the database checks every row to find a match. An index keeps a sorted shortcut on a column, like the index at the back of a book, so lookups jump straight to the right place. The primary key is indexed automatically. You add more for columns you often search or sort by.",
+    "analogy": "The index at the back of a textbook: you find the page without reading the whole book.",
+    "whenToUse": "On columns that appear often in filters or sorts, once the table is big enough for searches to feel slow.",
+    "tradeoffs": "Indexes speed up reads but slow down writes and use extra storage, so do not index everything.",
+    "related": ["database", "query", "schema"]
+  },
+  {
+    "id": "query",
+    "name": "Query",
+    "oneLine": "A question you ask the database, such as \"give me this user's last 10 posts\".",
+    "explain": "Queries describe what data you want, and the database works out how to fetch it. In relational databases they are written in SQL. Good queries ask for only the rows and columns needed. Values from users should be passed as bound parameters, never glued into the query text, or attackers can change what the query does.",
+    "analogy": "Asking the librarian for exactly the books you need instead of carrying the whole library home.",
+    "whenToUse": "Every time your app reads or writes stored data.",
+    "tradeoffs": "More data per query means slower responses and higher cost. Many tiny queries in a loop can be slower than one well-written query.",
+    "related": ["database", "index", "orm"]
+  },
+  {
+    "id": "orm",
+    "name": "ORM",
+    "oneLine": "A library that lets you work with database rows as objects in your language.",
+    "explain": "An object-relational mapper turns tables into classes or types and generates SQL for you. You write `User.find(42)` and it produces the query. This can speed up building and keep code consistent. The cost is another layer to learn, and complicated queries can come out slow or awkward.",
+    "analogy": "A translator at a meeting: convenient, but sometimes a subtle meaning gets lost.",
+    "whenToUse": "When your app has many tables and standard create, read, update, delete operations.",
+    "tradeoffs": "Faster to start, but adds a dependency and can hide slow queries. Small apps often do fine with plain SQL.",
+    "related": ["query", "database", "dependency"]
+  },
+  {
+    "id": "migration",
+    "name": "Migration",
+    "oneLine": "A saved, ordered change to your database structure.",
+    "explain": "As your app grows its schema changes: a new table, a new column. A migration is a small file that makes one such change, numbered so changes run in order. Because the files live in version control, every environment, from your laptop to production, can be brought to the same structure by running them. You never edit production tables by hand.",
+    "analogy": "A recipe card for a renovation: anyone can follow the steps in order and get the same house.",
+    "whenToUse": "Every time the database structure needs to change after the first version.",
+    "tradeoffs": "You must write and review each change, and rolling back can be hard if data was already altered.",
+    "related": ["schema", "database", "ci-cd"]
+  },
+  {
+    "id": "cache",
+    "name": "Cache",
+    "oneLine": "Keeping a copy of a result so you do not compute or fetch it again.",
+    "explain": "Some work is slow or expensive, like calling an external service or running a big query. A cache stores the answer under a key. The next request with the same key reads the stored copy instead. The main risk is staleness: the copy may be out of date. Good cache keys include whatever would change the answer, such as a version id.",
+    "analogy": "Writing down a phone number you looked up so you do not search for it again.",
+    "whenToUse": "When the same expensive result is requested repeatedly and small delays in freshness are acceptable.",
+    "tradeoffs": "Faster and cheaper, but stale data is possible and deciding when to throw a copy away is famously hard.",
+    "related": ["database", "rate-limiting", "http-methods"]
+  },
+  {
+    "id": "env-vars",
+    "name": "Environment variables",
+    "oneLine": "Settings your code reads from the environment instead of having them written inside it.",
+    "explain": "Values that differ between your laptop and production, such as which database to use, are kept outside the code as environment variables. The same code then runs everywhere with different settings. Non-secret settings can be committed in a config file. Secret ones must stay out of the repository.",
+    "analogy": "A thermostat setting: the machine is identical, only the dial differs per room.",
+    "whenToUse": "For anything that changes between environments or that you do not want hard-coded.",
+    "tradeoffs": "Easy to change without redeploying code, but a missing variable only fails at run time, so check for them at startup.",
+    "related": ["secrets", "ci-cd", "separation-of-concerns"]
+  },
+  {
+    "id": "secrets",
+    "name": "Secrets",
+    "oneLine": "Passwords and keys that must never be visible to the public.",
+    "explain": "API keys, tokens and database passwords prove your app's identity. If one leaks, anyone can act as your app and spend your money. Keep secrets in a gitignored local file and in your host's secret store, never in the repository, the browser code or logs. If a secret is ever committed, treat it as stolen and rotate it, because git history keeps it forever.",
+    "analogy": "The keys to your house: you do not post copies on the front door.",
+    "whenToUse": "Always, for any credential. Call secret services only from the server.",
+    "tradeoffs": "Secret handling adds setup steps, but the cost of a leaked key is much higher than the cost of those steps.",
+    "related": ["env-vars", "auth", "hashing"]
+  },
+  {
+    "id": "auth",
+    "name": "Authentication",
+    "oneLine": "Proving who a user is before letting them in.",
+    "explain": "Authentication answers \"who are you?\". The usual flow: the user proves their identity, for example with a password or a Google login, and the server then remembers them, commonly with a session cookie. Authorization is the separate question of what that person may do. Rolling your own password handling is risky, so most apps use an established library or provider.",
+    "analogy": "Showing ID at the door; the guest list then decides which rooms you can enter.",
+    "whenToUse": "As soon as users have private data or can change things.",
+    "tradeoffs": "Strong authentication adds friction and complexity. Using a provider saves effort but ties you to them.",
+    "related": ["session-cookie", "oauth", "hashing"]
+  },
+  {
+    "id": "session-cookie",
+    "name": "Session cookie",
+    "oneLine": "A small token the browser sends back so the server remembers who you are.",
+    "explain": "HTTP forgets every request. After login, the server gives the browser a cookie holding an identifier or signed data. The browser attaches it to every later request, so the server knows who is calling. Good cookies are marked HttpOnly so page scripts cannot read them, Secure so they only travel over HTTPS, and SameSite to limit cross-site use.",
+    "analogy": "A wristband at a festival: show it each time instead of proving your ticket again.",
+    "whenToUse": "For keeping a user signed in on a website you control.",
+    "tradeoffs": "Simple and safe when configured well, but needs protection against cross-site request tricks and does not suit every non-browser client.",
+    "related": ["auth", "secrets", "client-server"]
+  },
+  {
+    "id": "oauth",
+    "name": "OAuth",
+    "oneLine": "Letting a user grant your app limited access to another service without sharing their password.",
+    "explain": "With \"Sign in with GitHub\", the user is sent to GitHub, approves specific permissions, and GitHub gives your app a token limited to those permissions. Your app never sees the password. Tokens can be revoked and scoped narrowly, for example read-only access to chosen repositories. That is the safest way to access someone's data on another service.",
+    "analogy": "A valet key: it starts the car and parks it, but does not open the trunk.",
+    "whenToUse": "When you need to act on a user's behalf at another service, or want to avoid handling passwords.",
+    "tradeoffs": "More moving parts than a password form, and you depend on the provider being available.",
+    "related": ["auth", "secrets", "session-cookie"]
+  },
+  {
+    "id": "hashing",
+    "name": "Hashing",
+    "oneLine": "Turning data into a fixed scrambled fingerprint that cannot be turned back.",
+    "explain": "A hash function maps any input to a short fixed-size value. The same input always gives the same output, but you cannot recover the input from it. Passwords are stored as hashes made with slow, purpose-built functions, so a stolen database does not reveal them. Hashing can also anonymise values, such as an IP address mixed with a secret salt.",
+    "analogy": "A fingerprint: it identifies a person, but you cannot rebuild the person from it.",
+    "whenToUse": "For passwords, for checking files have not changed, and for storing identifiers without keeping the raw value.",
+    "tradeoffs": "Hashing is one-way, so you cannot read the original later. Weak or fast hash functions can be brute-forced.",
+    "related": ["auth", "secrets", "validation"]
+  },
+  {
+    "id": "validation",
+    "name": "Validation",
+    "oneLine": "Checking that incoming data is what you expect before using it.",
+    "explain": "Anything coming from outside your code, such as form fields, URLs and model output, can be wrong or hostile. Validation checks type, size and format at the boundary and rejects bad input with a clear message. Do it on the server even if the browser checks too, because the browser can be bypassed. A schema library keeps these rules in one place.",
+    "analogy": "A bouncer checking tickets at the entrance, not inside the party.",
+    "whenToUse": "At every point where data enters your system.",
+    "tradeoffs": "Strict rules can annoy users with rejections, so make error messages specific and helpful.",
+    "related": ["error-handling", "schema", "api-route"]
+  },
+  {
+    "id": "error-handling",
+    "name": "Error handling",
+    "oneLine": "Planning for what happens when things go wrong, and telling people clearly.",
+    "explain": "Networks drop, services time out and users type odd things. Good error handling catches failures, keeps the app running, logs enough detail to debug without leaking secrets, and shows the user a plain message about what to do next. Returning a clear status and message from an API also makes problems far easier to find when something breaks.",
+    "analogy": "A fire exit plan: you hope not to need it, and it matters most when you do.",
+    "whenToUse": "Everywhere you call something that can fail: the network, the database, parsing input.",
+    "tradeoffs": "More code paths to write and test. Catching everything silently is worse than crashing, because it hides real bugs.",
+    "related": ["logging", "validation", "testing"]
+  },
+  {
+    "id": "rate-limiting",
+    "name": "Rate limiting",
+    "oneLine": "Capping how often one visitor can use something.",
+    "explain": "Without limits, one script can hammer your server or burn through paid services. A rate limiter counts requests per visitor over a window of time and refuses extra ones with a clear message. It protects both your costs and other users. Counts are usually keyed by a hashed IP address or account.",
+    "analogy": "A turnstile that only lets so many people through per minute.",
+    "whenToUse": "On any endpoint that is expensive, calls a paid service, or could be abused.",
+    "tradeoffs": "Shared networks can make innocent users hit the limit, and counting needs storage that costs a little per request.",
+    "related": ["cache", "hashing", "api-route"]
+  },
+  {
+    "id": "webhook",
+    "name": "Webhook",
+    "oneLine": "Another service calling your server when something happens, instead of you asking repeatedly.",
+    "explain": "Rather than polling GitHub or a payment provider every minute, you give them a URL. When an event occurs, they send an HTTP request to it with the details. Your server must verify the request really came from them, usually by checking a signature, and respond quickly.",
+    "analogy": "Leaving your phone number so they call you when the parcel arrives, instead of you phoning every hour.",
+    "whenToUse": "When you need to react to events in another system.",
+    "tradeoffs": "Efficient, but your endpoint must be public and secured, and you must handle retries and duplicate deliveries.",
+    "related": ["api-route", "queue", "secrets"]
+  },
+  {
+    "id": "queue",
+    "name": "Queue",
+    "oneLine": "A waiting line for jobs that can be done later, in order.",
+    "explain": "Some tasks are slow, like sending emails or processing video. Instead of making the user wait, the app drops a job into a queue and replies at once. A separate worker takes jobs from the queue and does them, retrying on failure. This smooths out traffic spikes and keeps requests fast.",
+    "analogy": "A ticket system at a deli counter: orders wait their turn instead of everyone shouting at once.",
+    "whenToUse": "For slow, retryable or bursty work that does not need an instant result.",
+    "tradeoffs": "Adds another component and means results arrive later, so you must show the user the job is in progress.",
+    "related": ["webhook", "error-handling", "rate-limiting"]
+  },
+  {
+    "id": "state-management",
+    "name": "State management",
+    "oneLine": "Deciding where the changing data of your interface lives and who can change it.",
+    "explain": "State is data that changes while the app runs: what is typed in a box, whether a menu is open, which items are loaded. When several parts of the screen depend on the same state, you need one clear owner for it and a clear way to update it. Without that, parts of the page show different truths.",
+    "analogy": "A shared whiteboard in a meeting: everyone reads one board instead of keeping private notes.",
+    "whenToUse": "As soon as two parts of the interface depend on the same data.",
+    "tradeoffs": "Central state is predictable but adds structure to maintain. Small pages often need nothing more than a few variables.",
+    "related": ["component", "client-server", "separation-of-concerns"]
+  },
+  {
+    "id": "component",
+    "name": "Component",
+    "oneLine": "A reusable piece of interface with its own look and behaviour.",
+    "explain": "A component packages a part of the screen, such as a button, a card or a map node, together with how it renders and reacts. You build pages by combining components. This avoids copying code, keeps the look consistent and lets you fix something in one place. Frameworks provide components, but plain functions that build elements work too.",
+    "analogy": "Lego bricks: small standard pieces that snap together into anything.",
+    "whenToUse": "When the same piece of interface appears more than once or is complicated enough to deserve a name.",
+    "tradeoffs": "Too many tiny components scatter the logic. Too few create large tangled files.",
+    "related": ["state-management", "separation-of-concerns", "bundler"]
+  },
+  {
+    "id": "bundler",
+    "name": "Bundler",
+    "oneLine": "A tool that packs many source files into a few files browsers can load quickly.",
+    "explain": "Modern projects split code across many files and use libraries. A bundler follows the imports, combines and shrinks the files, and can translate newer syntax. Browsers now understand modules natively, so small projects can skip bundling entirely and ship plain files. Reach for a bundler when you use a framework or many dependencies.",
+    "analogy": "Packing for a trip: many items go into a few suitcases that are easy to carry.",
+    "whenToUse": "When the build step brings real benefits, such as using frameworks, TypeScript on the frontend or many libraries.",
+    "tradeoffs": "Adds build tooling and configuration to maintain. A no-build site is simpler and often fast enough.",
+    "related": ["dependency", "component", "ci-cd"]
+  },
+  {
+    "id": "dependency",
+    "name": "Dependency",
+    "oneLine": "Code written by someone else that your project relies on.",
+    "explain": "Instead of writing everything, you install libraries. Each one saves time but becomes part of your app: you inherit its bugs, its size and its security problems, and you must update it. Lockfiles record exact versions so builds repeat. Before adding one, ask whether a few lines of your own code or a built-in feature would do.",
+    "analogy": "Hiring a contractor: they save you work but you are now relying on them to show up and do it right.",
+    "whenToUse": "When a library solves a hard problem you should not reinvent, such as cryptography or date handling.",
+    "tradeoffs": "Faster to build but riskier and heavier. Every dependency is more to keep up to date.",
+    "related": ["bundler", "testing", "ci-cd"]
+  },
+  {
+    "id": "testing",
+    "name": "Testing",
+    "oneLine": "Code that checks your other code still works.",
+    "explain": "A test runs part of your app with known input and checks the result. Run automatically, tests catch things you broke by accident, which matters most when an AI changes many files at once. Start with tests for logic that would hurt if wrong, such as money, permissions and data parsing. Also test the live site yourself after deploys.",
+    "analogy": "A smoke alarm: boring until the day it saves you.",
+    "whenToUse": "For logic with real consequences and for bugs you have fixed, so they never return.",
+    "tradeoffs": "Tests take time to write and need updating as code changes. Testing everything equally is rarely worth it.",
+    "related": ["ci-cd", "error-handling", "logging"]
+  },
+  {
+    "id": "ci-cd",
+    "name": "CI/CD",
+    "oneLine": "Automatic checking and deploying every time you push code.",
+    "explain": "Continuous integration runs your checks and tests on every push so problems show up immediately. Continuous deployment then ships passing code to the live site without manual steps. The benefit is small, frequent, repeatable releases. Services such as GitHub Actions or a host's built-in integration provide this.",
+    "analogy": "A conveyor belt with inspectors: every change is checked and delivered the same way.",
+    "whenToUse": "As soon as you deploy more than once, so releases stop depending on remembering the steps.",
+    "tradeoffs": "Setup takes effort and the pipeline needs its own secrets. A broken pipeline can block releases.",
+    "related": ["testing", "env-vars", "migration"]
+  },
+  {
+    "id": "logging",
+    "name": "Logging",
+    "oneLine": "Recording what your app did so you can work out what went wrong later.",
+    "explain": "When something fails in production you cannot attach a debugger. Logs are the trail of messages your code leaves: requests received, errors thrown, key decisions taken. Log enough to trace a problem, but never secrets or private user content. Keep the messages structured and short so they can be searched.",
+    "analogy": "A flight recorder: you hope you never need it, but it explains what happened if you do.",
+    "whenToUse": "At errors and important events, especially in code that runs on a server you cannot watch.",
+    "tradeoffs": "Too little hides problems, too much costs money and can leak private data.",
+    "related": ["error-handling", "secrets", "testing"]
+  },
+  {
+    "id": "separation-of-concerns",
+    "name": "Separation of concerns",
+    "oneLine": "Giving each part of the code one clear job.",
+    "explain": "Instead of one giant file that renders pages, talks to the database and checks logins, split the code so each file or module does one thing. Changes then stay local, you can find things quickly, and you can test parts alone. Typical splits are interface, routing, business logic and data access.",
+    "analogy": "A kitchen with stations for chopping, cooking and plating, rather than one cook doing everything at one table.",
+    "whenToUse": "From the start, in a light form. Split further when a file becomes hard to hold in your head.",
+    "tradeoffs": "More files and some indirection. Over-splitting small projects makes them harder to follow, not easier.",
+    "related": ["component", "routing", "state-management"]
+  }
+]

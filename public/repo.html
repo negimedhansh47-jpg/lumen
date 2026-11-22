@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Understand my repo · Lumen</title>
+  <meta name="description" content="Paste a public GitHub repo. Explore an interactive architecture map and read each commit in plain English.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/tokens.css">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/components.css">
+</head>
+<body>
+  <main id="main" class="page tool">
+    <p class="eyebrow">Understand my repo</p>
+    <h1>See how your project fits together.</h1>
+    <p class="lede">Paste a public GitHub link. Lumen maps the architecture, and every box links back to real files.</p>
+    <form id="form" class="stack" style="margin-top: var(--s6)">
+      <div class="field">
+        <label for="repo">Public GitHub repo</label>
+        <div class="row" style="flex-wrap: nowrap">
+          <input id="repo" name="repo" type="text" inputmode="url" autocomplete="off" spellcheck="false" placeholder="owner/name or https://github.com/owner/name" aria-describedby="repo-hint">
+          <button class="btn" type="submit" id="run" style="flex: none">Map it</button>
+        </div>
+        <span id="repo-hint" class="hint">Public repos only. Private repos are not supported yet.</span>
+      </div>
+      <div class="row" id="examples"><span class="hint">Or try an example:</span></div>
+      <p class="privacy">Only public repositories are analyzed, and their analysis is cached so repeat visits are instant. Nothing private is ever stored.</p>
+    </form>
+    <div id="results" class="results" aria-live="polite"></div>
+  </main>
+  <script type="module" src="/js/pages/repo.js"></script>
+</body>
+</html>

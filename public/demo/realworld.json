@@ -1,0 +1,598 @@
+{
+ "overview": {
+  "meta": {
+   "fullName": "gothinkster/node-express-realworld-example-app",
+   "description": null,
+   "stars": 3800,
+   "language": "TypeScript",
+   "defaultBranch": "master",
+   "url": "https://github.com/gothinkster/node-express-realworld-example-app",
+   "analyzed": 12,
+   "total": 67,
+   "truncated": false
+  },
+  "headSha": "30b68e1e881462b2f4164ea09ab4c4f5699c7b0b",
+  "stack": [
+   "Node.js",
+   "Express",
+   "TypeScript",
+   "Prisma ORM",
+   "PostgreSQL",
+   "JWT",
+   "bcryptjs",
+   "Jest"
+  ],
+  "summary": "This is a Node.js Express API built with TypeScript that implements the RealWorld specification. It uses Prisma ORM to connect to PostgreSQL, JWT for authentication, and organizes features into route-based modules with controllers and services.",
+  "modules": [
+   {
+    "id": "entry",
+    "name": "Application Entry",
+    "paths": [
+     "src/main.ts"
+    ],
+    "layer": "config",
+    "role": "Creates the Express app, applies middleware, registers routes, starts the HTTP server, and handles global errors.",
+    "whyItExists": "Centralizes app bootstrap so middleware, routing, error handling, and server startup live in one place instead of being scattered.",
+    "concepts": [
+     "routing",
+     "error-handling",
+     "env-vars"
+    ],
+    "evidence": [
+     {
+      "path": "src/main.ts",
+      "lines": "1-60"
+     }
+    ]
+   },
+   {
+    "id": "routing",
+    "name": "Route Aggregation",
+    "paths": [
+     "src/app/routes/routes.ts"
+    ],
+    "layer": "api",
+    "role": "Mounts all feature controllers under the /api path prefix and exports the router used by the entry point.",
+    "whyItExists": "Keeps route registration in one file so adding or removing feature modules does not require touching the app entry file.",
+    "concepts": [
+     "api-route",
+     "routing"
+    ],
+    "evidence": [
+     {
+      "path": "src/app/routes/routes.ts",
+      "lines": "1-15"
+     }
+    ]
+   },
+   {
+    "id": "articles",
+    "name": "Articles Module",
+    "paths": [
+     "src/app/routes/article/article.controller.ts",
+     "src/app/routes/article/article.service.ts",
+     "src/app/routes/article/article.model.ts",
+     "src/app/routes/article/article.mapper.ts",
+     "src/app/routes/article/comment.model.ts",
+     "src/app/routes/article/author.mapper.ts"
+    ],
+    "layer": "api",
+    "role": "Handles article CRUD, comments, favorites, and feed endpoints using HTTP methods such as GET, POST, PUT, and DELETE.",
+    "whyItExists": "Groups article-related request handling, business logic, and data shapes together so the feature is cohesive and easy to maintain.",
+    "concepts": [
+     "api-route",
+     "http-methods",
+     "orm"
+    ],
+    "evidence": [
+     {
+      "path": "src/app/routes/article/article.controller.ts",
+      "lines": "1-80"
+     }
+    ]
+   },
+   {
+    "id": "auth",
+    "name": "Authentication Module",
+    "paths": [
+     "src/app/routes/auth/auth.controller.ts",
+     "src/app/routes/auth/auth.service.ts",
+     "src/app/routes/auth/auth.ts",
+     "src/app/routes/auth/token.utils.ts",
+     "src/app/routes/auth/register-input.model.ts",
+     "src/app/routes/auth/registered-user.model.ts",
+     "src/app/routes/auth/user.model.ts",
+     "src/app/routes/auth/user-request.d.ts"
+    ],
+    "layer": "api",
+    "role": "Handles user registration, login, JWT token creation and verification, and current-user retrieval.",
+    "whyItExists": "Isolates security-sensitive logic such as password hashing and token validation so authentication behavior is consistent and auditable.",
+    "concepts": [
+     "auth",
+     "hashing",
+     "validation"
+    ],
+    "evidence": [
+     {
+      "path": "src/app/routes/auth/auth.controller.ts",
+      "lines": "1-40"
+     }
+    ]
+   },
+   {
+    "id": "profiles",
+    "name": "Profiles Module",
+    "paths": [
+     "src/app/routes/profile/profile.controller.ts",
+     "src/app/routes/profile/profile.service.ts",
+     "src/app/routes/profile/profile.model.ts",
+     "src/app/routes/profile/profile.utils.ts"
+    ],
+    "layer": "api",
+    "role": "Handles getting user profiles and following or unfollowing other users.",
+    "whyItExists": "Separates social profile concerns from articles and auth so each feature has a single responsibility.",
+    "concepts": [
+     "api-route",
+     "http-methods"
+    ],
+    "evidence": [
+     {
+      "path": "src/app/routes/profile/profile.controller.ts",
+      "lines": "1-30"
+     }
+    ]
+   },
+   {
+    "id": "tags",
+    "name": "Tags Module",
+    "paths": [
+     "src/app/routes/tag/tag.controller.ts",
+     "src/app/routes/tag/tag.service.ts",
+     "src/app/routes/tag/tag.model.ts"
+    ],
+    "layer": "api",
+    "role": "Provides endpoints to list available tags used for categorizing articles.",
+    "whyItExists": "Keeps tag lookup logic isolated so the tag list can be reused by articles without coupling everything together.",
+    "concepts": [
+     "api-route",
+     "http-methods"
+    ],
+    "evidence": [
+     {
+      "path": "src/app/routes/tag/tag.controller.ts",
+      "lines": "1-20"
+     }
+    ]
+   },
+   {
+    "id": "data",
+    "name": "Data Access",
+    "paths": [
+     "src/prisma/schema.prisma",
+     "src/prisma/prisma-client.ts",
+     "src/prisma/migrations/20210924225358_initial/migration.sql",
+     "src/prisma/migrations/20211001143221_implicit_tags/migration.sql",
+     "src/prisma/migrations/20211105153605_api_url/migration.sql",
+     "src/prisma/migrations/20211221184529_deprecated_preview/migration.sql"
+    ],
+    "layer": "data",
+    "role": "Defines the PostgreSQL schema, generates the Prisma client, and applies database migrations.",
+    "whyItExists": "Provides a typed, single source of truth for database tables and relationships so application code does not write raw SQL.",
+    "concepts": [
+     "database",
+     "schema",
+     "orm"
+    ],
+    "evidence": [
+     {
+      "path": "src/prisma/schema.prisma",
+      "lines": "1-60"
+     }
+    ]
+   },
+   {
+    "id": "testing",
+    "name": "Testing",
+    "paths": [
+     "src/tests/services/article.service.test.ts",
+     "src/tests/services/auth.service.test.ts",
+     "src/tests/services/profile.service.test.ts",
+     "src/tests/services/tag.service.test.ts",
+     "src/tests/utils/profile.utils.test.ts",
+     "src/tests/prisma-mock.ts",
+     "jest.config.ts",
+     "jest.preset.js"
+    ],
+    "layer": "config",
+    "role": "Runs unit tests for services and utilities using Jest.",
+    "whyItExists": "Verifies service behavior in isolation so regressions are caught before deployment.",
+    "concepts": [
+     "testing"
+    ],
+    "evidence": [
+     {
+      "path": "src/tests/services/article.service.test.ts",
+      "lines": "1-20"
+     }
+    ]
+   }
+  ],
+  "edges": [
+   {
+    "from": "entry",
+    "to": "routing",
+    "label": "uses"
+   },
+   {
+    "from": "routing",
+    "to": "articles",
+    "label": "mounts"
+   },
+   {
+    "from": "routing",
+    "to": "auth",
+    "label": "mounts"
+   },
+   {
+    "from": "routing",
+    "to": "profiles",
+    "label": "mounts"
+   },
+   {
+    "from": "routing",
+    "to": "tags",
+    "label": "mounts"
+   },
+   {
+    "from": "articles",
+    "to": "data",
+    "label": "queries"
+   },
+   {
+    "from": "auth",
+    "to": "data",
+    "label": "queries"
+   },
+   {
+    "from": "profiles",
+    "to": "data",
+    "label": "queries"
+   },
+   {
+    "from": "tags",
+    "to": "data",
+    "label": "queries"
+   },
+   {
+    "from": "testing",
+    "to": "articles",
+    "label": "tests"
+   },
+   {
+    "from": "testing",
+    "to": "auth",
+    "label": "tests"
+   },
+   {
+    "from": "testing",
+    "to": "profiles",
+    "label": "tests"
+   },
+   {
+    "from": "testing",
+    "to": "tags",
+    "label": "tests"
+   }
+  ]
+ },
+ "commits": [
+  {
+   "sha": "30b68e1e881462b2f4164ea09ab4c4f5699c7b0b",
+   "message": "fix: missing user id",
+   "author": "Gerome Grignon",
+   "date": "2024-01-04T15:28:24Z"
+  },
+  {
+   "sha": "88b258ce54aaf54ff52511ba26edd52e36df201e",
+   "message": "chore: update documentation",
+   "author": "Gerome Grignon",
+   "date": "2024-01-04T13:21:10Z"
+  },
+  {
+   "sha": "a981fd9a6be13d665688c50f16a0f8da2b3394d9",
+   "message": "Merge pull request #147 from gothinkster/chore/nx",
+   "author": "Gerome Grignon",
+   "date": "2024-01-04T12:44:41Z"
+  },
+  {
+   "sha": "5eeccf13f3a5778b8ba818240edf89919a689a80",
+   "message": "chore: update to latest demo version",
+   "author": "Gerome Grignon",
+   "date": "2024-01-04T12:40:41Z"
+  },
+  {
+   "sha": "e40aeb924bbadca7f6444b502bdb7b1e6eddb8f9",
+   "message": "chore: move to nx",
+   "author": "Gerome Grignon",
+   "date": "2023-12-21T15:25:44Z"
+  },
+  {
+   "sha": "ba04b70c31af81ca7935096740a6e083563b3a4a",
+   "message": "Merge pull request #42 from anishkny/master",
+   "author": "Eric Simons",
+   "date": "2018-01-31T17:29:05Z"
+  },
+  {
+   "sha": "c834af937cfcabb9d92818f2324d69085d323467",
+   "message": "Update config.yml",
+   "author": "Anish Karandikar",
+   "date": "2017-09-25T19:47:01Z"
+  },
+  {
+   "sha": "1aea7fb098dc19e2b515c6c37f909ca53b7126e4",
+   "message": "Update config.yml",
+   "author": "Anish Karandikar",
+   "date": "2017-09-25T19:45:50Z"
+  },
+  {
+   "sha": "e89d815656ebe5e4720b6df1fd979df5958c42e5",
+   "message": "Auto-trigger integration tests in CircleCI",
+   "author": "Anish Karandikar",
+   "date": "2017-09-25T19:30:46Z"
+  },
+  {
+   "sha": "6a03a93c3f47a92e4c8a488119cfdd266e0d8c13",
+   "message": "Update config.yml",
+   "author": "Anish Karandikar",
+   "date": "2017-09-25T19:26:17Z"
+  },
+  {
+   "sha": "572b4363fe5d579ef18a4eeec9d57443be651b96",
+   "message": "Try CircleCI 2.0 config",
+   "author": "akarandi",
+   "date": "2017-09-25T17:20:07Z"
+  },
+  {
+   "sha": "0f45f5026a559d197869d5f808679951c79841d2",
+   "message": "Update circle.yml",
+   "author": "Anish Karandikar",
+   "date": "2017-09-25T16:43:20Z"
+  },
+  {
+   "sha": "b46ec4b019d2b93058d25643eeae5447409bb574",
+   "message": "Update circle.yml",
+   "author": "Anish Karandikar",
+   "date": "2017-09-25T16:41:01Z"
+  },
+  {
+   "sha": "43b6bf13b8d4d9a150ec1458b6e3cc96ef57bded",
+   "message": "Create circle.yml",
+   "author": "Anish Karandikar",
+   "date": "2017-09-25T16:34:57Z"
+  },
+  {
+   "sha": "45a5b536c509b27957f0dc38b4eb4b1592eb224f",
+   "message": "Update README.md",
+   "author": "Anish Karandikar",
+   "date": "2017-09-20T13:38:13Z"
+  }
+ ],
+ "moduleCommits": {
+  "entry": [
+   {
+    "sha": "88b258ce54aaf54ff52511ba26edd52e36df201e",
+    "message": "chore: update documentation",
+    "author": "Gerome Grignon",
+    "date": "2024-01-04T13:21:10Z"
+   },
+   {
+    "sha": "5eeccf13f3a5778b8ba818240edf89919a689a80",
+    "message": "chore: update to latest demo version",
+    "author": "Gerome Grignon",
+    "date": "2024-01-04T12:40:41Z"
+   },
+   {
+    "sha": "e40aeb924bbadca7f6444b502bdb7b1e6eddb8f9",
+    "message": "chore: move to nx",
+    "author": "Gerome Grignon",
+    "date": "2023-12-21T15:25:44Z"
+   }
+  ],
+  "routing": [
+   {
+    "sha": "e40aeb924bbadca7f6444b502bdb7b1e6eddb8f9",
+    "message": "chore: move to nx",
+    "author": "Gerome Grignon",
+    "date": "2023-12-21T15:25:44Z"
+   }
+  ],
+  "articles": [
+   {
+    "sha": "5eeccf13f3a5778b8ba818240edf89919a689a80",
+    "message": "chore: update to latest demo version",
+    "author": "Gerome Grignon",
+    "date": "2024-01-04T12:40:41Z"
+   },
+   {
+    "sha": "e40aeb924bbadca7f6444b502bdb7b1e6eddb8f9",
+    "message": "chore: move to nx",
+    "author": "Gerome Grignon",
+    "date": "2023-12-21T15:25:44Z"
+   }
+  ],
+  "auth": [
+   {
+    "sha": "5eeccf13f3a5778b8ba818240edf89919a689a80",
+    "message": "chore: update to latest demo version",
+    "author": "Gerome Grignon",
+    "date": "2024-01-04T12:40:41Z"
+   },
+   {
+    "sha": "e40aeb924bbadca7f6444b502bdb7b1e6eddb8f9",
+    "message": "chore: move to nx",
+    "author": "Gerome Grignon",
+    "date": "2023-12-21T15:25:44Z"
+   }
+  ],
+  "profiles": [
+   {
+    "sha": "5eeccf13f3a5778b8ba818240edf89919a689a80",
+    "message": "chore: update to latest demo version",
+    "author": "Gerome Grignon",
+    "date": "2024-01-04T12:40:41Z"
+   },
+   {
+    "sha": "e40aeb924bbadca7f6444b502bdb7b1e6eddb8f9",
+    "message": "chore: move to nx",
+    "author": "Gerome Grignon",
+    "date": "2023-12-21T15:25:44Z"
+   }
+  ],
+  "tags": [
+   {
+    "sha": "5eeccf13f3a5778b8ba818240edf89919a689a80",
+    "message": "chore: update to latest demo version",
+    "author": "Gerome Grignon",
+    "date": "2024-01-04T12:40:41Z"
+   },
+   {
+    "sha": "e40aeb924bbadca7f6444b502bdb7b1e6eddb8f9",
+    "message": "chore: move to nx",
+    "author": "Gerome Grignon",
+    "date": "2023-12-21T15:25:44Z"
+   }
+  ],
+  "data": [
+   {
+    "sha": "e40aeb924bbadca7f6444b502bdb7b1e6eddb8f9",
+    "message": "chore: move to nx",
+    "author": "Gerome Grignon",
+    "date": "2023-12-21T15:25:44Z"
+   }
+  ],
+  "testing": [
+   {
+    "sha": "5eeccf13f3a5778b8ba818240edf89919a689a80",
+    "message": "chore: update to latest demo version",
+    "author": "Gerome Grignon",
+    "date": "2024-01-04T12:40:41Z"
+   },
+   {
+    "sha": "e40aeb924bbadca7f6444b502bdb7b1e6eddb8f9",
+    "message": "chore: move to nx",
+    "author": "Gerome Grignon",
+    "date": "2023-12-21T15:25:44Z"
+   }
+  ]
+ },
+ "explanations": {
+  "30b68e1e881462b2f4164ea09ab4c4f5699c7b0b": {
+   "title": "Add missing user id field to current user query",
+   "whatChanged": "Added `id: true` to the select block in `getCurrentUser` so the database returns the user's identifier along with email, username, and bio. Evidence: `src/app/routes/auth/auth.service.ts`, line 137 (added line).",
+   "whyItMatters": "Without selecting `id`, callers of `getCurrentUser` receive a user object that lacks the primary key, which can break features that need to identify or update the logged-in user. Evidence: `src/app/routes/auth/auth.service.ts`, lines 134-140.",
+   "designReasoning": "The function already queries the database by `id` but did not project that field back to the caller; adding it keeps the returned object consistent with the lookup key. Evidence: `src/app/routes/auth/auth.service.ts`, lines 134-140.",
+   "tradeoffs": "Selecting one extra column adds negligible data transfer but slightly increases the result row size; omitting it keeps the payload smaller but forces callers to re-query or guess the id. Evidence: `src/app/routes/auth/auth.service.ts`, line 137.",
+   "alternatives": [
+    "Return the `id` parameter passed into the function instead of querying it",
+    "Select all fields with `select: {}` or omit the select block entirely"
+   ],
+   "concepts": [
+    "database",
+    "query",
+    "separation-of-concerns"
+   ],
+   "evidence": [
+    {
+     "path": "src/app/routes/auth/auth.service.ts",
+     "hint": "select block with added id: true"
+    }
+   ]
+  },
+  "88b258ce54aaf54ff52511ba26edd52e36df201e": {
+   "title": "Update documentation, Prisma config, import style, and seed data counts",
+   "whatChanged": "Added a README section explaining how to apply SQL migrations using npx prisma migrate deploy (README.md). Changed package.json prisma seed command from tsx to ts-node with transpile-only and CommonJS compiler options, and removed the leading ./ from the schema path (package.json). Changed src/main.ts imports from namespace-style import * as express to default-style import express (src/main.ts). Changed src/prisma/seed.ts to make main non-exported and reduced seed data from 30 users and 20 articles per user to 12 users and 12 articles per user (src/prisma/seed.ts).",
+   "whyItMatters": "The new README section tells developers how to push existing SQL migration scripts to the database, which is needed after cloning the project. The seed count reduction makes local database seeding faster and lighter. The import style change aligns with default ES module imports used elsewhere in the file.",
+   "designReasoning": "The commit keeps database setup instructions close to the Prisma generate step already documented, following a setup-then-run order. It keeps seed logic in a dedicated seed file rather than inline in the application entry point, separating test data creation from server startup.",
+   "tradeoffs": "Using ts-node with transpile-only may skip type-checking during seeding, which can surface type errors at runtime instead of before running. Reducing seed data means fewer sample records for manual testing, which may not represent production-like volume. Default imports may behave differently with some TypeScript interop settings compared to namespace imports.",
+   "alternatives": [
+    "Keep using tsx for the seed command and retain the original 30-user/20-article seed counts.",
+    "Document migrations in a separate docs folder instead of README.md.",
+    "Use a separate seeding script run manually rather than a package.json prisma seed script."
+   ],
+   "concepts": [
+    "migration",
+    "database",
+    "testing"
+   ],
+   "evidence": [
+    {
+     "path": "README.md",
+     "hint": "Added Apply any SQL migration script section with npx prisma migrate deploy"
+    },
+    {
+     "path": "package.json",
+     "hint": "Changed prisma seed command and schema path"
+    },
+    {
+     "path": "src/main.ts",
+     "hint": "Changed import * as express to import express"
+    },
+    {
+     "path": "src/prisma/seed.ts",
+     "hint": "Changed main export and reduced array lengths from 30 and 20 to 12"
+    }
+   ]
+  },
+  "a981fd9a6be13d665688c50f16a0f8da2b3394d9": {
+   "title": "Migrate from Express/Mongoose to Nx/Prisma monorepo",
+   "whatChanged": "Removed CircleCI and Travis CI configs, Express app.js, Mongoose models, Passport auth config, and config/index.js. Added Nx ESLint and Prettier configs, .gitignore, .prettierignore, Dockerfile, VS Code extensions, and e2e ESLint config. README now describes Prisma instead of Mongoose and lists DATABASE_URL, JWT_SECRET, NODE_ENV as required environment variables.",
+   "whyItMatters": "The project switches its database tool from Mongoose (MongoDB object modeling) to Prisma (TypeScript ORM) and adopts Nx for monorepo task running, Docker builds, and code formatting. This changes how the app starts, how data is accessed, and how CI is configured.",
+   "designReasoning": "Nx provides a single command to serve the API (`npx nx serve api`) and a generated Dockerfile for containerized deployment (`docker run -p 3000:3000 -t api`). Prisma requires generating a client from the schema (`npx prisma generate`) and applying migrations (`npx prisma migrate deploy`), which the README documents. Environment variables replace hardcoded MongoDB connection strings.",
+   "tradeoffs": "Old CI files were deleted, so automated testing on CircleCI/Travis is no longer configured in this commit. The app.js entry point and Mongoose models are gone, meaning existing MongoDB-specific code must be rewritten for Prisma. Docker build now depends on Nx-generated output in dist/api.",
+   "alternatives": [
+    "Keep Express + Mongoose with CircleCI/Travis CI",
+    "Use a different ORM such as Sequelize or TypeORM",
+    "Deploy without Docker using pm2 or systemd"
+   ],
+   "concepts": [
+    "orm",
+    "migration",
+    "client-server"
+   ],
+   "evidence": [
+    {
+     "path": ".circleci/config.yml",
+     "hint": "deleted CI config"
+    },
+    {
+     "path": ".travis.yml",
+     "hint": "deleted CI config"
+    },
+    {
+     "path": "app.js",
+     "hint": "deleted Express app entry point"
+    },
+    {
+     "path": "config/passport.js",
+     "hint": "deleted auth config"
+    },
+    {
+     "path": "Dockerfile",
+     "hint": "added Nx-generated Dockerfile"
+    },
+    {
+     "path": "README.md",
+     "hint": "updated to Prisma and environment variables"
+    },
+    {
+     "path": ".eslintrc.json",
+     "hint": "added Nx ESLint config"
+    },
+    {
+     "path": ".prettierrc",
+     "hint": "added Prettier config"
+    }
+   ]
+  }
+ }
+}
