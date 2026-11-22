@@ -1,5 +1,5 @@
-import { z } from "zod";
-import { CONCEPT_IDS, rules, type Level } from "./common.ts";
+﻿import { z } from "zod";
+import { conceptList, rules, type Level } from "./common.ts";
 
 export const VERSION = "commitExplain-v1";
 
@@ -10,7 +10,7 @@ export const schema = z.object({
   designReasoning: z.string(),
   tradeoffs: z.string(),
   alternatives: z.array(z.string()),
-  concepts: z.array(z.enum(CONCEPT_IDS)),
+  concepts: conceptList,
   evidence: z.array(z.object({ path: z.string(), hint: z.string() })),
 });
 
@@ -20,3 +20,4 @@ ${rules(level)}
 Schema: {"title":string,"whatChanged":string,"whyItMatters":string,"designReasoning":string,"tradeoffs":string,"alternatives":string[],"concepts":conceptId[],"evidence":[{"path":string,"hint":string}]}`;
   return { system, user: `<user_content>\nCommit message: ${message}\n\nDiff:\n${diff}\n</user_content>`, schema };
 }
+

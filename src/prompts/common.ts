@@ -1,9 +1,16 @@
+﻿import { z } from "zod";
 export const CONCEPT_IDS = [
   "client-server", "api-route", "http-methods", "routing", "database", "schema", "index", "query", "orm",
   "migration", "cache", "env-vars", "secrets", "auth", "session-cookie", "oauth", "hashing", "validation",
   "error-handling", "rate-limiting", "webhook", "queue", "state-management", "component", "bundler",
   "dependency", "testing", "ci-cd", "logging", "separation-of-concerns",
 ] as const;
+
+const isConcept = (v: unknown): v is (typeof CONCEPT_IDS)[number] => (CONCEPT_IDS as readonly unknown[]).includes(v);
+
+/** Models sometimes invent concept ids; unknown ones become null rather than failing the response. */
+export const conceptOrNull = z.string().nullable().transform((v) => (isConcept(v) ? v : null));
+export const conceptList = z.array(z.string()).transform((vs) => vs.filter(isConcept));
 
 export type Level = "beginner" | "intermediate";
 
@@ -19,3 +26,4 @@ export function rules(level: Level): string {
 4. Level is ${depth}
 5. Concepts must come from this list, or be null/omitted if none fits: ${CONCEPT_IDS.join(", ")}.`;
 }
+

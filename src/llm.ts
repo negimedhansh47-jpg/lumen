@@ -18,12 +18,22 @@ interface Call<T> {
   schema: z.ZodType<T>;
 }
 
-/** Extract the first JSON object from model text (models sometimes wrap it in fences). */
+/** Extract the first balanced JSON object (models add fences or trailing text). */
 function parseJson(text: string): unknown {
   const start = text.indexOf("{");
-  const end = text.lastIndexOf("}");
-  if (start < 0 || end < start) throw new LlmError("No JSON in model output");
-  return JSON.parse(text.slice(start, end + 1));
+  if (start < 0) throw new LlmError("No JSON in model output");
+  let depth = 0;
+  let inString = false;
+  for (let i = start; i < text.length; i++) {
+    const c = text[i];
+    if (inString) {
+      if (c === "\\") i++;
+      else if (c === '"') inString = false;
+    } else if (c === '"') inString = true;
+    else if (c === "{") depth++;
+    else if (c === "}" && --depth === 0) return JSON.parse(text.slice(start, i + 1).replaceAll("\\'", "'")); // models emit invalid \' escapes
+  }
+  throw new LlmError("Unterminated JSON in model output");
 }
 
 async function nim(env: LlmEnv, system: string, user: string): Promise<string> {
@@ -35,6 +45,7 @@ async function nim(env: LlmEnv, system: string, user: string): Promise<string> {
       model: env.LLM_MODEL,
       temperature: 0.2,
       max_tokens: 2000,
+      chat_template_kwargs: { enable_thinking: false }, // reasoning models otherwise spend the budget thinking
       messages: [{ role: "system", content: system }, { role: "user", content: user }],
     }),
     signal: AbortSignal.timeout(TIMEOUT_MS),
@@ -50,8 +61,9 @@ async function workersAi(env: LlmEnv, system: string, user: string): Promise<str
     messages: [{ role: "system", content: system }, { role: "user", content: user }],
     max_tokens: 2000,
     temperature: 0.2,
-  } as never)) as { response?: string };
-  return out.response ?? "";
+  } as never)) as { response?: unknown };
+  // Workers AI may return an already-parsed object instead of text.
+  return typeof out.response === "string" ? out.response : JSON.stringify(out.response ?? "");
 }
 
 async function attempt<T>(ask: () => Promise<string>, schema: z.ZodType<T>): Promise<T> {

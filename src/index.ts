@@ -1,4 +1,6 @@
-﻿export interface Env {
+﻿import type { LlmEnv } from "./llm.ts";
+
+export interface Env extends LlmEnv {
   DB: D1Database;
 }
 
@@ -20,4 +22,6 @@ export default {
     return notFound();
   },
 } satisfies ExportedHandler<Env>;
+
+
 
