@@ -1,4 +1,4 @@
-import { HttpError } from "./validate.ts";
+﻿import { HttpError } from "./validate.ts";
 
 export interface GhEnv {
   GITHUB_TOKEN?: string;
@@ -15,6 +15,8 @@ async function gh(env: GhEnv, path: string, accept = "application/vnd.github+jso
       ...(env.GITHUB_TOKEN ? { authorization: `Bearer ${env.GITHUB_TOKEN}` } : {}),
     },
     signal: AbortSignal.timeout(10_000),
+  }).catch(() => {
+    throw new HttpError(502, "github_error", "GitHub did not answer in time. Please try again.");
   });
   if (res.status === 404) {
     throw new HttpError(404, "repo_not_found", "That repo was not found, or it is private. Only public repos work without login.");
@@ -130,3 +132,4 @@ export function pickKeyFiles(files: TreeEntry[], limit = 12): string[] {
     .sort((a, b) => b.score - a.score);
   return scored.slice(0, limit).map((f) => f.path);
 }
+

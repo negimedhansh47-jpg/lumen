@@ -3,13 +3,12 @@
  "result": {
   "overview": {
    "patterns": [
-    "User gives no error details",
-    "User asks for many features at once",
-    "User provides no goal or context",
-    "User omits reproduction steps",
-    "User does not share code or file locations"
+    "asks for many features at once",
+    "does not share error details",
+    "asks for a whole app without a goal",
+    "asks for a database without saying which one"
    ],
-   "strongest": "The data lives in memory, so a refresh loses it. You need to store it somewhere permanent.",
+   "strongest": "the page is blank. fix it",
    "weakest": "build me an app to track my expenses"
   },
   "items": [
@@ -17,40 +16,40 @@
     "id": "item-1",
     "excerpt": "build me an app to track my expenses",
     "problem": "vague",
-    "why": "No stack, features, or goal are given, so the AI must guess everything and may build something unusable.",
-    "rewrite": "Build an expense tracker using [React/Express/etc]. It should let users add, view, and delete expenses. Goal: [personal use / team tool / learning project].",
-    "concept": null
+    "why": "No stack, goal, or scope is given, so the AI must guess everything and may build something unusable.",
+    "rewrite": "Build an expense tracker using [React/Express/etc]. Goal: [add/view/delete expenses]. Stack: [list].",
+    "concept": "component"
    },
    {
     "id": "item-2",
     "excerpt": "it's not working",
-    "problem": "no-context",
-    "why": "There is no description of what is broken, what was expected, or where to look, making it impossible to help.",
-    "rewrite": "I am trying to [do X] in [file name]. I expected [Y], but [Z] happened instead.",
-    "concept": null
+    "problem": "no-error",
+    "why": "There is no error message or symptom, so the AI cannot know what is broken.",
+    "rewrite": "It is not working. [paste the exact error here]. Expected: [what should happen]. Actual: [what happens].",
+    "concept": "error-handling"
    },
    {
     "id": "item-3",
     "excerpt": "the page is blank. fix it",
-    "problem": "no-error",
-    "why": "A blank page has many causes; without the browser console error the AI cannot know which one to fix.",
-    "rewrite": "The page is blank. I opened the browser console and saw: [paste the exact error here]. Please fix it.",
-    "concept": null
+    "problem": "no-context",
+    "why": "A blank page has many causes; without console output or file paths the AI cannot find the bug.",
+    "rewrite": "The page is blank. Browser console says: [paste exact error here]. File: [path], lines: [start]-[end].",
+    "concept": "error-handling"
    },
    {
     "id": "item-4",
     "excerpt": "idk how. just make it work and also add charts and login and dark mode",
     "problem": "too-big",
-    "why": "Asking for a fix plus three large features at once overwhelms the model and produces low-quality, untested code.",
-    "rewrite": "First fix the blank page. After that works, we will add charts, then login, then dark mode one at a time.",
-    "concept": null
+    "why": "Requesting charts, login, and dark mode together makes the change hard to review and test.",
+    "rewrite": "Fix the blank page first. After that works, add charts. Then login. Then dark mode.",
+    "concept": "state-management"
    },
    {
     "id": "item-5",
     "excerpt": "ok add a database",
-    "problem": "vague",
-    "why": "No database type, schema, or connection details are given, so the AI cannot know how to store the data safely.",
-    "rewrite": "Add a [PostgreSQL/SQLite/MongoDB] database to persist expenses. Use this schema: [paste schema or describe fields].",
+    "problem": "no-context",
+    "why": "No database type, schema, or connection details are given, so the AI cannot implement it correctly.",
+    "rewrite": "Add a [PostgreSQL/SQLite/etc] database to store expenses. Schema: [table and columns]. Connection: [env var or placeholder].",
     "concept": "database"
    }
   ]

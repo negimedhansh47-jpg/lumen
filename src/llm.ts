@@ -58,11 +58,13 @@ async function nim(env: LlmEnv, { system, user, maxTokens = 2000 }: Call<unknown
 
 async function workersAi(env: LlmEnv, { system, user, maxTokens = 2000 }: Call<unknown>): Promise<string> {
   if (!env.AI) throw new LlmError("Workers AI binding missing");
-  const out = (await env.AI.run(FALLBACK_MODEL as keyof AiModels, {
+  const run = env.AI.run(FALLBACK_MODEL as keyof AiModels, {
     messages: [{ role: "system", content: system }, { role: "user", content: user }],
     max_tokens: maxTokens,
     temperature: 0.2,
-  } as never)) as { response?: unknown };
+  } as never);
+  const timeout = new Promise<never>((_, reject) => setTimeout(() => reject(new LlmError("Workers AI timed out")), TIMEOUT_MS));
+  const out = (await Promise.race([run, timeout])) as { response?: unknown };
   // Workers AI may return an already-parsed object instead of text.
   return typeof out.response === "string" ? out.response : JSON.stringify(out.response ?? "");
 }

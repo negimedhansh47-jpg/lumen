@@ -1,47 +1,47 @@
 {
  "idea": "A website where my gym friends log workouts and see a weekly leaderboard",
  "result": {
-  "restatement": "A website where gym friends log workouts and see a weekly leaderboard.",
+  "restatement": "A website where gym friends log workouts and view a weekly leaderboard.",
   "decisions": [
    {
     "id": "frontend",
-    "question": "How will users view and interact with the site?",
-    "choice": "A single web page built with HTML, CSS, and JavaScript that runs in the browser.",
-    "why": "Simple for beginners, no build tools needed, and works on any device with a browser.",
-    "tradeoffs": "Less interactive than a modern framework, but easier to learn and debug.",
+    "question": "How will users interact with the website in their browser?",
+    "choice": "Build a simple website with HTML pages that send data to a server and show results.",
+    "why": "Easy for beginners, runs in any browser, no complex build tools needed.",
+    "tradeoffs": "Page reloads when navigating; less dynamic than a single-page app.",
     "alternatives": [
-     "React",
-     "Vue"
+     "React single-page app",
+     "Vue single-page app"
     ],
     "concepts": [
-     "client-server"
+     "client-server",
+     "component"
     ]
    },
    {
     "id": "backend",
-    "question": "Where will the server code run and how will the browser talk to it?",
-    "choice": "A small server using Node.js with Express that listens for browser requests and sends back data.",
-    "why": "JavaScript on both ends means one language to learn, and Express is popular with many tutorials.",
-    "tradeoffs": "Requires a server that stays running; more moving parts than a static file.",
+    "question": "Where will the server code run and how will pages talk to it?",
+    "choice": "Run a small server on a low-cost platform that receives browser requests and sends back data or pages.",
+    "why": "Keeps workout data and leaderboard logic in one place; cheap to start.",
+    "tradeoffs": "You must manage one server instead of only static files.",
     "alternatives": [
-     "Python Flask",
-     "PHP"
+     "Serverless functions",
+     "Static site with external backend service"
     ],
     "concepts": [
      "client-server",
-     "api-route",
-     "http-methods"
+     "api-route"
     ]
    },
    {
     "id": "data",
-    "question": "Where will workout logs and leaderboard scores live?",
-    "choice": "A SQLite database file stored on the server.",
-    "why": "Zero setup, no separate server to manage, and the whole database is just one file.",
-    "tradeoffs": "Not ideal if many people write at the exact same time, but fine for a small group.",
+    "question": "Where will workout logs and leaderboard data live?",
+    "choice": "Store data in a relational database on the same low-cost hosting platform.",
+    "why": "Structured tables fit workouts and users; simple to query for weekly totals.",
+    "tradeoffs": "Need to learn basic database queries and backups.",
     "alternatives": [
-     "PostgreSQL",
-     "MongoDB"
+     "Spreadsheet-like online database",
+     "File-based storage"
     ],
     "concepts": [
      "database",
@@ -51,13 +51,13 @@
    },
    {
     "id": "auth",
-    "question": "How will users prove who they are before logging a workout?",
-    "choice": "A simple username and password stored in the database, with passwords scrambled using hashing.",
-    "why": "No external accounts or services to set up, and hashing keeps passwords safe even if the file is stolen.",
-    "tradeoffs": "You must handle password resets yourself; no social login buttons.",
+    "question": "How will gym friends prove who they are when logging workouts?",
+    "choice": "Use email and password sign-up with passwords stored in a scrambled form.",
+    "why": "Simple to understand; no dependence on outside login services.",
+    "tradeoffs": "You are responsible for securing passwords and handling forgotten passwords.",
     "alternatives": [
-     "Google OAuth",
-     "GitHub OAuth"
+     "Sign in with Google or Apple",
+     "Magic link by email"
     ],
     "concepts": [
      "auth",
@@ -66,14 +66,14 @@
     ]
    },
    {
-    "id": "hosting",
-    "question": "Where will the site be published so friends can visit it?",
-    "choice": "A free tier on a cloud platform such as Render or Railway that hosts the Node server and SQLite file.",
-    "why": "No credit card usually required, automatic HTTPS, and a public link to share.",
-    "tradeoffs": "Free tiers may sleep after inactivity, causing a short delay on first visit.",
+    "id": "deploy",
+    "question": "How will the website be put online for friends to use?",
+    "choice": "Push code to a code-hosting site and connect it to a low-cost platform that deploys automatically.",
+    "why": "Friends get a live link; updates go live when you push code.",
+    "tradeoffs": "Requires learning a little about deployment settings and environment variables.",
     "alternatives": [
-     "Vercel",
-     "Netlify"
+     "Run on your own computer only",
+     "Deploy to a virtual private server"
     ],
     "concepts": [
      "ci-cd",
@@ -82,13 +82,13 @@
    }
   ],
   "firstSteps": [
-   "Create a folder for the project and open it in a code editor.",
-   "Initialize a Node project with npm init and install Express and sqlite3.",
-   "Write one server route that returns a list of workouts when the browser asks.",
-   "Create an HTML page with a form to add a workout and a place to show the leaderboard.",
-   "Connect the page to the server so submitting the form saves a workout and refreshes the list.",
-   "Deploy to Render or Railway and share the link with friends."
+   "Create a folder for the project and initialize a code repository.",
+   "Set up one server route that returns a simple welcome page.",
+   "Create a database table for users with email and scrambled password.",
+   "Create a database table for workouts with user, exercise, and date.",
+   "Build a page where a logged-in user can submit a workout.",
+   "Build a page that shows the weekly leaderboard."
   ],
-  "claudeMd": "# CLAUDE.md\n\n## What this is\nA website where gym friends log workouts and see a weekly leaderboard.\n\n## Stack\n- Node.js\n- Express\n- SQLite\n- HTML/CSS/JavaScript\n\n## Structure\n- /src - server code\n- /public - website files\n- /data - SQLite database file\n- package.json - project settings\n\n## How to work\n- Build one small step at a time. Explain the plan before changing many files.\n- Commit after every working change with a clear message.\n- Ask before adding a dependency. Prefer none.\n- If something fails, say so plainly. Do not hide it.\n\n## Rules\n- Keep server code in /src and website files in /public.\n- Use environment variables for secrets, never hardcode them.\n- Validate all data coming from the browser before saving it.\n- Hash passwords before storing them in the database.\n- Return clear error messages when something goes wrong.\n\n## Security\n- Never commit secrets. Keep them in a gitignored env file and in the host's secret store.\n- Validate all input. Never put user text into the page with innerHTML.\n"
+  "claudeMd": "# CLAUDE.md\n\n## What this is\nA website where gym friends log workouts and view a weekly leaderboard.\n\n## Stack\n- HTML/CSS for pages\n- Node.js server\n- PostgreSQL database\n- Express.js framework\n- bcrypt for password scrambling\n- Render or Railway for hosting\n\n## Structure\n- /src - server code\n- /public - HTML, CSS, and browser files\n- /database - table setup files\n- /routes - page and API endpoints\n\n## How to work\n- Build one small step at a time. Explain the plan before changing many files.\n- Commit after every working change with a clear message.\n- Ask before adding a dependency. Prefer none.\n- If something fails, say so plainly. Do not hide it.\n\n## Rules\n- Keep server code separate from browser code.\n- Validate all workout input before saving it.\n- Hash passwords before storing them.\n- Use environment variables for database credentials.\n- Return clear error messages when something fails.\n\n## Security\n- Never commit secrets. Keep them in a gitignored env file and in the host's secret store.\n- Validate all input. Never put user text into the page with innerHTML.\n"
  }
 }

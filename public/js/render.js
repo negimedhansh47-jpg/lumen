@@ -1,4 +1,4 @@
-// Safe DOM helpers. Model and user text only ever enters the page as text nodes, never as HTML.
+﻿// Safe DOM helpers. Model and user text only ever enters the page as text nodes, never as HTML.
 
 export function h(tag, props = {}, ...kids) {
   const el = document.createElement(tag);
@@ -55,12 +55,8 @@ export async function copyText(text) {
   }
 }
 
-/** Replace the contents of `el` with `node` and re-run the entrance animation. */
-export function show(el, ...nodes) {
-  el.replaceChildren(...nodes);
-}
-
 export function setBusy(button, busy, idleLabel, busyLabel) {
   button.disabled = busy;
   button.textContent = busy ? busyLabel : idleLabel;
 }
+
