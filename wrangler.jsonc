@@ -1,0 +1,17 @@
+{
+  "name": "lumen",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./public",
+    "not_found_handling": "404-page",
+    "run_worker_first": ["/api/*"]
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "lumen-db",
+      "database_id": "REPLACE_WITH_REAL_ID_AFTER_CREATE"
+    }
+  ]
+}

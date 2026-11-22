@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lumen</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Inter+Tight:wght@400;500&family=JetBrains+Mono&display=swap" rel="stylesheet">
+  <style>
+    :root { --bg:#FAF7F2; --ink:#14120F; --muted:#6B655C; --line:#E5DFD3; --accent:#E4572E; --code-bg:#F1ECE2; }
+    * { box-sizing: border-box; }
+    body { margin:0; min-height:100vh; display:grid; place-items:center; padding:24px;
+           background:var(--bg); color:var(--ink); font-family:"Inter Tight", system-ui, sans-serif; }
+    main { max-width:36rem; }
+    h1 { font-family:"Instrument Serif", Georgia, serif; font-weight:400; font-size:clamp(2.5rem, 8vw, 4rem); margin:0 0 16px; }
+    h1 span { color:var(--accent); }
+    p { color:var(--muted); line-height:1.6; margin:0 0 24px; }
+    code { font-family:"JetBrains Mono", monospace; background:var(--code-bg); border:1px solid var(--line);
+           border-radius:10px; padding:4px 8px; font-size:.9rem; color:var(--ink); }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Lumen<span>.</span></h1>
+    <p>Understand the code your AI writes. Setup is done; features are on the way.</p>
+    <code>GET /api/health</code>
+  </main>
+</body>
+</html>
