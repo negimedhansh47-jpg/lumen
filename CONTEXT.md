@@ -4,7 +4,7 @@ Read this first in every session, after CLAUDE.md. Update it at the end of any s
 SPEC.md is the plan. This file is what is *true now*. Keep it short.
 
 ## Current state (2026-11-23, night, after the full QA pass)
-Submittable. Full QA pass done (report: `scripts/out-qa/QA_REPORT.md`, gitignored, local only). All 6 major and 13 minor defects it found are fixed and deployed; smoke test now 28 checks. No known console errors, no secrets in the repo.
+Submittable. Full QA pass done (report: `scripts/out-qa/QA_REPORT.md`, gitignored, local only). All 6 major and 13 minor defects it found are fixed and deployed; smoke test now 29 checks (28/28 passed live before the last content-type fix, which was then checked live on its own). No known console errors, no secrets in the repo.
 
 - Live: https://lumen-learn.lumen-learn.workers.dev
 - Repo: https://github.com/negimedhansh47-jpg/lumen (public, `main`). Last feature commit: "Design v4 (white/ink/cerulean), live step guidance, and Ask about your project chat".
@@ -22,7 +22,8 @@ Submittable. Full QA pass done (report: `scripts/out-qa/QA_REPORT.md`, gitignore
 
 ## Remaining (Claude)
 Nothing is blocking. Optional, only if asked:
-- Nits left from QA (see report): heading level skips, concept dialog labelled "Concept card" instead of its title, `%2F` in `/repo?repo=` URLs, `/kickoff?example=1` and `/chat?example=1` deep links (not linked anywhere) do not auto-scroll, `owner/name.git` without github.com is not stripped, no Open Graph tags.
+- Nits left from QA (see report): heading level skips, concept dialog labelled "Concept card" instead of its title, `%2F` in `/repo?repo=` URLs, `owner/name.git` without github.com is not stripped, no Open Graph tags.
+- The empty-repo message (GitHub 409) is changed but was never exercised: no empty public repo was available to test.
 - AI depth: maps of library repos (Express, Flask, Requests) are shallow and concept tags are sometimes wrong; Ask answer text is not verified (only its file chips). Prompt tuning was deliberately not done this close to the deadline.
 - Freeze features. No new features before submission.
 
