@@ -13,6 +13,8 @@ MVP is built and live. All SPEC features exist: chat review, repo map + drawer +
 - Smoke test: `node scripts/smoke.mjs <base-url>` (default `http://localhost:8799`). Run it after every deploy.
 
 ## Decisions that are not obvious from the code
+- Concept cards are static reviewed text. "Explain this better" (added 2026-11-23 at the human's request, not in SPEC) asks the model to re-teach the card; it takes no user text, so results are cached in D1 per concept and level.
+- Auth: deliberately none. Nothing user-specific is stored, and a login wall would slow judges down. Revisit only for private repos (GitHub OAuth).
 - Model: NVIDIA NIM `nvidia/nemotron-3.5-super-vl-120b-a12b`, sent with `enable_thinking:false`. Fallback Workers AI Llama 3.3 70B. Chain: NIM, NIM retry, Workers AI, friendly error. Test results: `AI_USAGE.md`.
 - Trust model: LLM output is untrusted. Evidence paths are checked against the repo tree, chat excerpts must be verbatim substrings, duplicate excerpts are dropped, unknown concept ids become null.
 - `/api/repo/commits` returns no `filesChanged` (would cost 15+ GitHub subrequests). It takes `?path=` instead, which powers the drawer's commit list.

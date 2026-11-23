@@ -3,11 +3,13 @@ import { getCached, putCached } from "./cache.ts";
 import { getCommit, getFile, getHeadSha, getMeta, getTree, isReadable, listCommits, pickKeyFiles, type GhEnv } from "./github.ts";
 import { callLLM, type LlmEnv } from "./llm.ts";
 import * as chatReview from "./prompts/chatReview.ts";
+import concepts from "../public/concepts/concepts.json";
 import * as commitExplain from "./prompts/commitExplain.ts";
+import * as conceptExplain from "./prompts/conceptExplain.ts";
 import * as kickoff from "./prompts/kickoff.ts";
 import * as repoOverview from "./prompts/repoOverview.ts";
 import { spendLlmCall, type LimitEnv } from "./ratelimit.ts";
-import { levelSchema, parseLevel, parseRepo, parseSha, readBody } from "./validate.ts";
+import { HttpError, levelSchema, parseLevel, parseRepo, parseSha, readBody } from "./validate.ts";
 
 export interface Env extends LlmEnv, GhEnv, LimitEnv {}
 
@@ -146,5 +148,19 @@ export async function kickoffHandler(req: Request, env: Env): Promise<Response> 
   await spendLlmCall(env, req);
   const out = await callLLM(env, kickoff.build(idea, level));
   return Response.json({ restatement: out.restatement, decisions: out.decisions, firstSteps: out.firstSteps, claudeMd: kickoff.claudeMd(out) });
+}
+
+/** POST /api/concept/explain {id, level}. No user text goes in, so the answer is shared and cached per concept and level. */
+export async function explainConceptHandler(req: Request, env: Env): Promise<Response> {
+  const { id, level } = await readBody(req, z.object({ id: z.string().max(40), level: levelSchema }));
+  const card = (concepts as conceptExplain.ConceptCard[]).find((c) => c.id === id);
+  if (!card) throw new HttpError(404, "unknown_concept", "That concept is not in the library.");
+  const key = `concept:${id}:${level}:${conceptExplain.VERSION}`;
+  const cached = await getCached(env.DB, key);
+  if (cached) return Response.json(cached);
+  await spendLlmCall(env, req);
+  const out = await callLLM(env, conceptExplain.build(card, level));
+  await putCached(env.DB, key, out);
+  return Response.json(out);
 }
 

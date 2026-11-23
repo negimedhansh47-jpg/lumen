@@ -1,4 +1,6 @@
-import { h, para } from "./render.js";
+import { api } from "./api.js";
+import { errorBox, h, loading, para, setBusy } from "./render.js";
+import { getLevel } from "./shell.js";
 
 let concepts = new Map();
 let dialog;
@@ -23,6 +25,33 @@ function field(label, text) {
   return h("div", {}, h("p", { class: "label" }, label), para(text));
 }
 
+/** "Explain this better": asks the model to re-teach the card another way. */
+function explainBetter(id) {
+  const slot = h("div", { "aria-live": "polite" });
+  const button = h("button", { type: "button", class: "btn ghost small" }, "Explain this better");
+  button.addEventListener("click", async () => {
+    setBusy(button, true, "Explain this better", "Explaining...");
+    slot.replaceChildren(loading("Finding another way to explain it...", 3));
+    try {
+      const r = await api("/api/concept/explain", { id, level: getLevel() });
+      button.remove();
+      slot.replaceChildren(
+        h(
+          "div",
+          { class: "explain-better rise" },
+          field("Another way to see it", r.plainer),
+          field("For example", r.example),
+          h("details", { class: "check" }, h("summary", {}, `Check yourself: ${r.check.question}`), para(r.check.answer)),
+        ),
+      );
+    } catch (e) {
+      slot.replaceChildren(errorBox(e.message));
+      setBusy(button, false, "Explain this better", "Explaining...");
+    }
+  });
+  return h("div", { class: "stack" }, button, slot);
+}
+
 export function openConcept(id) {
   const c = concepts.get(id);
   if (!c) return;
@@ -42,6 +71,7 @@ export function openConcept(id) {
       h("div", { class: "analogy" }, h("p", { class: "label" }, "Think of it like"), para(c.analogy)),
       field("When to use it", c.whenToUse),
       field("Trade-offs", c.tradeoffs),
+      explainBetter(id),
       related ? h("div", {}, h("p", { class: "label" }, "Related"), related) : null,
     ),
   );

@@ -38,5 +38,13 @@ await check("AI: kickoff", async () => {
   must(d.decisions?.length >= 3 && d.claudeMd, "missing decisions or claudeMd");
 });
 
+await check("rejects unknown concept", async () => must((await call("/api/concept/explain", { id: "nope", level: "beginner" })).status === 404, "not 404"));
+await check("AI: explain concept better", async () => {
+  const res = await call("/api/concept/explain", { id: "cache", level: "beginner" });
+  const d = await res.json();
+  must(res.status === 200, `status ${res.status}: ${JSON.stringify(d)}`);
+  must(d.plainer && d.example && d.check?.question, "missing fields");
+});
+
 console.log(results.join("\n"));
 process.exit(results.some((r) => r.startsWith("FAIL")) ? 1 : 0);

@@ -35,6 +35,11 @@ textarea:focus, input[type="text"]:focus { outline: none; border-color: var(--ac
 .section { padding-block: var(--s8); }
 .tool { padding-block: var(--s7) var(--s5); }
 .tool h1 { font-size: clamp(2.2rem, 5vw, 3.4rem); margin-bottom: var(--s4); }
+/* tool pages: a centred intro and form column; results below use the full width */
+.tool > .eyebrow, .tool > h1, .tool > .lede { text-align: center; margin-inline: auto; }
+.tool > h1 { max-width: 18ch; }
+.tool > form { max-width: 48rem; margin-inline: auto; }
+.tool > form > .row, .tool > form > .privacy { justify-content: center; }.narrow { margin-inline: auto; }
 .stack { display: grid; gap: var(--s5); }
 .results { margin-top: var(--s7); display: grid; gap: var(--s6); }
 .rise { animation: rise 320ms ease-out both; }
@@ -168,6 +173,11 @@ dialog.concept::backdrop { background: rgba(20, 18, 15, 0.35); }
 .concept-body .one { font-size: 1.15rem; color: var(--muted); margin: 0; }
 .concept-body p { margin: 0; }
 .analogy { border-left: 3px solid var(--accent); padding-left: var(--s4); }
+.concept-body .stack { gap: var(--s3); }
+.concept-body .stack > .btn { justify-self: start; }
+.explain-better { display: grid; gap: var(--s4); background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius); padding: var(--s4); }
+.check summary { cursor: pointer; font-weight: 500; }
+.check[open] summary { margin-bottom: var(--s2); }
 
 /* ---------- Toast ---------- */
 .toast { position: fixed; bottom: var(--s5); left: 50%; transform: translateX(-50%); background: var(--ink); color: #fff; padding: 10px 20px; border-radius: 999px; font-size: 0.9rem; z-index: 60; animation: rise 200ms ease-out; }
