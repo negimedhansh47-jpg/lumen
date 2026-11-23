@@ -3,7 +3,7 @@ import { fillCommits, liveSource, section } from "../commits.js";
 import { conceptChips, loadConcepts } from "../concepts.js";
 import { renderMap } from "../map.js";
 import { load as loadProject, save as saveProject } from "../project-store.js";
-import { emptyBox, errorBox, h, loading, para, setBusy, toast } from "../render.js";
+import { emptyBox, errorBox, focusResults, h, loading, nextSteps, para, setBusy, toast } from "../render.js";
 import { getLevel, mountShell } from "../shell.js";
 
 mountShell("/repo");
@@ -85,9 +85,8 @@ function trackBar(fullName, latest) {
   return h(
     "div",
     { class: "save-bar" },
-    h("p", {}, h("b", {}, "Learning as you build? "), "Track this repo. Next visit, My project shows only the commits that are new since today."),
+    h("p", {}, h("b", {}, "Is this your project? "), "Track it, and next time My project shows only the changes that are new since today."),
     button,
-    h("a", { class: "btn ghost small", href: "/project" }, "My project"),
   );
 }
 
@@ -118,18 +117,25 @@ function render(o, source) {
   const mapSection = h(
     "section",
     { class: "rise" },
-    h("h2", { style: "margin-bottom: var(--s5)" }, "Architecture map"),
+    h("div", { class: "section-head", style: "margin-bottom: var(--s4)" }, h("h2", {}, "Architecture map"), map ? h("p", { class: "map-hint", style: "margin:0" }, "👆 Click any box to see what it does, why it exists, and the files behind it.") : null),
     map ? map.el : emptyBox("Lumen could not ground any modules in this repo's files, so it shows none rather than guess."),
-    map ? h("p", { class: "map-hint" }, "Tap a box for its role, evidence and commits. Hover a line to see how modules connect.") : null,
   );
-  results.replaceChildren(head, trackBar(o.meta.fullName, () => commits?.[0]), mapSection, h("section", { class: "rise" }, h("h2", { style: "margin-bottom: var(--s4)" }, "Recent commits"), commitsSlot));
+  results.replaceChildren(
+    head,
+    mapSection,
+    trackBar(o.meta.fullName, () => commits?.[0]),
+    h("section", { class: "rise" }, h("div", { class: "section-head" }, h("h2", {}, "Recent changes"), h("p", { class: "muted", style: "margin:0" }, "Press Explain on any change to learn what it did and why.")), commitsSlot),
+    nextSteps("Track this repo to see new changes explained each time you come back, or review the AI chat you used to build it.", [["/project", "Go to My project"], ["/chat", "Review a chat"]]),
+  );
+  focusResults(results);
   fillCommits(commitsSlot, source.commits, source).then((list) => (commits = list));
 }
 
 async function load(repo) {
   input.value = repo;
   setBusy(run, true, "Map it", "Mapping...");
-  results.replaceChildren(loading("Reading the repo and drawing the map. First time takes 15 to 30 seconds; repeat visits are instant.", 6, true));
+  results.replaceChildren(loading("Reading the repo and drawing the map. The first time takes 15 to 30 seconds; after that it is instant.", 6, true));
+  focusResults(results);
   try {
     render(await api(`/api/repo/overview?repo=${encodeURIComponent(repo)}&level=${getLevel()}`), liveSource(repo));
     history.replaceState(null, "", `/repo?repo=${encodeURIComponent(repo)}`);
@@ -164,8 +170,8 @@ try {
   // no examples published: the form still works
 }
 const exampleRow = document.getElementById("examples");
-if (examples.length) exampleRow.append(...examples.map((x) => h("button", { type: "button", class: "btn ghost small", onclick: () => loadDemo(x.id) }, x.label)));
-else exampleRow.remove();
+if (examples.length) exampleRow.append(...examples.map((x) => h("button", { type: "button", class: "btn ghost", onclick: () => loadDemo(x.id) }, x.label)));
+else document.getElementById("examples-block").remove();
 
 const params = new URLSearchParams(location.search);
 if (params.get("repo")) load(params.get("repo"));

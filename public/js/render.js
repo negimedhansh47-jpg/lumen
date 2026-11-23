@@ -55,6 +55,22 @@ export async function copyText(text) {
   }
 }
 
+/** Brings the results area into view, so people see that something happened. */
+export function focusResults(el) {
+  const calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  el.scrollIntoView({ behavior: calm ? "auto" : "smooth", block: "start" });
+}
+
+/** "What next?" card at the end of every result: one clear follow-up per page. */
+export function nextSteps(text, links) {
+  return h(
+    "section",
+    { class: "next rise" },
+    h("div", {}, h("h3", {}, "What next?"), h("p", {}, text)),
+    h("div", { class: "row" }, links.map(([href, label], i) => h("a", { class: i ? "btn ghost" : "btn accent", href }, label))),
+  );
+}
+
 export function setBusy(button, busy, idleLabel, busyLabel) {
   button.disabled = busy;
   button.textContent = busy ? busyLabel : idleLabel;

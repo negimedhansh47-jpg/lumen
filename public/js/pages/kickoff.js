@@ -1,7 +1,7 @@
 import { api, demo } from "../api.js";
 import { conceptChips, loadConcepts } from "../concepts.js";
 import { load as loadProject, save as saveProject } from "../project-store.js";
-import { copyText, errorBox, h, loading, para, setBusy, toast } from "../render.js";
+import { copyText, errorBox, focusResults, h, loading, nextSteps, para, setBusy, toast } from "../render.js";
 import { getLevel, mountShell } from "../shell.js";
 
 mountShell("/kickoff");
@@ -35,7 +35,7 @@ function saveBar(r) {
     button.disabled = true;
     toast("Plan saved. Tick off steps on My project as you build.");
   });
-  return h("div", { class: "save-bar rise" }, h("p", {}, h("b", {}, "Building this? "), "Save the plan in this browser and tick off the first steps as you go."), button);
+  return h("div", { class: "save-bar rise" }, h("p", {}, h("b", {}, "Building this? "), "Save the plan to My project and tick off the steps as you go. It stays in this browser."), button);
 }
 
 function render(r) {
@@ -50,7 +50,9 @@ function render(r) {
       h("div", { class: "md-head" }, h("div", {}, h("h3", {}, "Your CLAUDE.md"), h("p", { class: "hint", style: "margin:0" }, "Save this in your project folder so your AI follows your decisions.")), h("button", { type: "button", class: "btn small", onclick: () => copyText(r.claudeMd) }, "Copy CLAUDE.md")),
       h("pre", {}, h("code", {}, r.claudeMd)),
     ),
+    nextSteps("Save the plan, start building with your AI, then come back to My project to tick off steps and see your changes explained.", [["/project", "Go to My project"], ["/chat", "Review a chat"]]),
   );
+  focusResults(results);
 }
 
 async function explain() {
@@ -61,6 +63,7 @@ async function explain() {
   }
   setBusy(run, true, "Explain the decisions", "Thinking...");
   results.replaceChildren(loading("Working through the decisions. This usually takes 10 to 20 seconds.", 6, true));
+  focusResults(results);
   try {
     render(await api("/api/kickoff", { idea, level: getLevel() }));
   } catch (e) {
@@ -89,3 +92,4 @@ document.getElementById("example").addEventListener("click", loadExample);
 box.addEventListener("input", () => (count.textContent = String(box.value.length)));
 
 await loadConcepts();
+if (new URLSearchParams(location.search).has("example")) loadExample();

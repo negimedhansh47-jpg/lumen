@@ -9,10 +9,10 @@ Lumen teaches software engineering to people who build with AI ("vibecoders"). I
 ## What it does
 | Page | What you get |
 |---|---|
-| **Review my chat** | Paste an AI conversation. Lumen flags vague prompts, shows each one beside a rewrite (before/after), and names the concept you were missing. |
-| **Understand my repo** | Paste a public GitHub URL. An interactive architecture map: modules laid out by layer, click one for its role, why it exists, evidence (real file paths and lines) and commits that touched it. |
+| **Review a chat** | Paste an AI conversation. Lumen flags vague prompts, shows each one beside a rewrite (before/after), and names the concept you were missing. |
+| **Explain a repo** | Paste a public GitHub URL. An interactive architecture map: modules laid out by layer, click one for its role, why it exists, evidence (real file paths and lines) and commits that touched it. |
 | **Commit timeline** | Recent commits, each explainable in plain English with design reasoning, trade-offs and alternatives. |
-| **Start a project** | Describe an idea. Get 4 to 6 key decisions explained and a ready-made `CLAUDE.md` for your AI. |
+| **Plan an idea** | Describe an idea. Get 4 to 6 key decisions explained and a ready-made `CLAUDE.md` for your AI. |
 | **Concept cards** | 30 concept cards (analogy, when to use, trade-offs) open from any chip. "Explain this better" asks the AI to re-teach a card another way, with an example and a self-check question. |
 | **My project** | Learn as you build: save a plan or track a repo in your browser. Each visit shows commits that are new since last time (explainable), a checklist of your plan, and the concepts you have explored. Export/import as a file. |
 | **Examples** | Every page has an example that runs with zero model calls. |

@@ -16,7 +16,7 @@ const card = (heading, ...kids) => h("section", { class: "card stack rise" }, h(
 
 function changesCard(p) {
   if (!p.repo) {
-    return card("What changed since your last visit", h("p", { class: "muted" }, "Track a repo and this shows the commits that are new since you last looked, each one explainable."), h("a", { class: "btn small", href: "/repo" }, "Track a repo"));
+    return card("What changed since your last visit", h("p", { class: "muted" }, "Map your repo on Explain a repo and press Track. Then this shows only the changes that are new since you last looked."), h("a", { class: "btn small", href: "/repo" }, "Explain a repo"));
   }
   const list = h("div", { class: "commits" }, loading("Checking GitHub for new commits...", 3));
   const caughtUp = h("button", { type: "button", class: "btn ghost small", hidden: true }, "Mark all as seen");
@@ -60,7 +60,7 @@ function changesCard(p) {
 
 function planCard(p) {
   if (!p.plan) {
-    return card("Your plan", h("p", { class: "muted" }, "Describe your idea on Start a project and save the plan here, then tick off steps as you build."), h("a", { class: "btn small", href: "/kickoff" }, "Plan a project"));
+    return card("Your plan", h("p", { class: "muted" }, "Describe your idea on Plan an idea and press Save, then tick off steps here as you build."), h("a", { class: "btn small", href: "/kickoff" }, "Plan an idea"));
   }
   const steps = p.plan.firstSteps;
   const status = h("p", { class: "muted", style: "margin:0" }, `${p.done.length} of ${steps.length} steps done`);
@@ -160,9 +160,11 @@ function emptyState() {
   return h(
     "section",
     { class: "card stack rise", style: "text-align:center; justify-items:center; padding: var(--s7) var(--s5)" },
-    h("h2", {}, "No project yet"),
-    h("p", { class: "muted", style: "max-width: 34rem" }, "Save a plan from Start a project, or track a repo from Understand my repo. Everything stays in this browser."),
-    h("div", { class: "row", style: "justify-content:center" }, h("a", { class: "btn accent", href: "/kickoff" }, "Plan a project"), h("a", { class: "btn", href: "/repo" }, "Track a repo"), h("button", { type: "button", class: "btn ghost", onclick: () => file.click() }, "Import a file"), file),
+    h("h2", {}, "You have no project yet"),
+    h("p", { class: "muted", style: "max-width: 36rem" }, "Pick how you want to start. Either way it takes a minute, needs no account, and stays in this browser."),
+    h("div", { class: "row", style: "justify-content:center" }, h("a", { class: "btn accent", href: "/kickoff" }, "Start from an idea"), h("a", { class: "btn", href: "/repo" }, "Start from a GitHub repo")),
+    h("button", { type: "button", class: "btn ghost small", onclick: () => file.click() }, "Or import a saved project file"),
+    file,
   );
 }
 

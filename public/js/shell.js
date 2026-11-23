@@ -20,7 +20,7 @@ function setLevel(level) {
 
 function levelToggle() {
   const buttons = ["beginner", "intermediate"].map((level) =>
-    h("button", { type: "button", "data-level": level, onclick: () => choose(level) }, level[0].toUpperCase() + level.slice(1)),
+    h("button", { type: "button", "data-level": level, onclick: () => choose(level) }, level === "beginner" ? "Beginners" : "Some experience"),
   );
   const sync = () => buttons.forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.level === getLevel())));
   function choose(level) {
@@ -28,13 +28,15 @@ function levelToggle() {
     sync();
   }
   sync();
-  return h("div", { class: "level", role: "group", "aria-label": "Explanation level" }, buttons);
+  buttons[0].title = "Every term explained in plain words";
+  buttons[1].title = "Adds trade-offs and alternatives";
+  return h("div", { class: "level-wrap" }, h("span", { "aria-hidden": "true" }, "Explain for:"), h("div", { class: "level", role: "group", "aria-label": "Explain for" }, buttons));
 }
 
 const NAV = [
-  ["/kickoff", "Start a project"],
-  ["/chat", "Review my chat"],
-  ["/repo", "Understand my repo"],
+  ["/kickoff", "Plan an idea"],
+  ["/chat", "Review a chat"],
+  ["/repo", "Explain a repo"],
   ["/project", "My project"],
 ];
 

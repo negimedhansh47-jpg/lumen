@@ -15,87 +15,91 @@
 </head>
 <body>
   <main id="main">
-    <section class="night hero-band on-night">
-      <div class="grid-bg"></div>
-      <div class="page hero">
-        <div>
-          <p class="eyebrow">For people who build with AI</p>
-          <h1>Understand the code your <em>AI</em> <span class="rotate" id="rotate">writes.</span></h1>
-          <p class="lede">Paste a chat or point to a repo. Lumen explains every change, maps how it fits together, teaches the engineering idea behind it, and coaches your next prompt.</p>
-          <div class="row">
-            <a class="btn accent" href="/chat?example=1">Try an example</a>
-            <a class="btn ghost" href="/repo?example=1">See an architecture map</a>
+    <section class="hero-band">
+      <div class="page">
+        <div class="hero">
+          <div>
+            <p class="eyebrow">For people who build with AI</p>
+            <h1>Understand the code your <em>AI</em> <span class="rotate" id="rotate">writes.</span></h1>
+            <p class="lede">Lumen is a patient tutor for your own project. It explains what your AI built, why, and how to ask it better, in plain words.</p>
+          </div>
+          <div class="peek" id="peek" aria-label="Example: a vague prompt and Lumen's better version">
+            <div class="bar" aria-hidden="true"><i></i><i></i><i></i></div>
+            <div class="before">
+              <p class="label">You wrote</p>
+              <q>it just says error. fix it</q>
+            </div>
+            <div class="after">
+              <p class="label">Lumen suggests</p>
+              <q id="typed" data-text="Submitting the login form returns an error. Here is the exact message: [paste it]. Check the handler in [file name].">Submitting the login form returns an error. Here is the exact message: [paste it]. Check the handler in [file name].</q>
+            </div>
+            <div class="row"><span class="chip">Error handling</span><span class="hint">The idea you were missing</span></div>
           </div>
         </div>
-        <div class="peek" id="peek" aria-label="Example of a prompt rewrite">
-          <div class="bar" aria-hidden="true"><i></i><i></i><i></i></div>
-          <div class="before">
-            <p class="label">You wrote</p>
-            <q>it just says error. fix it</q>
+
+        <div class="chooser">
+          <p>Start here. What do you have right now?</p>
+          <div class="choices">
+            <a class="choice-card reveal" style="--d:0" href="/kickoff">
+              <span class="icon" aria-hidden="true">✦</span>
+              <span class="have">I have</span>
+              <h3>An idea</h3>
+              <p>Learn the big decisions before you build, and get a plan your AI will follow.</p>
+              <span class="go">Plan an idea <b>&rarr;</b></span>
+            </a>
+            <a class="choice-card reveal" style="--d:1" href="/chat">
+              <span class="icon" aria-hidden="true">❝</span>
+              <span class="have">I have</span>
+              <h3>A chat with an AI</h3>
+              <p>See which of your prompts confused the AI, and exactly how to write them better.</p>
+              <span class="go">Review a chat <b>&rarr;</b></span>
+            </a>
+            <a class="choice-card reveal" style="--d:2" href="/repo">
+              <span class="icon" aria-hidden="true">⌘</span>
+              <span class="have">I have</span>
+              <h3>A GitHub repo</h3>
+              <p>Get a clickable map of how your code fits together, and every change explained.</p>
+              <span class="go">Explain a repo <b>&rarr;</b></span>
+            </a>
           </div>
-          <div class="after">
-            <p class="label">Try this instead</p>
-            <q id="typed" data-text="Submitting the login form returns an error. Here is the exact message: [paste it]. Check the handler in [file name].">Submitting the login form returns an error. Here is the exact message: [paste it]. Check the handler in [file name].</q>
-          </div>
-          <div class="row"><span class="chip">Error handling</span><span class="hint">The concept you were missing</span></div>
+          <p class="just-looking">Just looking? <a href="/repo?example=1">Open a ready-made example</a>. It takes one click and no sign-up.</p>
         </div>
       </div>
     </section>
-
-    <div class="ticker" aria-hidden="true">
-      <div class="track">
-        <span>Client and server</span><span>API routes</span><span>Database</span><span>Schema</span><span>Migrations</span><span>Cache</span><span>Secrets</span><span>Authentication</span><span>Validation</span><span>Error handling</span><span>Rate limiting</span><span>Webhooks</span><span>Queues</span><span>Testing</span><span>CI/CD</span>
-        <span>Client and server</span><span>API routes</span><span>Database</span><span>Schema</span><span>Migrations</span><span>Cache</span><span>Secrets</span><span>Authentication</span><span>Validation</span><span>Error handling</span><span>Rate limiting</span><span>Webhooks</span><span>Queues</span><span>Testing</span><span>CI/CD</span>
-      </div>
-    </div>
 
     <section class="page section">
-      <p class="eyebrow reveal">Start here</p>
-      <h2 class="reveal" style="max-width: 20ch; margin-bottom: var(--s6)">Four ways to learn from the code you already have.</h2>
-      <div class="entries">
-        <a class="entry reveal" style="--d:0" href="/kickoff">
-          <span class="num">01</span>
-          <h3>Start a project</h3>
-          <p>Describe your idea. Learn the key decisions before the first line of code, and get a CLAUDE.md to hand your AI.</p>
-          <span class="go">Plan a project <b>&rarr;</b></span>
-        </a>
-        <a class="entry reveal" style="--d:1" href="/chat">
-          <span class="num">02</span>
-          <h3>Review my chat</h3>
-          <p>Paste a conversation with your AI. See which prompts were vague, how to rewrite them, and what concept was missing.</p>
-          <span class="go">Review a chat <b>&rarr;</b></span>
-        </a>
-        <a class="entry reveal" style="--d:2" href="/repo">
-          <span class="num">03</span>
-          <h3>Understand my repo</h3>
-          <p>Paste a public GitHub link. Explore an interactive map of the architecture and read each commit in plain English.</p>
-          <span class="go">Map a repo <b>&rarr;</b></span>
-        </a>
-        <a class="entry wide reveal" style="--d:3" href="/project">
-          <span class="num">04</span>
-          <div>
-            <h3>Keep learning as you build</h3>
-            <p>Save your project in this browser. Come back any time to see what changed since your last visit, tick off your plan, and track the concepts you have learned.</p>
-          </div>
-          <span class="go">Open my project <b>&rarr;</b></span>
-        </a>
-      </div>
-      <div class="stat-row">
-        <div class="stat reveal" style="--d:0"><b>30</b><span>Concept cards</span></div>
-        <div class="stat reveal" style="--d:1"><b>2</b><span>Levels: beginner, intermediate</span></div>
-        <div class="stat reveal" style="--d:2"><b>0</b><span>Chats or ideas stored</span></div>
+      <div class="feature">
+        <div>
+          <p class="eyebrow reveal">Keep learning as you build</p>
+          <h2 class="reveal">Your project, remembered.</h2>
+          <ul class="feature-list">
+            <li class="reveal" style="--d:1">See only what changed since your last visit, each change explained.</li>
+            <li class="reveal" style="--d:2">Tick off your plan step by step.</li>
+            <li class="reveal" style="--d:3">Collect the ideas you have learned along the way.</li>
+          </ul>
+          <a class="btn reveal" href="/project">Open My project</a>
+          <p class="hint" style="margin-top: var(--s3)">Saved in your browser only. No account needed.</p>
+        </div>
+        <div class="feature-art reveal" aria-hidden="true">
+          <p class="label">Since your last visit</p>
+          <div class="mini-row"><span>Add login page</span><span class="tag">new</span></div>
+          <div class="mini-row"><span>Save workouts to the database</span><span class="tag">new</span></div>
+          <div class="mini-row"><span class="muted">Set up the project</span><span class="hint">seen</span></div>
+          <p class="label" style="margin-top: var(--s3)">Your plan</p>
+          <div class="meter"><i style="--p:60%"></i></div>
+          <p class="hint" style="margin:0">3 of 5 steps done</p>
+        </div>
       </div>
     </section>
 
-    <section class="night section on-night">
-      <div class="grid-bg"></div>
+    <section class="night section">
       <div class="page">
-        <p class="eyebrow reveal">How it teaches</p>
-        <h2 class="reveal" style="max-width: 22ch">Not documentation. A tutor that points at <em>your own</em> code.</h2>
+        <p class="eyebrow reveal">Why you can trust it</p>
+        <h2 class="reveal" style="max-width: 22ch">Not generic tutorials. A tutor that points at <em>your own</em> code.</h2>
         <ol class="steps">
-          <li class="reveal" style="--d:0"><strong>Grounded in evidence</strong>Every claim about a repo cites a real file and lines. If Lumen cannot find evidence, it says less.</li>
-          <li class="reveal" style="--d:1"><strong>At your level</strong>Beginner explains every term. Intermediate adds trade-offs and alternatives.</li>
-          <li class="reveal" style="--d:2"><strong>Concepts you can open</strong>Tap any concept chip for a short card, and ask for a different explanation if it does not click.</li>
+          <li class="reveal" style="--d:0"><strong>Shows its evidence</strong>Every claim about a repo names a real file. If Lumen cannot find evidence, it says less.</li>
+          <li class="reveal" style="--d:1"><strong>At your level</strong>Pick "Beginners" for plain words, or "Some experience" for trade-offs and alternatives.</li>
+          <li class="reveal" style="--d:2"><strong>Click any blue idea</strong>Blue chips open a short explanation. If it does not click, ask for it explained another way.</li>
         </ol>
       </div>
     </section>

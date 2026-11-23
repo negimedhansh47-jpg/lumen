@@ -1,6 +1,6 @@
 import { api, demo } from "../api.js";
 import { conceptChips, loadConcepts } from "../concepts.js";
-import { copyText, emptyBox, errorBox, h, loading, para, setBusy } from "../render.js";
+import { copyText, emptyBox, errorBox, focusResults, h, loading, nextSteps, para, setBusy } from "../render.js";
 import { getLevel, mountShell } from "../shell.js";
 
 mountShell("/chat");
@@ -28,7 +28,7 @@ function item(i) {
     h(
       "div",
       { class: "after" },
-      h("p", { class: "label" }, "Try this instead"),
+      h("p", { class: "label" }, "Clearer version"),
       h("blockquote", {}, i.rewrite),
       h("div", {}, h("button", { type: "button", class: "btn ghost small", onclick: () => copyText(i.rewrite) }, "Copy rewrite")),
     ),
@@ -48,10 +48,16 @@ function overview(o) {
 }
 
 function render(result) {
-  const nodes = [overview(result.overview)];
-  if (result.items.length) nodes.push(h("h2", {}, "Prompt by prompt"), ...result.items.map(item));
+  const n = result.items.length;
+  const nodes = [
+    h("div", { class: "section-head rise" }, h("p", { class: "eyebrow" }, "Your review"), h("h2", {}, n ? `${n} prompt${n === 1 ? "" : "s"} to improve` : "Your prompts look clear"), h("p", { class: "muted", style: "margin:0" }, n ? "Each one shows what you wrote, a clearer version you can copy, and why it works better. Click a blue idea to learn it." : "")),
+    overview(result.overview),
+  ];
+  if (n) nodes.push(...result.items.map(item));
   else nodes.push(emptyBox("No specific prompts could be flagged in this chat. That usually means it was already clear."));
+  nodes.push(nextSteps("Use the clearer prompts in your next chat. Then see how the code your AI wrote fits together.", [["/repo", "Explain my repo"], ["/kickoff", "Plan a new idea"]]));
   results.replaceChildren(...nodes);
+  focusResults(results);
 }
 
 async function review() {
@@ -62,6 +68,7 @@ async function review() {
   }
   setBusy(run, true, "Review my prompts", "Reviewing...");
   results.replaceChildren(loading("Reading your chat. This usually takes 5 to 15 seconds.", 6, true));
+  focusResults(results);
   try {
     render(await api("/api/chat/review", { chat, level: getLevel() }));
   } catch (e) {

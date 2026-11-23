@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Understand my repo · Lumen</title>
-  <meta name="description" content="Paste a public GitHub repo. Explore an interactive architecture map and read each commit in plain English.">
+  <title>Explain a repo · Lumen</title>
+  <meta name="description" content="Paste a public GitHub repo. Lumen maps its architecture and explains every commit in plain English.">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,28 +15,35 @@
 </head>
 <body>
   <main id="main">
-    <header class="masthead night">
-      <div class="grid-bg"></div>
+    <header class="masthead">
       <div class="page">
-        <p class="eyebrow">Understand my repo</p>
+        <p class="eyebrow">Explain a repo</p>
         <h1>See how your project fits together.</h1>
-        <p class="lede">Paste a public GitHub link. Lumen maps the architecture, and every box links back to real files.</p>
+        <p class="lede">Lumen draws a map of your code. Click any box to learn what it does and why, with links to the real files.</p>
+        <ol class="howto" aria-label="How it works">
+          <li>Paste a GitHub link</li>
+          <li>Press Map it</li>
+          <li>Click the boxes</li>
+        </ol>
       </div>
     </header>
     <div class="page tool">
-    <form id="form" class="stack">
-      <div class="field">
-        <label for="repo">Public GitHub repo</label>
-        <div class="row" style="flex-wrap: nowrap">
-          <input id="repo" name="repo" type="text" inputmode="url" autocomplete="off" spellcheck="false" placeholder="owner/name or https://github.com/owner/name" aria-describedby="repo-hint">
-          <button class="btn accent" type="submit" id="run" style="flex: none">Map it</button>
+      <form id="form" class="stack">
+        <div class="field">
+          <label for="repo">Public GitHub repo</label>
+          <div class="row" style="flex-wrap: nowrap">
+            <input id="repo" name="repo" type="text" inputmode="url" autocomplete="off" spellcheck="false" placeholder="github.com/owner/name" aria-describedby="repo-hint">
+            <button class="btn accent" type="submit" id="run" style="flex: none">Map it</button>
+          </div>
+          <span id="repo-hint" class="hint">Paste the link from your browser's address bar. Public repos only.</span>
         </div>
-        <span id="repo-hint" class="hint">Public repos only. Private repos are not supported yet.</span>
-      </div>
-      <div class="row" id="examples"><span class="hint">Or try an example:</span></div>
-      <p class="privacy">Only public repositories are analyzed, and their analysis is cached so repeat visits are instant. Nothing private is ever stored.</p>
-    </form>
-    <div id="results" class="results" aria-live="polite"></div>
+        <div id="examples-block" class="stack" style="gap: var(--s3)">
+          <p class="or">No repo handy? Try one of these</p>
+          <div class="row" id="examples" style="justify-content: center"></div>
+        </div>
+        <p class="privacy">Only public repositories are analyzed. Nothing private is ever stored.</p>
+      </form>
+      <div id="results" class="results" aria-live="polite"></div>
     </div>
   </main>
   <script type="module" src="/js/pages/repo.js"></script>
