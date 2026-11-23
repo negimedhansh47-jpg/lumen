@@ -26,6 +26,7 @@ export async function spendLlmCall(env: LimitEnv, req: Request): Promise<void> {
   const [perIp, global] = await env.DB.batch<{ count: number }>([
     env.DB.prepare(BUMP).bind(ipHash, Math.floor(now / HOUR)),
     env.DB.prepare(BUMP).bind("global", -Math.floor(now / DAY)), // negative window keeps daily rows apart from hourly ones
+    env.DB.prepare("DELETE FROM rate_limits WHERE (window > 0 AND window < ?) OR (window < 0 AND window > ?)").bind(Math.floor(now / HOUR) - 2, -Math.floor(now / DAY) + 2), // expired counters
   ]);
   if ((global.results[0]?.count ?? 0) > Number(env.DAILY_LLM_CAP ?? 1500)) {
     throw new HttpError(503, "capacity", "Demo capacity reached. Try the examples.");

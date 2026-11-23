@@ -8,7 +8,8 @@ MVP is built and live. All SPEC features exist: chat review, repo map + drawer +
 
 - Live: https://lumen-learn.lumen-learn.workers.dev
 - Repo: https://github.com/negimedhansh47-jpg/lumen (public, `main`)
-- Worker `lumen-learn`, D1 `lumen-db`, deploys are **manual**: `npx wrangler deploy` (no CI token yet).
+- Worker `lumen-learn`, D1 `lumen-db`. Deploys: push to `main` auto-deploys (Cloudflare Workers Builds, confirmed 2026-11-23); `npx wrangler deploy` also works.
+- `GITHUB_TOKEN` secret is set but GitHub answered 401 (wrong or mistyped token). The Worker falls back to anonymous calls (60/hour) until it is replaced; `wrangler tail` shows "GITHUB_TOKEN was rejected".
 - Smoke test: `node scripts/smoke.mjs <base-url>` (default `http://localhost:8799`). Run it after every deploy.
 
 ## Decisions that are not obvious from the code
@@ -28,7 +29,6 @@ MVP is built and live. All SPEC features exist: chat review, repo map + drawer +
 - Production has no `GITHUB_TOKEN`: anonymous GitHub API is ~60 requests/hour per egress IP. Fix: `npx wrangler secret put GITHUB_TOKEN` with a no-scope fine-grained token.
 - `public/concepts/concepts.json` is AI-drafted and NOT human-reviewed (CLAUDE.md requires review). Same for `public/demo/*` outputs.
 - Untested: real phone, Intermediate level on live, live 429 path, very large repos (CPU limit), contrast measurement.
-- `rate_limits` rows are never cleaned up.
 - Product name is still "Lumen" (working title).
 
 ## Windows gotchas
