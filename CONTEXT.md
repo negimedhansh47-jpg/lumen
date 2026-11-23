@@ -14,6 +14,8 @@ MVP is built and live. All SPEC features exist: chat review, repo map + drawer +
 
 ## Decisions that are not obvious from the code
 - Concept cards are static reviewed text. "Explain this better" (added 2026-11-23 at the human's request, not in SPEC) asks the model to re-teach the card; it takes no user text, so results are cached in D1 per concept and level.
+- "My project" (added 2026-11-23 at the human's request, not in SPEC) is localStorage only (`public/js/project-store.js`, shape-checked on load and import). It tracks a repo + last-seen sha, a saved kickoff plan with a checklist, and opened concepts. Export/import JSON moves it between devices. No server storage, so no auth needed.
+- Design v2 (2026-11-23): midnight #0B1120 + paper #F5F0E6, accent signal lime #D4FF3F (fills and text on midnight only; #3F5A00 for lime-family text on paper). Fonts: Instrument Serif display, Space Grotesk headings, Inter Tight body, JetBrains Mono labels. Motion respects prefers-reduced-motion.
 - Auth: deliberately none. Nothing user-specific is stored, and a login wall would slow judges down. Revisit only for private repos (GitHub OAuth).
 - Model: NVIDIA NIM `nvidia/nemotron-3.5-super-vl-120b-a12b`, sent with `enable_thinking:false`. Fallback Workers AI Llama 3.3 70B. Chain: NIM, NIM retry, Workers AI, friendly error. Test results: `AI_USAGE.md`.
 - Trust model: LLM output is untrusted. Evidence paths are checked against the repo tree, chat excerpts must be verbatim substrings, duplicate excerpts are dropped, unknown concept ids become null.

@@ -1,6 +1,7 @@
 import { api, demo } from "../api.js";
 import { conceptChips, loadConcepts } from "../concepts.js";
-import { copyText, errorBox, h, loading, para, setBusy } from "../render.js";
+import { load as loadProject, save as saveProject } from "../project-store.js";
+import { copyText, errorBox, h, loading, para, setBusy, toast } from "../render.js";
 import { getLevel, mountShell } from "../shell.js";
 
 mountShell("/kickoff");
@@ -25,9 +26,22 @@ function decision(d, n) {
   );
 }
 
+function saveBar(r) {
+  const button = h("button", { type: "button", class: "btn accent small" }, "Save as my project");
+  button.addEventListener("click", () => {
+    const p = loadProject();
+    saveProject({ plan: { restatement: r.restatement, firstSteps: r.firstSteps, claudeMd: r.claudeMd }, name: p.name || r.restatement.slice(0, 60), done: [] });
+    button.textContent = "Saved";
+    button.disabled = true;
+    toast("Plan saved. Tick off steps on My project as you build.");
+  });
+  return h("div", { class: "save-bar rise" }, h("p", {}, h("b", {}, "Building this? "), "Save the plan in this browser and tick off the first steps as you go."), button);
+}
+
 function render(r) {
   results.replaceChildren(
     h("section", { class: "rise" }, h("p", { class: "eyebrow" }, "What you are building"), h("h2", {}, r.restatement)),
+    saveBar(r),
     ...r.decisions.map(decision),
     h("section", { class: "card rise" }, h("h3", {}, "Your first steps"), h("ol", { class: "firststeps" }, r.firstSteps.map((s) => h("li", {}, s)))),
     h(

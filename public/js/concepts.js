@@ -1,9 +1,12 @@
 import { api } from "./api.js";
+import { learn } from "./project-store.js";
 import { errorBox, h, loading, para, setBusy } from "./render.js";
 import { getLevel } from "./shell.js";
 
 let concepts = new Map();
 let dialog;
+
+export const allConcepts = () => [...concepts.values()];
 
 export async function loadConcepts() {
   try {
@@ -55,6 +58,7 @@ function explainBetter(id) {
 export function openConcept(id) {
   const c = concepts.get(id);
   if (!c) return;
+  learn(id); // counts toward "concepts explored" on My project (stored in this browser only)
   if (!dialog) {
     dialog = h("dialog", { class: "concept", "aria-label": "Concept card" });
     dialog.addEventListener("click", (e) => e.target === dialog && dialog.close());

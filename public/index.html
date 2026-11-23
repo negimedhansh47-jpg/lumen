@@ -8,72 +8,100 @@
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Space+Grotesk:wght@500;600;700&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/tokens.css">
   <link rel="stylesheet" href="/css/base.css">
   <link rel="stylesheet" href="/css/components.css">
 </head>
 <body>
   <main id="main">
-    <section class="page hero">
-      <div>
-        <p class="eyebrow">For people who build with AI</p>
-        <h1>Understand the code your <em>AI</em> writes.</h1>
-        <p class="lede">Paste a chat or point to a repo. Lumen explains every change, maps how it fits together, teaches the engineering idea behind it, and coaches your next prompt.</p>
-        <div class="row">
-          <a class="btn" href="/chat?example=1">Try an example</a>
-          <a class="btn ghost" href="/repo?example=1">See an architecture map</a>
+    <section class="night hero-band on-night">
+      <div class="grid-bg"></div>
+      <div class="page hero">
+        <div>
+          <p class="eyebrow">For people who build with AI</p>
+          <h1>Understand the code your <em>AI</em> <span class="rotate" id="rotate">writes.</span></h1>
+          <p class="lede">Paste a chat or point to a repo. Lumen explains every change, maps how it fits together, teaches the engineering idea behind it, and coaches your next prompt.</p>
+          <div class="row">
+            <a class="btn accent" href="/chat?example=1">Try an example</a>
+            <a class="btn ghost" href="/repo?example=1">See an architecture map</a>
+          </div>
         </div>
-      </div>
-      <div class="peek" aria-label="Example of a prompt rewrite">
-        <div class="before">
-          <p class="label">You wrote</p>
-          <q>it just says error. fix it</q>
+        <div class="peek" id="peek" aria-label="Example of a prompt rewrite">
+          <div class="bar" aria-hidden="true"><i></i><i></i><i></i></div>
+          <div class="before">
+            <p class="label">You wrote</p>
+            <q>it just says error. fix it</q>
+          </div>
+          <div class="after">
+            <p class="label">Try this instead</p>
+            <q id="typed" data-text="Submitting the login form returns an error. Here is the exact message: [paste it]. Check the handler in [file name].">Submitting the login form returns an error. Here is the exact message: [paste it]. Check the handler in [file name].</q>
+          </div>
+          <div class="row"><span class="chip">Error handling</span><span class="hint">The concept you were missing</span></div>
         </div>
-        <div class="after">
-          <p class="label">Try this instead</p>
-          <q>Submitting the login form returns an error. Here is the exact message: [paste it]. Check the handler in [file name].</q>
-        </div>
-        <div class="row"><span class="chip">Error handling</span><span class="hint">The concept you were missing</span></div>
       </div>
     </section>
 
-    <section class="page section" style="padding-top: var(--s5)">
-      <p class="eyebrow">Start here</p>
-      <div class="entries">
-        <a class="entry" href="/kickoff">
-          <span class="num">1</span>
-          <h3>Start a project</h3>
-          <p>Describe your idea. Learn the key decisions before the first line of code, and get a CLAUDE.md to hand your AI.</p>
-          <span class="go">Plan a project &rarr;</span>
-        </a>
-        <a class="entry" href="/chat">
-          <span class="num">2</span>
-          <h3>Review my chat</h3>
-          <p>Paste a conversation with your AI. See which prompts were vague, how to rewrite them, and what concept was missing.</p>
-          <span class="go">Review a chat &rarr;</span>
-        </a>
-        <a class="entry" href="/repo">
-          <span class="num">3</span>
-          <h3>Understand my repo</h3>
-          <p>Paste a public GitHub link. Explore an interactive map of the architecture and read each commit in plain English.</p>
-          <span class="go">Map a repo &rarr;</span>
-        </a>
+    <div class="ticker" aria-hidden="true">
+      <div class="track">
+        <span>Client and server</span><span>API routes</span><span>Database</span><span>Schema</span><span>Migrations</span><span>Cache</span><span>Secrets</span><span>Authentication</span><span>Validation</span><span>Error handling</span><span>Rate limiting</span><span>Webhooks</span><span>Queues</span><span>Testing</span><span>CI/CD</span>
+        <span>Client and server</span><span>API routes</span><span>Database</span><span>Schema</span><span>Migrations</span><span>Cache</span><span>Secrets</span><span>Authentication</span><span>Validation</span><span>Error handling</span><span>Rate limiting</span><span>Webhooks</span><span>Queues</span><span>Testing</span><span>CI/CD</span>
       </div>
-    </section>
+    </div>
 
     <section class="page section">
-      <p class="eyebrow">How it teaches</p>
-      <h2>Not just documentation. A tutor that points at your own code.</h2>
-      <ol class="steps">
-        <li><strong>Grounded in evidence</strong>Every claim about a repo cites a real file and lines. If Lumen cannot find evidence, it says less.</li>
-        <li><strong>At your level</strong>Beginner explains every term. Intermediate adds trade-offs and alternatives.</li>
-        <li><strong>Concepts you can open</strong>Tap any concept chip for a short card: what it is, an analogy, when to use it, and the trade-offs.</li>
-      </ol>
+      <p class="eyebrow reveal">Start here</p>
+      <h2 class="reveal" style="max-width: 20ch; margin-bottom: var(--s6)">Four ways to learn from the code you already have.</h2>
+      <div class="entries">
+        <a class="entry reveal" style="--d:0" href="/kickoff">
+          <span class="num">01</span>
+          <h3>Start a project</h3>
+          <p>Describe your idea. Learn the key decisions before the first line of code, and get a CLAUDE.md to hand your AI.</p>
+          <span class="go">Plan a project <b>&rarr;</b></span>
+        </a>
+        <a class="entry reveal" style="--d:1" href="/chat">
+          <span class="num">02</span>
+          <h3>Review my chat</h3>
+          <p>Paste a conversation with your AI. See which prompts were vague, how to rewrite them, and what concept was missing.</p>
+          <span class="go">Review a chat <b>&rarr;</b></span>
+        </a>
+        <a class="entry reveal" style="--d:2" href="/repo">
+          <span class="num">03</span>
+          <h3>Understand my repo</h3>
+          <p>Paste a public GitHub link. Explore an interactive map of the architecture and read each commit in plain English.</p>
+          <span class="go">Map a repo <b>&rarr;</b></span>
+        </a>
+        <a class="entry wide reveal" style="--d:3" href="/project">
+          <span class="num">04</span>
+          <div>
+            <h3>Keep learning as you build</h3>
+            <p>Save your project in this browser. Come back any time to see what changed since your last visit, tick off your plan, and track the concepts you have learned.</p>
+          </div>
+          <span class="go">Open my project <b>&rarr;</b></span>
+        </a>
+      </div>
+      <div class="stat-row">
+        <div class="stat reveal" style="--d:0"><b>30</b><span>Concept cards</span></div>
+        <div class="stat reveal" style="--d:1"><b>2</b><span>Levels: beginner, intermediate</span></div>
+        <div class="stat reveal" style="--d:2"><b>0</b><span>Chats or ideas stored</span></div>
+      </div>
+    </section>
+
+    <section class="night section on-night">
+      <div class="grid-bg"></div>
+      <div class="page">
+        <p class="eyebrow reveal">How it teaches</p>
+        <h2 class="reveal" style="max-width: 22ch">Not documentation. A tutor that points at <em>your own</em> code.</h2>
+        <ol class="steps">
+          <li class="reveal" style="--d:0"><strong>Grounded in evidence</strong>Every claim about a repo cites a real file and lines. If Lumen cannot find evidence, it says less.</li>
+          <li class="reveal" style="--d:1"><strong>At your level</strong>Beginner explains every term. Intermediate adds trade-offs and alternatives.</li>
+          <li class="reveal" style="--d:2"><strong>Concepts you can open</strong>Tap any concept chip for a short card, and ask for a different explanation if it does not click.</li>
+        </ol>
+      </div>
     </section>
 
     <section class="page section narrow">
-      <p class="privacy">Your chats, ideas and private code are processed in memory and never stored. Only analyses of public repositories are cached.</p>
+      <p class="privacy reveal">Your chats, ideas and private code are processed in memory and never stored. Only analyses of public repositories are cached. Your saved project lives only in your own browser.</p>
     </section>
   </main>
   <script type="module" src="/js/pages/home.js"></script>

@@ -8,29 +8,36 @@
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Space+Grotesk:wght@500;600;700&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/tokens.css">
   <link rel="stylesheet" href="/css/base.css">
   <link rel="stylesheet" href="/css/components.css">
 </head>
 <body>
-  <main id="main" class="page tool">
-    <p class="eyebrow">Review my chat</p>
-    <h1>See where your prompts lost the AI.</h1>
-    <p class="lede">Paste a conversation with any AI. Lumen finds the vague prompts, rewrites them, and names the concept that would have helped.</p>
-    <form id="form" class="stack" style="margin-top: var(--s6)">
+  <main id="main">
+    <header class="masthead night">
+      <div class="grid-bg"></div>
+      <div class="page">
+        <p class="eyebrow">Review my chat</p>
+        <h1>See where your prompts lost the AI.</h1>
+        <p class="lede">Paste a conversation with any AI. Lumen finds the vague prompts, rewrites them, and names the concept that would have helped.</p>
+      </div>
+    </header>
+    <div class="page tool">
+    <form id="form" class="stack">
       <div class="field">
         <label for="chat">Your chat</label>
         <textarea id="chat" name="chat" maxlength="30000" placeholder="User: make a login page&#10;AI: Here is a basic login page...&#10;User: it doesn't work" aria-describedby="chat-hint"></textarea>
         <span id="chat-hint" class="hint"><span id="count">0</span> / 30,000 characters</span>
       </div>
       <div class="row">
-        <button class="btn" type="submit" id="run">Review my prompts</button>
+        <button class="btn accent" type="submit" id="run">Review my prompts</button>
         <button class="btn ghost" type="button" id="example">Use an example chat</button>
       </div>
       <p class="privacy">Your chat is sent to an AI model to be reviewed, then forgotten. It is never stored or logged.</p>
     </form>
     <div id="results" class="results" aria-live="polite"></div>
+    </div>
   </main>
   <script type="module" src="/js/pages/chat.js"></script>
 </body>

@@ -13,7 +13,8 @@ Lumen teaches software engineering to people who build with AI ("vibecoders"). I
 | **Understand my repo** | Paste a public GitHub URL. An interactive architecture map: modules laid out by layer, click one for its role, why it exists, evidence (real file paths and lines) and commits that touched it. |
 | **Commit timeline** | Recent commits, each explainable in plain English with design reasoning, trade-offs and alternatives. |
 | **Start a project** | Describe an idea. Get 4 to 6 key decisions explained and a ready-made `CLAUDE.md` for your AI. |
-| **Concept cards** | 30 hand-checked concept cards (analogy, when to use, trade-offs) open from any chip. |
+| **Concept cards** | 30 concept cards (analogy, when to use, trade-offs) open from any chip. "Explain this better" asks the AI to re-teach a card another way, with an example and a self-check question. |
+| **My project** | Learn as you build: save a plan or track a repo in your browser. Each visit shows commits that are new since last time (explainable), a checklist of your plan, and the concepts you have explored. Export/import as a file. |
 | **Examples** | Every page has an example that runs with zero model calls. |
 
 Level toggle (Beginner / Intermediate) changes explanation depth.
@@ -26,7 +27,7 @@ Level toggle (Beginner / Intermediate) changes explanation depth.
 - The UI never uses `innerHTML` for model or user text.
 
 ## Privacy
-Chats and ideas are processed in memory and never stored or logged. Only analyses of **public** repositories are cached (keyed by commit sha). Only `github.com` owner/name targets are accepted.
+Chats and ideas are processed in memory and never stored or logged. Only analyses of **public** repositories are cached (keyed by commit sha). Only `github.com` owner/name targets are accepted. "My project" is stored only in your browser's localStorage and is never sent to the server.
 
 ## Stack
 Cloudflare Workers with static assets. Frontend is plain HTML, CSS and ES modules (no framework, no build step). API is TypeScript in `/src`. D1 stores the cache and rate-limit counters only. LLM: NVIDIA NIM (`nvidia/nemotron-3.5-super-vl-120b-a12b`), with a Workers AI fallback (`@cf/meta/llama-3.3-70b-instruct-fp8-fast`).
@@ -38,7 +39,7 @@ Cloudflare Workers with static assets. Frontend is plain HTML, CSS and ES module
 | `wrangler`, `typescript`, `@cloudflare/workers-types` | Dev tooling |
 
 ### Fonts
-Instrument Serif, Inter Tight, JetBrains Mono (Google Fonts, SIL Open Font License).
+Instrument Serif (display), Space Grotesk (headings), Inter Tight (body), JetBrains Mono (labels and code). All Google Fonts, SIL Open Font License.
 
 ## AI disclosure
 - **Claude Code (Claude Sonnet 5.5)** wrote the code, the concept library drafts and the example data under human direction.

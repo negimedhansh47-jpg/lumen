@@ -15,7 +15,7 @@ async function check(name, fn) {
 const must = (cond, msg) => { if (!cond) throw new Error(msg); };
 const call = (path, body) => fetch(base + path, body ? { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) } : {});
 
-for (const page of ["/", "/chat", "/repo", "/kickoff", "/concepts/concepts.json", "/demo/index.json", "/css/components.css", "/js/shell.js"]) {
+for (const page of ["/", "/chat", "/repo", "/kickoff", "/project", "/js/project-store.js", "/js/commits.js", "/concepts/concepts.json", "/demo/index.json", "/css/components.css", "/js/shell.js"]) {
   await check(`GET ${page}`, async () => must((await call(page)).status === 200, "not 200"));
 }
 await check("health", async () => must((await (await call("/api/health")).json()).ok === true, "ok not true"));

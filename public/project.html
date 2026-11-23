@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My project · Lumen</title>
+  <meta name="description" content="Keep learning as you build: see what changed since your last visit, tick off your plan, and track the concepts you have learned.">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Space+Grotesk:wght@500;600;700&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/tokens.css">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/components.css">
+</head>
+<body>
+  <main id="main">
+    <header class="masthead night">
+      <div class="grid-bg"></div>
+      <div class="page">
+        <p class="eyebrow">My project</p>
+        <h1 id="title">Keep learning as you <em>build.</em></h1>
+        <p class="lede">Your project is saved in this browser only. Come back after each coding session to see what changed, tick off your plan, and grow your concept collection.</p>
+      </div>
+    </header>
+    <div class="page tool">
+      <div id="results" class="results" style="margin-top: calc(-1 * var(--s8)); position: relative; z-index: 2" aria-live="polite"></div>
+    </div>
+  </main>
+  <script type="module" src="/js/pages/project.js"></script>
+</body>
+</html>

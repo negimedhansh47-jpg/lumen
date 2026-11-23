@@ -35,7 +35,22 @@ const NAV = [
   ["/kickoff", "Start a project"],
   ["/chat", "Review my chat"],
   ["/repo", "Understand my repo"],
+  ["/project", "My project"],
 ];
+
+/** Fade-up on scroll. Elements already on screen are shown at once, so nothing flashes. */
+export function reveal(root = document) {
+  const els = [...root.querySelectorAll(".reveal:not(.in)")];
+  if (!("IntersectionObserver" in window)) return els.forEach((el) => el.classList.add("in"));
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) if (e.isIntersecting) (e.target.classList.add("in"), io.unobserve(e.target));
+  }, { rootMargin: "0px 0px -8% 0px" });
+  for (const el of els) {
+    if (el.getBoundingClientRect().top < innerHeight) el.classList.add("in");
+    else io.observe(el);
+  }
+  document.documentElement.classList.add("js");
+}
 
 export function mountShell(active) {
   const link = ([href, label]) => h("a", { href, "aria-current": href === active ? "page" : null }, label);
@@ -47,7 +62,14 @@ export function mountShell(active) {
     h(
       "footer",
       { class: "site-footer" },
-      h("div", { class: "page" }, h("span", {}, "Lumen teaches you the engineering behind the code your AI writes."), h("a", { href: "https://github.com/negimedhansh47-jpg/lumen" }, "Source on GitHub")),
+      h(
+        "div",
+        { class: "page" },
+        h("span", { class: "big", "aria-hidden": "true" }, "Lumen", h("span", {}, ".")),
+        h("span", {}, "Lumen teaches you the engineering behind the code your AI writes."),
+        h("a", { href: "https://github.com/negimedhansh47-jpg/lumen" }, "Source on GitHub"),
+      ),
     ),
   );
+  reveal();
 }

@@ -12,7 +12,8 @@ Millions of people now build software by prompting an AI. The code works, until 
 - **Review my chat:** paste a conversation with an AI. Lumen finds the vague prompts, shows each one beside a better rewrite, names the problem and links the engineering concept you were missing. Every quoted excerpt is checked to really exist in your chat.
 - **Understand my repo:** point it at a public GitHub repo. It draws an interactive architecture map (modules, layers, connections). Click a box for its role, why it exists, evidence files and the commits that touched it. Any commit can be explained: what changed, why it matters, the trade-offs.
 - **Start a project:** describe an idea and get the key decisions (stack, data, auth, hosting) explained with trade-offs, first steps, and a ready-to-use CLAUDE.md for your AI tool.
-- **30 concept cards** open from any chip, each with an analogy, when to use it and the trade-offs.
+- **30 concept cards** open from any chip, each with an analogy, when to use it and the trade-offs. If a card does not click, "Explain this better" re-teaches it another way with an example and a self-check question.
+- **My project: learn as you build.** Save your plan or track your repo (stored only in your browser). Each time you come back, Lumen shows the commits that are new since your last visit, ready to explain, plus your plan checklist and the concepts you have explored.
 - Every page has a one-click example that needs no AI call.
 
 ## How we built it
