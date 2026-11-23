@@ -14,8 +14,8 @@ Millions of people now build software by prompting an AI. The code works, until 
 - **Plan an idea:** describe an idea and get the key decisions (stack, data, auth, hosting) explained with trade-offs, first steps, and a ready-to-use CLAUDE.md for your AI tool.
 - **30 concept cards** open from any chip, each with an analogy, when to use it and the trade-offs. If a card does not click, "Explain this better" re-teaches it another way with an example and a self-check question.
 - **My project: learn as you build.** Save your plan or track your repo (stored only in your browser). Each time you come back, Lumen shows the commits that are new since your last visit, ready to explain, plus your plan checklist and the concepts you have explored.
-- **Ask about your project:** chat with the AI about your repo or plan. It answers only from what Lumen has mapped, cites real files, and nothing is saved.
-- Every page has a one-click example that needs no AI call.
+- **Ask about your project:** chat with the AI about your repo or plan. It is told to answer only from what Lumen has mapped, the files it cites are checked against the map, and nothing is saved.
+- Every tool has a one-click example that needs no AI call.
 
 ## How we built it
 Cloudflare Workers with static assets (plain HTML, CSS and ES modules, no framework or bundler), D1 for cache and rate limits only, NVIDIA NIM (Nemotron 3.5 Super) as the model with a Workers AI fallback. One runtime dependency: zod.
@@ -40,7 +40,7 @@ Choosing the model from measured runs (validity, latency) beat choosing by reput
 GitHub login for private repos, an in-editor extension, more concepts reviewed by teachers, and "explain this diff before you accept it" for AI pull requests.
 
 ## AI disclosure
-Built with Claude Code (Claude Sonnet) as a coding assistant, with the human directing and reviewing. The concept library and example outputs were AI-drafted and are marked for human review. Full log: `AI_USAGE.md`. Runtime AI: NVIDIA NIM and Cloudflare Workers AI.
+Built with Claude Code (Claude Sonnet, later Claude Opus) as a coding assistant, with the human directing and reviewing. The concept library and example outputs were AI-drafted and are marked for human review. Full log: `AI_USAGE.md`. Runtime AI: NVIDIA NIM and Cloudflare Workers AI.
 
 ## Built with
 Cloudflare Workers, Cloudflare D1, Workers AI, NVIDIA NIM, TypeScript, zod, HTML, CSS, JavaScript.
