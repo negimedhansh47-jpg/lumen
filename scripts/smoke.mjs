@@ -22,6 +22,13 @@ await check("health", async () => must((await (await call("/api/health")).json()
 await check("404 on unknown API route", async () => must((await call("/api/nope")).status === 404, "not 404"));
 await check("rejects short chat", async () => must((await call("/api/chat/review", { chat: "hi", level: "beginner" })).status === 400, "not 400"));
 await check("rejects non-github repo", async () => must((await call("/api/repo/overview?repo=" + encodeURIComponent("https://evil.com/a/b"))).status === 400, "not 400"));
+// Regression checks from the 2026-11-23 QA pass (none of these reach the model)
+await check("bad level is 400, not 500", async () => must((await call("/api/repo/overview?repo=a/b&level=expert")).status === 400, "not 400"));
+await check("whitespace-only chat is 400", async () => must((await call("/api/chat/review", { chat: " ".repeat(25) })).status === 400, "not 400"));
+await check("non-JSON content type is 415", async () => must((await fetch(base + "/api/chat/review", { method: "POST", headers: { "content-type": "text/plain" }, body: JSON.stringify({ chat: "x".repeat(30) }) })).status === 415, "not 415"));
+await check("dot-dot repo segment is 400", async () => must((await call("/api/repo/commits?repo=" + encodeURIComponent("../users"))).status === 400, "not 400"));
+await check("unknown page is an HTML 404", async () => { const r = await call("/no-such-page"); must(r.status === 404 && r.headers.get("content-type")?.includes("text/html"), `${r.status} ${r.headers.get("content-type")}`); });
+await check("unknown API route stays JSON", async () => must((await call("/api/nope")).headers.get("content-type")?.includes("application/json"), "not JSON"));
 await check("AI: chat review", async () => {
   const chat = "User: make me a todo app\nAssistant: Here is a todo app in React.\nUser: it's broken fix it\nAssistant: Which part is broken?";
   const res = await call("/api/chat/review", { chat, level: "beginner" });
