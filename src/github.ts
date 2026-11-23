@@ -6,25 +6,36 @@ export interface GhEnv {
 
 const API = "https://api.github.com"; // the only host this app ever fetches repo data from
 
-async function gh(env: GhEnv, path: string, accept = "application/vnd.github+json"): Promise<Response> {
-  const res = await fetch(`${API}${path}`, {
+function request(path: string, accept: string, token?: string): Promise<Response> {
+  return fetch(`${API}${path}`, {
     headers: {
       accept,
       "user-agent": "lumen-learn",
       "x-github-api-version": "2022-11-28",
-      ...(env.GITHUB_TOKEN ? { authorization: `Bearer ${env.GITHUB_TOKEN}` } : {}),
+      ...(token ? { authorization: `Bearer ${token}` } : {}),
     },
     signal: AbortSignal.timeout(15_000),
   }).catch(() => {
     throw new HttpError(502, "github_error", "GitHub did not answer in time. Please try again.");
   });
+}
+
+async function gh(env: GhEnv, path: string, accept = "application/vnd.github+json"): Promise<Response> {
+  let res = await request(path, accept, env.GITHUB_TOKEN?.trim());
+  if (res.status === 401 && env.GITHUB_TOKEN) {
+    console.error("GITHUB_TOKEN was rejected (401); retrying anonymously. Replace the secret.");
+    res = await request(path, accept); // a bad token must not take the whole site down
+  }
   if (res.status === 404) {
     throw new HttpError(404, "repo_not_found", "That repo was not found, or it is private. Only public repos work without login.");
   }
   if (res.status === 403 || res.status === 429) {
     throw new HttpError(429, "github_limit", "GitHub's rate limit was reached. Try an example, or retry in a few minutes.");
   }
-  if (!res.ok) throw new HttpError(502, "github_error", "GitHub did not answer. Please try again.");
+  if (!res.ok) {
+    console.error("github status", res.status, path.split("?")[0]); // 401 here means the GITHUB_TOKEN secret is wrong or expired
+    throw new HttpError(502, "github_error", "GitHub did not answer. Please try again.");
+  }
   return res;
 }
 
