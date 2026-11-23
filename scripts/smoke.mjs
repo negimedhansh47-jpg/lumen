@@ -25,7 +25,9 @@ await check("rejects non-github repo", async () => must((await call("/api/repo/o
 // Regression checks from the 2026-11-23 QA pass (none of these reach the model)
 await check("bad level is 400, not 500", async () => must((await call("/api/repo/overview?repo=a/b&level=expert")).status === 400, "not 400"));
 await check("whitespace-only chat is 400", async () => must((await call("/api/chat/review", { chat: " ".repeat(25) })).status === 400, "not 400"));
-await check("non-JSON content type is 415", async () => must((await fetch(base + "/api/chat/review", { method: "POST", headers: { "content-type": "text/plain" }, body: JSON.stringify({ chat: "x".repeat(30) }) })).status === 415, "not 415"));
+for (const type of ["text/plain", "text/plain; application/json"]) {
+  await check(`content type "${type}" is 415`, async () => must((await fetch(base + "/api/chat/review", { method: "POST", headers: { "content-type": type }, body: JSON.stringify({ chat: "x".repeat(30) }) })).status === 415, "not 415"));
+}
 await check("dot-dot repo segment is 400", async () => must((await call("/api/repo/commits?repo=" + encodeURIComponent("../users"))).status === 400, "not 400"));
 await check("unknown page is an HTML 404", async () => { const r = await call("/no-such-page"); must(r.status === 404 && r.headers.get("content-type")?.includes("text/html"), `${r.status} ${r.headers.get("content-type")}`); });
 await check("unknown API route stays JSON", async () => must((await call("/api/nope")).headers.get("content-type")?.includes("application/json"), "not JSON"));

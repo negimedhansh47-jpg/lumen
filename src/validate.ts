@@ -17,7 +17,8 @@ const MAX_BODY = 64 * 1024;
 
 export async function readBody<T>(req: Request, schema: z.ZodType<T>): Promise<T> {
   // A JSON content type forces a CORS preflight, so other websites cannot make visitors' browsers spend the AI budget.
-  if (!req.headers.get("content-type")?.includes("application/json")) {
+  // Compare the media type itself: "text/plain; application/json" contains the string but is still preflight-free.
+  if (req.headers.get("content-type")?.split(";")[0].trim().toLowerCase() !== "application/json") {
     throw new HttpError(415, "bad_type", "Send the request as JSON (content-type: application/json).");
   }
   const text = await req.text();
