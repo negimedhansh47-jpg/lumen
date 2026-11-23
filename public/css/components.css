@@ -51,8 +51,10 @@ textarea:focus, input[type="text"]:focus { outline: none; border-color: var(--ac
 
 /* ---------- Layout ---------- */
 .section { padding-block: var(--s8); }
-.stack { display: grid; gap: var(--s5); }
-.results { margin-top: var(--s7); display: grid; gap: var(--s6); scroll-margin-top: 96px; }
+/* minmax(0, 1fr): a long line (a CLAUDE.md block, a long file name) must not widen the page on phones */
+.stack { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s5); }
+.results { margin-top: var(--s7); display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s6); scroll-margin-top: 96px; }
+.results h1, .results h2, .chip, .checklist span, .msg, #title { overflow-wrap: break-word; }
 .results:empty { display: none; }
 .rise { animation: rise 520ms cubic-bezier(0.2, 0.7, 0.2, 1) both; }
 @keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
@@ -234,8 +236,9 @@ button.chip:hover::after { background: var(--on-accent); color: var(--accent); }
 .md-head { display: flex; justify-content: space-between; align-items: center; gap: var(--s3); margin-bottom: var(--s3); flex-wrap: wrap; }
 
 /* ---------- My project ---------- */
-.project-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: var(--s5); align-items: start; }
-.checklist { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--s1); }
+.project-grid { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: var(--s5); align-items: start; }
+.checklist { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s1); }
+.checklist span { min-width: 0; }
 .checklist label { display: flex; gap: var(--s3); align-items: flex-start; padding: var(--s3); border-radius: var(--radius); cursor: pointer; transition: background var(--ease); }
 .checklist label:hover { background: var(--bg); }
 .checklist input { width: 1.15rem; height: 1.15rem; margin-top: 0.2rem; accent-color: var(--accent); flex: none; }
@@ -268,7 +271,7 @@ dialog.concept::backdrop { background: rgba(0, 23, 31, 0.45); backdrop-filter: b
 @media (max-width: 900px) {
   .hero, .feature { grid-template-columns: 1fr; }
   .peek { transform: none; }
-  .choices, .steps, .overview-grid, .project-grid { grid-template-columns: 1fr; }
+  .choices, .steps, .overview-grid, .project-grid { grid-template-columns: minmax(0, 1fr); }
   .section { padding-block: var(--s7); }
   .hero-band { padding-block: var(--s7) var(--s6); }
   .level-wrap > span { display: none; }
