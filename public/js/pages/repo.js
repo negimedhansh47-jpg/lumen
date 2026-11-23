@@ -53,12 +53,14 @@ function makeDrawer(source, onClose) {
     const commitsSlot = h("div", { class: "mini" });
     const seeCommits = h("button", { type: "button", class: "btn ghost small", onclick: () => { seeCommits.remove(); fillCommits(commitsSlot, () => source.moduleCommits(m), source, true); } }, "See commits touching this");
     body.replaceChildren(
-      section("Role", para(m.role)),
-      section("Why it exists", para(m.whyItExists)),
-      connections.length ? section("Connections", h("ul", {}, connections.map((c) => h("li", {}, c)))) : null,
-      m.concepts.length ? section("Concepts", conceptChips(m.concepts)) : null,
-      section("Evidence", h("ul", { class: "evidence" }, m.evidence.map((v) => h("li", {}, v.lines ? `${v.path}:${v.lines}` : v.path)))),
-      h("div", {}, seeCommits, commitsSlot),
+      ...[
+        section("Role", para(m.role)),
+        section("Why it exists", para(m.whyItExists)),
+        connections.length ? section("Connections", h("ul", {}, connections.map((c) => h("li", {}, c)))) : null,
+        m.concepts.length ? section("Concepts", conceptChips(m.concepts)) : null,
+        section("Evidence", h("ul", { class: "evidence" }, m.evidence.map((v) => h("li", {}, v.lines ? `${v.path}:${v.lines}` : v.path)))),
+        h("div", {}, seeCommits, commitsSlot),
+      ].filter(Boolean), // replaceChildren would print a null as the text "null"
     );
     body.scrollTop = 0;
     drawer.classList.add("open");
@@ -122,12 +124,14 @@ function render(o, source, live = false) {
     map ? map.el : emptyBox("Lumen could not ground any modules in this repo's files, so it shows none rather than guess."),
   );
   results.replaceChildren(
-    head,
-    mapSection,
-    live ? askPanel(() => ({ repo: o.meta.fullName }), { title: `Ask about ${o.meta.name ?? o.meta.fullName}` }) : null,
-    trackBar(o.meta.fullName, () => commits?.[0]),
-    h("section", { class: "rise" }, h("div", { class: "section-head" }, h("h2", {}, "Recent changes"), h("p", { class: "muted", style: "margin:0" }, "Press Explain on any change to learn what it did and why.")), commitsSlot),
-    nextSteps("Track this repo to see new changes explained each time you come back, or review the AI chat you used to build it.", [["/project", "Go to My project"], ["/chat", "Review a chat"]]),
+    ...[
+      head,
+      mapSection,
+      live ? askPanel(() => ({ repo: o.meta.fullName }), { title: `Ask about ${o.meta.name ?? o.meta.fullName}` }) : null,
+      trackBar(o.meta.fullName, () => commits?.[0]),
+      h("section", { class: "rise" }, h("div", { class: "section-head" }, h("h2", {}, "Recent changes"), h("p", { class: "muted", style: "margin:0" }, "Press Explain on any change to learn what it did and why.")), commitsSlot),
+      nextSteps("Track this repo to see new changes explained each time you come back, or review the AI chat you used to build it.", [["/project", "Go to My project"], ["/chat", "Review a chat"]]),
+    ].filter(Boolean),
   );
   focusResults(results);
   fillCommits(commitsSlot, source.commits, source).then((list) => (commits = list));

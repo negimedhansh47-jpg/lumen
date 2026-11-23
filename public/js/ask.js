@@ -30,9 +30,11 @@ export function askPanel(context, { title = "Ask about your project" } = {}) {
       const out = await api("/api/project/ask", { question, history: history.slice(-6), ...context(), level: getLevel() });
       history.push({ role: "user", text: question }, { role: "assistant", text: out.answer.slice(0, 1500) });
       wait.replaceChildren(
-        para(out.answer),
-        out.files.length ? h("div", { class: "chips" }, out.files.map((f) => h("code", { class: "chip" }, f))) : null,
-        out.concepts.length ? conceptChips(out.concepts) : null,
+        ...[
+          para(out.answer),
+          out.files.length ? h("div", { class: "chips" }, out.files.map((f) => h("code", { class: "chip" }, f))) : null,
+          conceptChips(out.concepts), // null when no known concepts
+        ].filter(Boolean), // replaceChildren would print a null as the text "null"
       );
       setStarters(out.followUps);
     } catch (e) {
