@@ -4,52 +4,52 @@
   "overview": {
    "patterns": [
     "asks for many features at once",
-    "does not share error details",
-    "asks for a whole app without a goal",
-    "asks for a database without saying which one"
+    "no error details provided",
+    "does not explain how to reproduce",
+    "changes goal mid-conversation"
    ],
-   "strongest": "the page is blank. fix it",
-   "weakest": "build me an app to track my expenses"
+   "strongest": "ok add a database",
+   "weakest": "the page is blank. fix it"
   },
   "items": [
    {
     "id": "item-1",
     "excerpt": "build me an app to track my expenses",
     "problem": "vague",
-    "why": "No stack, goal, or scope is given, so the AI must guess everything and may build something unusable.",
-    "rewrite": "Build an expense tracker using [React/Express/etc]. Goal: [add/view/delete expenses]. Stack: [list].",
-    "concept": "component"
+    "why": "No stack, features, or goal are given, so the AI must guess the whole design.",
+    "rewrite": "Build an expense tracker using [React/Express/etc]. It should let me add, view, and delete expenses.",
+    "concept": "database"
    },
    {
     "id": "item-2",
     "excerpt": "it's not working",
-    "problem": "no-error",
-    "why": "There is no error message or symptom, so the AI cannot know what is broken.",
-    "rewrite": "It is not working. [paste the exact error here]. Expected: [what should happen]. Actual: [what happens].",
+    "problem": "no-context",
+    "why": "There is no description of what fails, what was tried, or where the code lives.",
+    "rewrite": "The app fails at [step]. I changed [file] at [lines]. Expected [X], got [Y].",
     "concept": "error-handling"
    },
    {
     "id": "item-3",
     "excerpt": "the page is blank. fix it",
-    "problem": "no-context",
-    "why": "A blank page has many causes; without console output or file paths the AI cannot find the bug.",
-    "rewrite": "The page is blank. Browser console says: [paste exact error here]. File: [path], lines: [start]-[end].",
+    "problem": "no-error",
+    "why": "A blank screen can come from many causes; without the console error the AI cannot target the fix.",
+    "rewrite": "The page is blank. The browser console shows: [paste the exact error here].",
     "concept": "error-handling"
    },
    {
     "id": "item-4",
     "excerpt": "idk how. just make it work and also add charts and login and dark mode",
     "problem": "too-big",
-    "why": "Requesting charts, login, and dark mode together makes the change hard to review and test.",
-    "rewrite": "Fix the blank page first. After that works, add charts. Then login. Then dark mode.",
+    "why": "Bundling a blank-page fix with charts, login, and dark mode makes it impossible to test or review one change at a time.",
+    "rewrite": "First fix the blank page. After that works, add charts as a separate task.",
     "concept": "state-management"
    },
    {
     "id": "item-5",
-    "excerpt": "ok add a database",
+    "excerpt": "now it shows but when I add an expense and refresh it's gone",
     "problem": "no-context",
-    "why": "No database type, schema, or connection details are given, so the AI cannot implement it correctly.",
-    "rewrite": "Add a [PostgreSQL/SQLite/etc] database to store expenses. Schema: [table and columns]. Connection: [env var or placeholder].",
+    "why": "The user does not say where data is stored or share the save code, so the fix is a guess.",
+    "rewrite": "After adding an expense and refreshing, the list is empty. The save code is in [file] around [lines].",
     "concept": "database"
    }
   ]

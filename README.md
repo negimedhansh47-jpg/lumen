@@ -53,7 +53,7 @@ npm install
 npx wrangler d1 migrations apply lumen-db --local
 npx wrangler dev
 ```
-Regenerate the examples with `node scripts/make-demo.mjs` while `wrangler dev` is running on port 8799.
+Check a running instance (local or deployed) with `node scripts/smoke.mjs <base-url>`. Regenerate the examples with `node scripts/make-demo.mjs` while `wrangler dev` is running on port 8799.
 
 ## Platform limits it is designed around (Workers free plan)
 50 subrequests and 10 ms CPU per request. D1 queries count as subrequests. Analysis is split into small endpoints and the client orchestrates them. See [SPEC.md](SPEC.md).

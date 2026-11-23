@@ -41,7 +41,17 @@ export async function reviewChat(req: Request, env: Env): Promise<Response> {
     .filter((i) => !seen.has(norm(i.excerpt)) && seen.add(norm(i.excerpt))) // one finding per excerpt
     .slice(0, 8)
     .map((i, n) => ({ id: `item-${n + 1}`, ...i }));
-  return Response.json({ overview: out.overview, items });
+  const { strongest, weakest } = out.overview;
+  return Response.json({ overview: { ...out.overview, strongest: userQuote(chat, strongest), weakest: userQuote(chat, weakest) }, items });
+}
+
+const AI_SPEAKER = /^\W*(ai|assistant|claude|chatgpt|gpt|bot|model)\b/i;
+
+/** The quote only if it really appears in the chat on a line the person wrote (not the AI); otherwise "". */
+function userQuote(chat: string, quote: string): string {
+  const q = norm(quote);
+  const line = q ? chat.split("\n").find((l) => norm(l).includes(q)) : undefined;
+  return line && !AI_SPEAKER.test(line) ? quote : "";
 }
 
 /** GET /api/repo/overview?repo=owner/name&level= */

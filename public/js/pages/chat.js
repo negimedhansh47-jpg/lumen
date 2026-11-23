@@ -42,8 +42,8 @@ function overview(o) {
     "section",
     { class: "overview-grid rise" },
     h("div", { class: "card" }, h("h3", {}, "Patterns"), o.patterns.length ? list(o.patterns) : h("p", { class: "muted" }, "None stood out.")),
-    h("div", { class: "card" }, h("h3", {}, "Strongest prompt"), h("p", {}, o.strongest)),
-    h("div", { class: "card" }, h("h3", {}, "Weakest prompt"), h("p", {}, o.weakest)),
+    o.strongest ? h("div", { class: "card" }, h("h3", {}, "Strongest prompt"), h("p", {}, o.strongest)) : null,
+    o.weakest ? h("div", { class: "card" }, h("h3", {}, "Weakest prompt"), h("p", {}, o.weakest)) : null,
   );
 }
 

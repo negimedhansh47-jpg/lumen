@@ -4,22 +4,25 @@
    "fullName": "negimedhansh47-jpg/lumen",
    "description": null,
    "stars": 0,
-   "language": "HTML",
+   "language": "JavaScript",
    "defaultBranch": "main",
    "url": "https://github.com/negimedhansh47-jpg/lumen",
    "analyzed": 9,
-   "total": 47,
+   "total": 51,
    "truncated": false
   },
-  "headSha": "5f5fe0fd5443bb87ea9ec029e8af84a4b8d7f1e9",
+  "headSha": "75e4848ca3807a42cfabfcaeac2106b525994cc6",
   "stack": [
    "Cloudflare Workers",
    "TypeScript",
    "D1",
    "zod",
-   "HTML/CSS/JS"
+   "HTML/CSS/ES modules",
+   "NVIDIA NIM",
+   "Workers AI",
+   "GitHub API"
   ],
-  "summary": "Lumen is a Cloudflare Worker that serves static HTML/CSS/JS pages and exposes JSON API routes for reviewing AI chats, explaining GitHub commits, mapping repo architecture, and coaching prompts. It caches repo analyses and rate limits users in D1, calls an LLM binding for explanations, and validates all input with zod.",
+  "summary": "Lumen is a Cloudflare Worker that teaches software engineering to AI-assisted developers. It reviews AI chats, maps public GitHub repositories into architecture modules, explains commits, and helps start projects, all grounded in evidence from real files and lines.",
   "modules": [
    {
     "id": "web",
@@ -41,19 +44,14 @@
      "public/js/pages/home.js",
      "public/js/pages/kickoff.js",
      "public/js/pages/repo.js",
-     "public/demo/chat.json",
-     "public/demo/index.json",
-     "public/demo/kickoff.json",
-     "public/demo/lumen.json",
-     "public/demo/realworld.json",
      "public/concepts/concepts.json"
     ],
     "layer": "ui",
-    "role": "Serves static HTML, CSS, and client-side JavaScript pages for the chat, repo, kickoff, and home views.",
-    "whyItExists": "Separates the user interface from the API backend so users can interact with the app in a browser while the Worker handles business logic.",
+    "role": "Serves static HTML, CSS, and JavaScript pages for chat review, repo mapping, commit explanation, and project kickoff.",
+    "whyItExists": "Provides the user interface so people can interact with Lumen without installing anything, keeping the frontend separate from the API logic.",
     "concepts": [
-     "component",
-     "routing"
+     "client-server",
+     "component"
     ],
     "evidence": [
      {
@@ -70,8 +68,8 @@
      "src/handlers.ts"
     ],
     "layer": "api",
-    "role": "Defines HTTP route handlers for chat review, repo overview, commits, commit explanation, and project kickoff.",
-    "whyItExists": "Provides a clear entry point for browser clients to call server-side features over HTTP.",
+    "role": "Defines HTTP routes such as /api/chat/review and /api/repo/overview and dispatches requests to the correct handler.",
+    "whyItExists": "Separates request routing from business logic so each endpoint has a single responsibility and the server can be tested independently.",
     "concepts": [
      "api-route",
      "http-methods",
@@ -85,31 +83,66 @@
    },
    {
     "id": "logic",
-    "name": "Business logic",
+    "name": "Request logic",
     "paths": [
+     "src/handlers.ts",
      "src/validate.ts",
-     "src/ratelimit.ts",
      "src/cache.ts",
-     "src/github.ts",
-     "src/llm.ts",
-     "src/prompts/chatReview.ts",
-     "src/prompts/commitExplain.ts",
-     "src/prompts/common.ts",
-     "src/prompts/kickoff.ts",
-     "src/prompts/repoOverview.ts"
+     "src/ratelimit.ts"
     ],
     "layer": "logic",
-    "role": "Validates input, enforces rate limits, reads cached data, fetches GitHub repo metadata and files, calls the LLM, and builds prompt templates.",
-    "whyItExists": "Keeps request handling separate from core rules so validation, external calls, and prompt construction can be tested and changed independently.",
+    "role": "Validates input, checks caches, enforces rate limits, and coordinates calls to GitHub and the LLM.",
+    "whyItExists": "Keeps validation, caching, and rate-limiting separate from route definitions so the same rules can be reused across endpoints.",
     "concepts": [
      "validation",
-     "rate-limiting",
-     "cache"
+     "cache",
+     "rate-limiting"
     ],
     "evidence": [
      {
       "path": "src/handlers.ts",
-      "lines": "1-30"
+      "lines": "1-60"
+     }
+    ]
+   },
+   {
+    "id": "github",
+    "name": "GitHub provider",
+    "paths": [
+     "src/github.ts"
+    ],
+    "layer": "external",
+    "role": "Fetches repository metadata, file trees, and commit data from the GitHub API.",
+    "whyItExists": "Encapsulates all communication with GitHub in one place so the rest of the app does not depend directly on an external HTTP API.",
+    "concepts": [
+     "client-server"
+    ],
+    "evidence": [
+     {
+      "path": "src/github.ts"
+     }
+    ]
+   },
+   {
+    "id": "llm",
+    "name": "LLM provider",
+    "paths": [
+     "src/llm.ts",
+     "src/prompts/chatReview.ts",
+     "src/prompts/commitExplain.ts",
+     "src/prompts/kickoff.ts",
+     "src/prompts/repoOverview.ts",
+     "src/prompts/common.ts"
+    ],
+    "layer": "external",
+    "role": "Calls NVIDIA NIM or Workers AI to generate explanations, prompt rewrites, and architecture maps.",
+    "whyItExists": "Isolates model interaction behind a single interface so the app can switch providers or add fallback behavior without changing handlers.",
+    "concepts": [
+     "oauth"
+    ],
+    "evidence": [
+     {
+      "path": "src/llm.ts"
      }
     ]
    },
@@ -118,11 +151,11 @@
     "name": "Database",
     "paths": [
      "migrations/0001_init.sql",
-     "wrangler.jsonc"
+     "src/cache.ts"
     ],
     "layer": "data",
-    "role": "Defines D1 tables for cached repo analyses and per-IP rate-limit counters.",
-    "whyItExists": "Persists analysis results and rate-limit state so repeated requests are faster and abuse is limited.",
+    "role": "Stores cached public-repo analyses and hashed IP rate-limit counters in Cloudflare D1.",
+    "whyItExists": "Persists only safe, public data so repeated repo analyses are faster while chats and ideas are never stored.",
     "concepts": [
      "database",
      "schema",
@@ -130,30 +163,7 @@
     ],
     "evidence": [
      {
-      "path": "migrations/0001_init.sql",
-      "lines": "1-15"
-     }
-    ]
-   },
-   {
-    "id": "external",
-    "name": "External services",
-    "paths": [
-     "src/github.ts",
-     "src/llm.ts",
-     "wrangler.jsonc"
-    ],
-    "layer": "external",
-    "role": "Calls the GitHub API to read public repos and calls the Cloudflare AI binding to generate explanations.",
-    "whyItExists": "Delegates source-code fetching and AI text generation to specialized services outside the application code.",
-    "concepts": [
-     "oauth",
-     "env-vars"
-    ],
-    "evidence": [
-     {
-      "path": "wrangler.jsonc",
-      "lines": "1-20"
+      "path": "migrations/0001_init.sql"
      }
     ]
    },
@@ -166,8 +176,8 @@
      "tsconfig.json"
     ],
     "layer": "config",
-    "role": "Configures the Worker entry point, D1 database binding, AI binding, environment variables, assets, and TypeScript compilation.",
-    "whyItExists": "Centralizes deployment and build settings so the app can run locally and on Cloudflare without code changes.",
+    "role": "Defines the Worker entry point, D1 binding, environment variables, and TypeScript build settings.",
+    "whyItExists": "Separates deployment and environment configuration from application code so the same code can run in development and production.",
     "concepts": [
      "env-vars",
      "dependency"
@@ -193,22 +203,57 @@
    },
    {
     "from": "logic",
+    "to": "github",
+    "label": "calls"
+   },
+   {
+    "from": "logic",
+    "to": "llm",
+    "label": "calls"
+   },
+   {
+    "from": "logic",
     "to": "data",
     "label": "reads"
    },
    {
     "from": "logic",
-    "to": "external",
-    "label": "calls"
-   },
-   {
-    "from": "api",
-    "to": "config",
-    "label": "reads"
+    "to": "data",
+    "label": "writes"
    }
   ]
  },
  "commits": [
+  {
+   "sha": "75e4848ca3807a42cfabfcaeac2106b525994cc6",
+   "message": "Harden LLM timeouts and GitHub body-read errors, stronger chat review prompt, softer OAuth wording",
+   "author": "negimedhansh47-jpg",
+   "date": "2026-11-23T02:57:56Z"
+  },
+  {
+   "sha": "2594fa968ef212ef4b4ad8589a187dc159c76f27",
+   "message": "Dedupe chat findings, add smoke test, CONTEXT.md, paper grain and card spotlight",
+   "author": "negimedhansh47-jpg",
+   "date": "2026-11-22T15:46:44Z"
+  },
+  {
+   "sha": "cd98c42a8749f01886d5beb578a248605625a747",
+   "message": "Fix text encoding corruption in repo.js and map.js",
+   "author": "negimedhansh47-jpg",
+   "date": "2026-11-22T13:11:56Z"
+  },
+  {
+   "sha": "2772e97b56949402a62bbc5b3045d8f8d317a2a8",
+   "message": "Drawer: list module connections (visible on phones and to screen readers)",
+   "author": "negimedhansh47-jpg",
+   "date": "2026-11-22T13:10:41Z"
+  },
+  {
+   "sha": "ed1896a5e57b4d40072d990e45b96efae0610fc5",
+   "message": "Harden timeouts, add security headers, README and AI disclosure, regenerate examples",
+   "author": "negimedhansh47-jpg",
+   "date": "2026-11-22T13:09:33Z"
+  },
   {
    "sha": "5f5fe0fd5443bb87ea9ec029e8af84a4b8d7f1e9",
    "message": "Frontend: design system, landing, chat review, repo map, kickoff, concept library, demo data",
@@ -269,6 +314,12 @@
   ],
   "api": [
    {
+    "sha": "75e4848ca3807a42cfabfcaeac2106b525994cc6",
+    "message": "Harden LLM timeouts and GitHub body-read errors, stronger chat review prompt, softer OAuth wording",
+    "author": "negimedhansh47-jpg",
+    "date": "2026-11-23T02:57:56Z"
+   },
+   {
     "sha": "4cc0b874c51572d1c68a46add9f5991c62487431",
     "message": "Backend: validation, rate limit, cache, GitHub client, all API routes",
     "author": "negimedhansh47-jpg",
@@ -289,10 +340,80 @@
   ],
   "logic": [
    {
+    "sha": "75e4848ca3807a42cfabfcaeac2106b525994cc6",
+    "message": "Harden LLM timeouts and GitHub body-read errors, stronger chat review prompt, softer OAuth wording",
+    "author": "negimedhansh47-jpg",
+    "date": "2026-11-23T02:57:56Z"
+   },
+   {
+    "sha": "2594fa968ef212ef4b4ad8589a187dc159c76f27",
+    "message": "Dedupe chat findings, add smoke test, CONTEXT.md, paper grain and card spotlight",
+    "author": "negimedhansh47-jpg",
+    "date": "2026-11-22T15:46:44Z"
+   },
+   {
+    "sha": "5f5fe0fd5443bb87ea9ec029e8af84a4b8d7f1e9",
+    "message": "Frontend: design system, landing, chat review, repo map, kickoff, concept library, demo data",
+    "author": "negimedhansh47-jpg",
+    "date": "2026-11-22T12:49:46Z"
+   },
+   {
     "sha": "4cc0b874c51572d1c68a46add9f5991c62487431",
     "message": "Backend: validation, rate limit, cache, GitHub client, all API routes",
     "author": "negimedhansh47-jpg",
     "date": "2026-11-22T12:38:47Z"
+   }
+  ],
+  "github": [
+   {
+    "sha": "75e4848ca3807a42cfabfcaeac2106b525994cc6",
+    "message": "Harden LLM timeouts and GitHub body-read errors, stronger chat review prompt, softer OAuth wording",
+    "author": "negimedhansh47-jpg",
+    "date": "2026-11-23T02:57:56Z"
+   },
+   {
+    "sha": "ed1896a5e57b4d40072d990e45b96efae0610fc5",
+    "message": "Harden timeouts, add security headers, README and AI disclosure, regenerate examples",
+    "author": "negimedhansh47-jpg",
+    "date": "2026-11-22T13:09:33Z"
+   },
+   {
+    "sha": "4cc0b874c51572d1c68a46add9f5991c62487431",
+    "message": "Backend: validation, rate limit, cache, GitHub client, all API routes",
+    "author": "negimedhansh47-jpg",
+    "date": "2026-11-22T12:38:47Z"
+   }
+  ],
+  "llm": [
+   {
+    "sha": "75e4848ca3807a42cfabfcaeac2106b525994cc6",
+    "message": "Harden LLM timeouts and GitHub body-read errors, stronger chat review prompt, softer OAuth wording",
+    "author": "negimedhansh47-jpg",
+    "date": "2026-11-23T02:57:56Z"
+   },
+   {
+    "sha": "ed1896a5e57b4d40072d990e45b96efae0610fc5",
+    "message": "Harden timeouts, add security headers, README and AI disclosure, regenerate examples",
+    "author": "negimedhansh47-jpg",
+    "date": "2026-11-22T13:09:33Z"
+   },
+   {
+    "sha": "4cc0b874c51572d1c68a46add9f5991c62487431",
+    "message": "Backend: validation, rate limit, cache, GitHub client, all API routes",
+    "author": "negimedhansh47-jpg",
+    "date": "2026-11-22T12:38:47Z"
+   },
+   {
+    "sha": "b698ba3c6134bbe3f018ca63190c324318c51582",
+    "message": "Step 1: LLM feasibility results, model chosen, fallback verified",
+    "author": "negimedhansh47-jpg",
+    "date": "2026-11-22T12:27:57Z"
+   },
+   {
+    "sha": "69e3c3c8366add4fa43c271ac95dbac1db4358f6",
+    "message": "Step 1 prep: LLM layer, prompts, feasibility harness, zod",
+    "author": "negimedhansh47-jpg",
+    "date": "2026-11-22T12:09:02Z"
    }
   ],
   "data": [
@@ -301,14 +422,6 @@
     "message": "Step 0: Worker with static assets, health route, D1 migration, docs",
     "author": "negimedhansh47-jpg",
     "date": "2026-11-22T11:45:25Z"
-   }
-  ],
-  "external": [
-   {
-    "sha": "4cc0b874c51572d1c68a46add9f5991c62487431",
-    "message": "Backend: validation, rate limit, cache, GitHub client, all API routes",
-    "author": "negimedhansh47-jpg",
-    "date": "2026-11-22T12:38:47Z"
    }
   ],
   "config": [
@@ -339,147 +452,222 @@
   ]
  },
  "explanations": {
-  "5f5fe0fd5443bb87ea9ec029e8af84a4b8d7f1e9": {
-   "title": "Frontend: design system, landing, chat review, repo map, kickoff, concept library, demo data",
-   "whatChanged": "Added a new chat review page at public/chat.html with a textarea for pasting AI conversations, submit and example buttons, privacy text, results area, and a module script reference to /js/pages/chat.js. Added public/concepts/concepts.json containing concept entries such as client-server, api-route, http-methods, routing, database, schema, index, query, orm, migration, and cache, each with id, name, oneLine, explain, analogy, whenToUse, tradeoffs, and related fields. Added .claude/ to .gitignore.",
-   "whyItMatters": "Introduces a user-facing tool for reviewing AI chats and a structured concept library that teaches software engineering terms, supporting the product's educational purpose.",
-   "designReasoning": "Separates the chat tool page from the concept data so the UI can load concepts independently. Uses semantic HTML, CSS custom properties for spacing, preconnected fonts, and an accessible form with character counting and aria-live results.",
-   "tradeoffs": "Adding a static HTML page and JSON library increases frontend assets to maintain. Storing concepts as JSON keeps them version-controlled and easy to edit but requires client-side JavaScript to render them.",
+  "75e4848ca3807a42cfabfcaeac2106b525994cc6": {
+   "title": "Harden LLM timeouts and GitHub body-read errors, stronger chat review prompt, softer OAuth wording",
+   "whatChanged": "Extended the GitHub API fetch timeout from 10 seconds to 15 seconds in src/github.ts. Extended the LLM provider timeout from 25 seconds to 30 seconds in src/llm.ts and added a check that skips the second NIM attempt if more than half the timeout has already elapsed. Added a catch branch in src/index.ts that converts TimeoutError or AbortError into a 502 github_error response. Changed the chat review prompt version from chatReview-v2 to chatReview-v3 in src/prompts/chatReview.ts and added a rule that the strongest prompt is never listed as a problem, plus a filter in src/handlers.ts that drops any excerpt matching the overview's strongest prompt. Softened OAuth wording in public/concepts/concepts.json, changing \"the safest way\" to \"the standard, safer way.\" Adjusted demo explain scores in scripts/make-demo.mjs from 4 to 6 for Lumen and from 3 to 5 for the Express blog API.",
+   "whyItMatters": "Long-running operations such as reading a large GitHub response body or generating a big repo overview can exceed short timeouts and surface as failures. The new timeout handling turns those delays into a clear, retryable 502 error instead of an unhandled exception. The prompt hardening prevents the review from incorrectly flagging the user's best prompt as a problem, making the coaching output more trustworthy. The OAuth wording change avoids overstating security guarantees.",
+   "designReasoning": "The system separates concerns by letting src/github.ts and src/llm.ts own their transport timeouts while src/index.ts owns the final error translation to the client. Skipping a redundant NIM retry when half the budget is consumed avoids wasting time on a slow-but-not-flaky provider. The chat review filter enforces a consistency invariant at the application layer: an excerpt identified as strongest cannot also appear as a finding.",
+   "tradeoffs": "Longer timeouts mean users wait longer before receiving an error when a provider is genuinely stuck. Skipping the second NIM attempt reduces total retry coverage in exchange for faster failure on slow providers. The stronger prompt filter may reduce the number of findings returned when the model's strongest excerpt overlaps with other candidate excerpts.",
    "alternatives": [
-    "Render concepts server-side instead of client-side JSON",
-    "Use a single bundled HTML page rather than separate CSS and JS files",
-    "Store concepts in a database instead of a static JSON file"
+    "Keep the original 10-second GitHub timeout and surface body-read errors as generic 500s.",
+    "Retry NIM unconditionally regardless of elapsed time.",
+    "Use a circuit breaker instead of a time-based skip for the second provider attempt.",
+    "Keep the chat review prompt unchanged and rely on post-processing to remove duplicate findings."
    ],
    "concepts": [
     "client-server",
-    "api-route",
-    "http-methods"
-   ],
-   "evidence": [
-    {
-     "path": "public/chat.html",
-     "hint": "New chat review form and results container"
-    },
-    {
-     "path": "public/concepts/concepts.json",
-     "hint": "Concept library entries with explanations and tradeoffs"
-    },
-    {
-     "path": ".gitignore",
-     "hint": "Added .claude/ to ignore list"
-    }
-   ]
-  },
-  "4cc0b874c51572d1c68a46add9f5991c62487431": {
-   "title": "Backend: validation, rate limit, cache, GitHub client, all API routes",
-   "whatChanged": "Added five new source files implementing the backend layer: cache read/write against a database table, a GitHub API client that fetches repo metadata, file trees, file contents, and commits, HTTP request handlers for chat review, repo overview, commit listing, commit explanation, and project kickoff, plus input validation and rate-limit usage. The diff shows new files only, with no deletions.",
-   "whyItMatters": "This commit creates the complete backend surface of the app: it lets the frontend call defined API routes, protects against bad input with validation, limits LLM spending with rate limiting, avoids repeated GitHub and LLM calls with caching, and isolates private chat/idea data from the public repo cache.",
-   "designReasoning": "Separation of concerns: cache, GitHub client, handlers, validation, rate limiting, LLM calls, and prompts live in separate files. The GitHub client is the only place that calls fetch to github.com, centralizing auth headers, timeouts, and error mapping. Handlers validate input before any work, cache public repo results keyed by repo and head SHA, skip caching for private chats and ideas, and ground LLM outputs by filtering module evidence to paths that actually exist in the fetched file tree.",
-   "tradeoffs": "Caching public repo analyses by head SHA means results are stale until the repo is pushed to again; the commit accepts this to avoid repeated GitHub API and LLM calls. Truncating file trees to 350 listed files and key-file contents to 3000 chars bounds LLM input size and cost but may miss relevant files. Filtering out modules without existing evidence paths improves accuracy but can drop legitimate modules if path matching fails.",
-   "alternatives": [
-    "Use an in-memory cache instead of the database-backed cache, which would lose data on restart but avoid database latency.",
-    "Call GitHub directly from each handler instead of a centralized client, which would duplicate auth, timeout, and error-handling code.",
-    "Cache chat and kickoff results too, which would improve speed but risks storing private user data in the shared cache table.",
-    "Return raw GitHub responses instead of transformed RepoMeta and CommitSummary types, which would simplify the client but push API-shape knowledge into handlers."
-   ],
-   "concepts": [
-    "client-server",
-    "api-route",
-    "http-methods"
-   ],
-   "evidence": [
-    {
-     "path": "src/cache.ts",
-     "hint": "getCached and putCached read/write rows from the analyses table using cache_key, payload, and created_at columns."
-    },
-    {
-     "path": "src/github.ts",
-     "hint": "gh helper fetches https://api.github.com with Bearer auth, 10-second timeout, and maps 404/403/429 to HttpError; getMeta, getTree, getFile, listCommits, getCommit wrap GitHub endpoints."
-    },
-    {
-     "path": "src/handlers.ts",
-     "hint": "reviewChat, overview, commits, explainCommit, kickoffHandler map to POST /api/chat/review, GET /api/repo/overview, GET /api/repo/commits, POST /api/commit/explain, POST /api/kickoff; readBody with zod schemas validates input; spendLlmCall enforces rate limits; getCached/putCached store public results only."
-    }
-   ]
-  },
-  "b698ba3c6134bbe3f018ca63190c324318c51582": {
-   "title": "LLM Feasibility Results",
-   "whatChanged": "The code now includes LLM feasibility results, a chosen model, and a verified fallback.",
-   "whyItMatters": "This change matters because it allows for the integration of LLM models into the system, enabling features like automated commit explanations.",
-   "designReasoning": "The design reasoning behind this change is to use LLM models to generate commit explanations, with a focus on selecting a suitable model and handling potential errors or inconsistencies in the model output.",
-   "tradeoffs": "The tradeoffs of this change include the potential for model output to be inconsistent or inaccurate, as well as the need to handle errors and exceptions when working with the LLM models.",
-   "alternatives": [
-    "Using a different LLM model",
-    "Implementing a custom commit explanation system"
-   ],
-   "concepts": [
-    "api-route",
-    "http-methods",
+    "error-handling",
     "validation"
    ],
    "evidence": [
     {
-     "path": "AI_USAGE.md",
-     "hint": "The LLM feasibility results are documented in this file."
+     "path": "src/github.ts",
+     "hint": "AbortSignal.timeout changed from 10_000 to 15_000"
     },
     {
      "path": "src/llm.ts",
-     "hint": "The LLM model integration is implemented in this file."
+     "hint": "TIMEOUT_MS changed from 25_000 to 30_000 and a Date.now() skip guard was added"
     },
     {
-     "path": "src/prompts/commitExplain.ts",
-     "hint": "The commit explanation prompt is defined in this file."
-    }
-   ]
-  },
-  "69e3c3c8366add4fa43c271ac95dbac1db4358f6": {
-   "title": "Step 1 prep: LLM layer, prompts, feasibility harness, zod",
-   "whatChanged": "Added an LLM integration layer in src/llm.ts that calls NVIDIA NIM and Cloudflare Workers AI, parses JSON output, and retries between providers. Added prompt builders in src/prompts/chatReview.ts and src/prompts/commitExplain.ts with Zod schemas for structured responses. Added shared constants in src/prompts/common.ts. Added a feasibility harness in scripts/llm-test.ts and sample chats in scripts/samples.ts. Added zod dependency in package.json, scripts/out to .gitignore, and allowImportingTsExtensions in tsconfig.json.",
-   "whyItMatters": "This prepares the system to automatically review AI chats and explain git commits using structured LLM output, which makes results predictable and testable before wider rollout.",
-   "designReasoning": "The code separates concerns by putting provider logic in src/llm.ts, prompt templates in src/prompts/, and shared concept lists in src/prompts/common.ts. It uses Zod schemas to validate model JSON output, ensuring the response matches the expected shape. It falls back from NIM to Workers AI if the first provider fails, improving reliability.",
-   "tradeoffs": "Hardcoding the NVIDIA API URL and fallback model reduces flexibility but keeps the initial implementation simple. Catching all errors silently in the retry loop hides which provider failed, making debugging harder. Reading .dev.vars manually couples the harness to local file-based secrets instead of using environment bindings directly.",
-   "alternatives": [
-    "Use a single LLM provider instead of retrying across two",
-    "Use environment variables directly instead of parsing .dev.vars",
-    "Use a dedicated LLM client library instead of raw fetch"
-   ],
-   "concepts": [
-    "env-vars",
-    "validation",
-    "error-handling"
-   ],
-   "evidence": [
-    {
-     "path": "src/llm.ts",
-     "hint": "Lines 1-77 show the LLM provider functions, retry logic, and Zod-based parsing."
+     "path": "src/index.ts",
+     "hint": "New catch branch for TimeoutError or AbortError returning 502 github_error"
     },
     {
      "path": "src/prompts/chatReview.ts",
-     "hint": "Lines 1-27 show the chat review prompt builder and Zod schema."
+     "hint": "VERSION changed to chatReview-v3 and system prompt adds strongest-prompt exclusion rule"
     },
     {
-     "path": "src/prompts/commitExplain.ts",
-     "hint": "Lines 1-22 show the commit explanation prompt builder and Zod schema."
+     "path": "src/handlers.ts",
+     "hint": "New filter drops excerpts equal to norm(out.overview.strongest)"
     },
     {
-     "path": "src/prompts/common.ts",
-     "hint": "Lines 1-21 show shared concept IDs and level rules."
+     "path": "public/concepts/concepts.json",
+     "hint": "OAuth explain text changed from safest to standard, safer"
     },
     {
-     "path": "scripts/llm-test.ts",
-     "hint": "Lines 1-41 show the feasibility harness that runs models against chat and commit cases."
+     "path": "scripts/make-demo.mjs",
+     "hint": "explain scores changed from 4 to 6 and 3 to 5"
+    }
+   ]
+  },
+  "2594fa968ef212ef4b4ad8589a187dc159c76f27": {
+   "title": "Dedupe chat findings, add smoke test, CONTEXT.md, paper grain and card spotlight",
+   "whatChanged": "CLAUDE.md now tells developers to read and update CONTEXT.md. CONTEXT.md is new and records live URLs, deploy steps, AI model chain, trust rules, rate limits, known gaps, and Windows gotchas. base.css adds a fixed full-page SVG noise overlay behind main and footer so the cream background looks like paper grain. components.css makes each entry card a positioned overflow-hidden container with a radial-gradient spotlight that fades in on hover. home.js adds a pointermove listener to every .entry card that sets CSS variables --mx and --my to the pointer position inside the card. handlers.ts adds a seen Set in reviewChat that drops duplicate excerpts so each finding appears only once. scripts/smoke.mjs is new and checks pages return 200, health returns ok, unknown API routes return 400, short chat and non-GitHub repos are rejected, chat review returns non-duplicate items, and kickoff returns decisions and claudeMd.",
+   "whyItMatters": "CONTEXT.md keeps session state visible so work does not drift from SPEC.md. The smoke test catches broken deploys before users see them. Deduplication prevents the same chat finding from showing twice, which matches the trust rule that duplicate excerpts are dropped. Grain and spotlight improve visual polish without changing behavior.",
+   "designReasoning": "The commit follows CLAUDE.md's rule to build one step from SPEC.md section 12 per session and not add unplanned features. The trust model treats LLM output as untrusted, so reviewChat verifies excerpts are verbatim substrings of the chat and now removes duplicates. Free-plan limits (50 subrequests, 10 ms CPU, 100k requests/day) shape the API design, such as avoiding GitHub filesChanged subrequests.",
+   "tradeoffs": "Manual deploys mean no CI token yet, so the smoke test must be run by hand after each deploy. The radial spotlight uses pointermove on every card, which could add overhead on pages with many cards, but keeps the effect simple and dependency-free. The smoke test calls real AI endpoints, so it may be slow or consume rate-limit budget.",
+   "alternatives": [
+    "Use CI/CD for automatic deploys instead of manual wrangler deploy",
+    "Use a CSS animation or canvas for grain instead of an inline SVG data URI",
+    "Use IntersectionObserver or a single mousemove listener instead of per-card pointermove",
+    "Skip AI calls in smoke test and only check static routes"
+   ],
+   "concepts": [
+    "testing",
+    "client-server",
+    "validation"
+   ],
+   "evidence": [
+    {
+     "path": "CLAUDE.md",
+     "hint": "CONTEXT.md instruction added"
     },
     {
-     "path": "package.json",
-     "hint": "Lines 17-20 show the added zod dependency."
+     "path": "CONTEXT.md",
+     "hint": "new project state file"
     },
+    {
+     "path": "public/css/base.css",
+     "hint": "paper grain overlay added"
+    },
+    {
+     "path": "public/css/components.css",
+     "hint": "card spotlight styles added"
+    },
+    {
+     "path": "public/js/pages/home.js",
+     "hint": "pointermove spotlight listener added"
+    },
+    {
+     "path": "src/handlers.ts",
+     "hint": "duplicate excerpt filter added"
+    },
+    {
+     "path": "scripts/smoke.mjs",
+     "hint": "new smoke test script"
+    }
+   ]
+  },
+  "cd98c42a8749f01886d5beb578a248605625a747": {
+   "title": "Fix text encoding corruption in repo.js and map.js",
+   "whatChanged": "Removed invisible byte-order-mark characters from the first line of public/js/map.js and public/js/pages/repo.js, and replaced corrupted arrow and middle-dot characters with correct UTF-8 characters in public/js/map.js line 82 and public/js/pages/repo.js lines 68 and 89.",
+   "whyItMatters": "Users saw garbled text such as â†’ instead of → and Â· instead of · in commit metadata and edge labels, and the byte-order-mark can break JavaScript module parsing.",
+   "designReasoning": "The files are frontend modules that render UI text; keeping source files as clean UTF-8 without a BOM and using correct arrow and dot characters ensures browsers parse the modules and display labels correctly.",
+   "tradeoffs": "None evident from the diff; the change only restores intended characters.",
+   "alternatives": [
+    "Keep the corrupted characters and let users see garbled text",
+    "Use HTML entities such as &rarr; and &middot; instead of literal UTF-8 characters"
+   ],
+   "concepts": [
+    "component"
+   ],
+   "evidence": [
+    {
+     "path": "public/js/map.js",
+     "hint": "Line 1 removes BOM; line 82 replaces â†’ with →"
+    },
+    {
+     "path": "public/js/pages/repo.js",
+     "hint": "Line 1 removes BOM; line 68 replaces Â· with ·; line 89 replaces Ã— with ×"
+    }
+   ]
+  },
+  "2772e97b56949402a62bbc5b3045d8f8d317a2a8": {
+   "title": "Drawer: list module connections",
+   "whatChanged": "Added connections to module details in the drawer",
+   "whyItMatters": "Improves accessibility and usability on phones and for screen readers",
+   "designReasoning": "The addition of connections to the module details provides more context and relationships between modules, enhancing the overall user experience",
+   "tradeoffs": "Potential increase in complexity and data loading time",
+   "alternatives": [
+    "Use a separate page for module connections",
+    "Implement a toggle for connections visibility"
+   ],
+   "concepts": [
+    "client-server",
+    "api-route",
+    "routing"
+   ],
+   "evidence": [
+    {
+     "path": "public/js/pages/repo.js",
+     "hint": "Added connections.length ? section('Connections', ...)"
+    },
+    {
+     "path": "public/js/pages/repo.js",
+     "hint": "const connectionsOf = (m) => o.edges.flatMap(...)"
+    },
+    {
+     "path": "public/js/pages/repo.js",
+     "hint": "const map = o.modules.length ? renderMap(..., (m) => drawerHandle.open(m, connectionsOf(m)))"
+    }
+   ]
+  },
+  "ed1896a5e57b4d40072d990e45b96efae0610fc5": {
+   "title": "Harden timeouts, add security headers, README and AI disclosure, regenerate examples",
+   "whatChanged": "Added security headers to public/_headers, expanded README with privacy, stack, libraries, fonts, local run steps, platform limits, and future work, added AI usage disclosure table to AI_USAGE.md, and regenerated public/demo/chat.json and public/demo/kickoff.json example data.",
+   "whyItMatters": "Security headers protect the browser from MIME sniffing, clickjacking, and overly broad referrer or content loading. The README and AI disclosure tell users how the app works, what models generated it, and what still needs human review. Regenerated examples keep demo data consistent with the current concept list and prompt tuning.",
+   "designReasoning": "Headers are served as static asset rules so every page gets protection without code changes. Documentation lives in markdown next to code so contributors see stack, limits, and AI provenance in one place. Example JSON is regenerated by a script so demo content matches the app’s current schema and concept ids.",
+   "tradeoffs": "Static headers apply to all routes and cannot be tuned per endpoint. README length grows to cover privacy and platform limits, which may overwhelm new readers. Regenerated examples replace hand-written text, so wording changes even when meaning stays similar.",
+   "alternatives": [
+    "Set headers in the Worker code instead of _headers",
+    "Keep examples hand-written instead of script-generated",
+    "Omit AI disclosure and rely on commit history only"
+   ],
+   "concepts": [
+    "client-server",
+    "validation"
+   ],
+   "evidence": [
+    {
+     "path": "public/_headers",
+     "hint": "Security headers block MIME sniffing, framing, and restrict scripts, styles, fonts, images, and connections"
+    },
+    {
+     "path": "README.md",
+     "hint": "Describes Cloudflare Workers stack, D1 cache and rate limits, NVIDIA NIM and Workers AI LLMs, local run commands, and free-plan subrequest limits"
+    },
+    {
+     "path": "AI_USAGE.md",
+     "hint": "Lists which files were written by Claude Code versus generated by NVIDIA NIM, and marks the concept library as not yet human-reviewed"
+    },
+    {
+     "path": "public/demo/chat.json",
+     "hint": "Regenerated chat examples with concepts such as component, error-handling, state-management, and database"
+    },
+    {
+     "path": "public/demo/kickoff.json",
+     "hint": "Regenerated kickoff example with updated restatement and decision text"
+    }
+   ]
+  },
+  "5f5fe0fd5443bb87ea9ec029e8af84a4b8d7f1e9": {
+   "title": "Frontend: design system, landing, chat review, repo map, kickoff, concept library, demo data",
+   "whatChanged": "Added .claude/ to .gitignore so Claude-related files are not committed. Added public/chat.html, a new chat-review page with a textarea for pasting AI conversations, submit and example buttons, privacy text, and a results area. Added public/concepts/concepts.json, a 302-line JSON library of software concepts including client-server, api-route, http-methods, routing, database, schema, index, query, orm, migration, cache, and others, each with id, name, oneLine, explain, analogy, whenToUse, tradeoffs, and related fields.",
+   "whyItMatters": "The chat page gives users a place to paste an AI conversation so Lumen can flag vague prompts and rewrite them. The concepts JSON provides a shared, machine-readable library of beginner software-engineering ideas that the app can reference when naming missing concepts. Ignoring .claude/ keeps local AI tooling out of version control.",
+   "designReasoning": "The page separates structure (HTML), styling (linked CSS token/base/component files), and behavior (linked module script), following separation-of-concerns. The textarea uses maxlength and a live character counter to enforce input limits. Privacy text states chats are sent to an AI model then forgotten, addressing data handling. The concepts JSON uses flat objects with related arrays so concepts can be linked and looked up by id.",
+   "tradeoffs": "Linking external Google Fonts improves typography but adds a third-party dependency and network round trips. Storing concepts as JSON is simple and language-independent but requires application code to load and search it; a database would be more scalable but heavier. A client-side textarea keeps input local until submit, but the privacy promise depends on server behavior not shown in this diff.",
+   "alternatives": [
+    "Store concepts in a database instead of JSON",
+    "Use a frontend framework rather than static HTML",
+    "Keep .claude/ tracked instead of ignoring it"
+   ],
+   "concepts": [
+    "client-server",
+    "api-route",
+    "http-methods"
+   ],
+   "evidence": [
     {
      "path": ".gitignore",
-     "hint": "Line 6 shows scripts/out added to ignore list."
+     "hint": "Added +.claude/ to ignore list"
     },
     {
-     "path": "tsconfig.json",
-     "hint": "Line 10 shows allowImportingTsExtensions added."
+     "path": "public/chat.html",
+     "hint": "New chat review form with textarea, buttons, results div, and module script"
+    },
+    {
+     "path": "public/concepts/concepts.json",
+     "hint": "JSON array of concept objects with id, name, explain, analogy, tradeoffs, related"
     }
    ]
   }
