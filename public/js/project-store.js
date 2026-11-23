@@ -1,4 +1,4 @@
-// "My project" lives only in this browser (localStorage). Nothing here is ever sent to the server.
+// "My project" is stored only in this browser (localStorage). Only Ask sends a piece of it (plan text, repo name) with a question; nothing is stored server-side.
 const KEY = "lumen-project";
 const str = (v, max) => (typeof v === "string" ? v.slice(0, max) : "");
 const strs = (v, max, len) => (Array.isArray(v) ? v.filter((x) => typeof x === "string").slice(0, max).map((x) => x.slice(0, len)) : []);

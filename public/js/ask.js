@@ -58,7 +58,7 @@ export function askPanel(context, { title = "Ask about your project" } = {}) {
     "section",
     { class: "card stack ask rise" },
     h("h3", {}, title),
-    h("p", { class: "muted", style: "margin:0" }, "Pick a question below or type your own. Answers use only what Lumen has seen of this project. This chat is not saved."),
+    h("p", { class: "muted", style: "margin:0" }, "Pick a question below or type your own. Answers are based on what Lumen has seen of this project, so check the files it names. This chat is not saved."),
     log,
     starters,
     form,
