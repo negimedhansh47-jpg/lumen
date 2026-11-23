@@ -158,11 +158,11 @@ interface CachedOverview {
   edges: { from: string; to: string; label: string }[];
 }
 
-/** Newest cached map of a repo: a key-range lookup, so asking costs no GitHub calls. */
+/** Newest cached map of a repo, preferring this level (any level beats "open the map again"). A key-range lookup, so asking costs no GitHub calls. */
 async function latestOverview(db: D1Database, repo: string, level: string): Promise<CachedOverview | null> {
   const prefix = `overview:${repo.toLowerCase()}@`;
   const row = await db
-    .prepare("SELECT payload FROM analyses WHERE cache_key >= ? AND cache_key < ? AND cache_key LIKE ? ORDER BY created_at DESC LIMIT 1")
+    .prepare("SELECT payload FROM analyses WHERE cache_key >= ? AND cache_key < ? ORDER BY cache_key LIKE ? DESC, created_at DESC LIMIT 1")
     .bind(prefix, `${prefix}~`, `%:${level}`)
     .first<{ payload: string }>();
   return row ? (JSON.parse(row.payload) as CachedOverview) : null;
