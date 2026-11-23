@@ -105,7 +105,8 @@ export function renderMap(modules, edges, onSelect) {
     onSelect(byId.get(id));
   }
 
-  new ResizeObserver(() => requestAnimationFrame(draw)).observe(el);
+  const resize = new ResizeObserver(() => (el.isConnected ? requestAnimationFrame(draw) : resize.disconnect())); // let a replaced map go
+  resize.observe(el);
   requestAnimationFrame(draw);
   setTimeout(draw, 700); // once the entrance animation has settled
 

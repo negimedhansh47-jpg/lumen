@@ -19,7 +19,8 @@ export async function api(path, body) {
 }
 
 export async function demo(name) {
-  const res = await fetch(`/demo/${name}.json`);
+  const res = await fetch(`/demo/${name}.json`).catch(() => null);
+  if (!res) throw new ApiError("network", "Could not reach the server. Check your connection and try again.");
   if (!res.ok) throw new ApiError("demo_missing", "That example is not available right now.");
   return res.json();
 }

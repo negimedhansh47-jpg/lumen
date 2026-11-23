@@ -77,7 +77,7 @@ async function loadExample() {
   try {
     const data = await demo("kickoff");
     box.value = data.idea;
-    count.textContent = String(data.idea.length);
+    box.dispatchEvent(new Event("input")); // updates the counter and drops the button hint before we scroll
     render(data.result); // pre-generated: no model call
   } catch (e) {
     results.replaceChildren(errorBox(e.message));

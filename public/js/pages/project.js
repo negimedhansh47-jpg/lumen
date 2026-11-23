@@ -151,9 +151,10 @@ function settingsCard(p) {
 
 // ---------- Page ----------
 
+const defaultTitle = title.textContent;
+
 function setTitle() {
-  const { name } = load();
-  if (name) title.replaceChildren(name);
+  title.textContent = load().name || defaultTitle; // back to the default after Remove
 }
 
 function emptyState() {

@@ -82,7 +82,7 @@ async function loadExample() {
   try {
     const data = await demo("chat");
     box.value = data.chat;
-    count.textContent = data.chat.length.toLocaleString();
+    box.dispatchEvent(new Event("input")); // updates the counter and drops the button hint before we scroll
     render(data.result); // pre-generated: no model call
   } catch (e) {
     results.replaceChildren(errorBox(e.message));

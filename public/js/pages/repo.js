@@ -36,6 +36,7 @@ function makeDrawer(source, onClose) {
   let opener = null;
 
   function close() {
+    if (!drawer.classList.contains("open")) return;
     drawer.classList.remove("open");
     scrim.classList.remove("open");
     drawer.setAttribute("aria-hidden", "true");
@@ -44,7 +45,6 @@ function makeDrawer(source, onClose) {
   }
   closeBtn.addEventListener("click", close);
   scrim.addEventListener("click", close);
-  document.addEventListener("keydown", (e) => e.key === "Escape" && drawer.classList.contains("open") && close());
 
   function open(m, connections) {
     opener = document.activeElement;
@@ -97,7 +97,7 @@ function trackBar(fullName, latest) {
 // ---------- Page ----------
 
 let drawerHandle;
-
+document.addEventListener("keydown", (e) => e.key === "Escape" && drawerHandle?.close()); // once per page, not once per map
 function render(o, source, live = false) {
   drawerHandle?.close();
   document.querySelectorAll(".drawer, .scrim").forEach((el) => el.remove());
@@ -140,6 +140,7 @@ function render(o, source, live = false) {
 
 async function load(repo) {
   input.value = repo;
+  input.dispatchEvent(new Event("input")); // drops the button hint before we scroll, so results do not land under the header
   setBusy(run, true, "Map it", "Mapping...");
   results.replaceChildren(loading("Reading the repo and drawing the map. The first time takes 15 to 30 seconds; after that it is instant.", 6, true));
   focusResults(results);
@@ -158,6 +159,7 @@ async function loadDemo(id) {
   try {
     const data = await demo(id);
     input.value = data.overview.meta.fullName;
+    input.dispatchEvent(new Event("input"));
     render(data.overview, demoSource(data)); // pre-generated: no model call
   } catch (e) {
     results.replaceChildren(errorBox(e.message));

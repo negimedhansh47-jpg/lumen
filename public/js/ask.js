@@ -18,7 +18,7 @@ export function askPanel(context, { title = "Ask about your project" } = {}) {
 
   async function ask(question) {
     question = question.trim();
-    if (question.length < 3) return;
+    if (question.length < 3 || send.disabled) return; // Enter calls requestSubmit even while the button is busy
     box.value = "";
     log.append(h("div", { class: "msg user" }, question));
     const wait = h("div", { class: "msg ai", "aria-label": "Thinking" }, h("span", { class: "typing-dots" }, h("i"), h("i"), h("i")));
