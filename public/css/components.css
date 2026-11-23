@@ -288,8 +288,9 @@ dialog.concept::backdrop { background: rgba(0, 23, 31, 0.45); backdrop-filter: b
   .drawer { top: auto; width: 100%; max-height: 82vh; border-left: 0; border-radius: 22px 22px 0 0; transform: translateY(105%); overflow: hidden; }
   .site-header .page { gap: var(--s3); }
   .site-header { position: static; }
-  .nav { order: 3; width: 100%; gap: var(--s1); flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-inline: calc(-1 * var(--s2)); }
-  .nav a { white-space: nowrap; }
+  .nav { order: 3; width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: var(--s1); } /* all four tools visible, no hidden side-scroll */
+  .nav a { white-space: nowrap; text-align: center; padding: 11px 8px; }
+  .level button { padding: 10px 14px; }
   .card { padding: var(--s4); }
   .tool > form { padding: var(--s5) var(--s4); margin-top: calc(-1 * var(--s7)); }
   .masthead { padding-block: var(--s7) calc(var(--s7) + var(--s5)); }
