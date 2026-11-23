@@ -73,6 +73,7 @@ export function nextSteps(text, links) {
 
 export function setBusy(button, busy, idleLabel, busyLabel) {
   button.disabled = busy;
+  button.dataset.busy = busy ? "1" : "";
   button.textContent = busy ? busyLabel : idleLabel;
 }
 

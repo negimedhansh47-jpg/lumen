@@ -1,4 +1,4 @@
-﻿import { commits, explainCommit, explainConceptHandler, kickoffHandler, overview, reviewChat, type Env } from "./handlers.ts";
+﻿import { askProject, commits, explainCommit, explainConceptHandler, kickoffHandler, overview, reviewChat, type Env } from "./handlers.ts";
 import { LlmError } from "./llm.ts";
 import { HttpError } from "./validate.ts";
 
@@ -12,6 +12,7 @@ const routes: Record<string, Handler> = {
   "POST /api/commit/explain": explainCommit,
   "POST /api/kickoff": kickoffHandler,
   "POST /api/concept/explain": explainConceptHandler,
+  "POST /api/project/ask": askProject,
 };
 
 function fail(status: number, code: string, message: string): Response {

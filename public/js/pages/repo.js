@@ -1,10 +1,11 @@
 import { ApiError, api, demo } from "../api.js";
+import { askPanel } from "../ask.js";
 import { fillCommits, liveSource, section } from "../commits.js";
 import { conceptChips, loadConcepts } from "../concepts.js";
 import { renderMap } from "../map.js";
 import { load as loadProject, save as saveProject } from "../project-store.js";
 import { emptyBox, errorBox, focusResults, h, loading, nextSteps, para, setBusy, toast } from "../render.js";
-import { getLevel, mountShell } from "../shell.js";
+import { getLevel, guide, mountShell } from "../shell.js";
 
 mountShell("/repo");
 
@@ -94,7 +95,7 @@ function trackBar(fullName, latest) {
 
 let drawerHandle;
 
-function render(o, source) {
+function render(o, source, live = false) {
   drawerHandle?.close();
   document.querySelectorAll(".drawer, .scrim").forEach((el) => el.remove());
 
@@ -123,6 +124,7 @@ function render(o, source) {
   results.replaceChildren(
     head,
     mapSection,
+    live ? askPanel(() => ({ repo: o.meta.fullName }), { title: `Ask about ${o.meta.name ?? o.meta.fullName}` }) : null,
     trackBar(o.meta.fullName, () => commits?.[0]),
     h("section", { class: "rise" }, h("div", { class: "section-head" }, h("h2", {}, "Recent changes"), h("p", { class: "muted", style: "margin:0" }, "Press Explain on any change to learn what it did and why.")), commitsSlot),
     nextSteps("Track this repo to see new changes explained each time you come back, or review the AI chat you used to build it.", [["/project", "Go to My project"], ["/chat", "Review a chat"]]),
@@ -137,7 +139,7 @@ async function load(repo) {
   results.replaceChildren(loading("Reading the repo and drawing the map. The first time takes 15 to 30 seconds; after that it is instant.", 6, true));
   focusResults(results);
   try {
-    render(await api(`/api/repo/overview?repo=${encodeURIComponent(repo)}&level=${getLevel()}`), liveSource(repo));
+    render(await api(`/api/repo/overview?repo=${encodeURIComponent(repo)}&level=${getLevel()}`), liveSource(repo), true);
     history.replaceState(null, "", `/repo?repo=${encodeURIComponent(repo)}`);
   } catch (e) {
     results.replaceChildren(errorBox(e.message, "Could not map that repo"));
@@ -162,6 +164,7 @@ form.addEventListener("submit", (e) => {
   load(input.value);
 });
 
+guide({ input, button: run, results, min: 3, need: "Paste a GitHub link in the box above to turn this button on." });
 await loadConcepts();
 let examples = [];
 try {

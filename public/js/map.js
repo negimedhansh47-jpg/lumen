@@ -67,7 +67,7 @@ export function renderMap(modules, edges, onSelect) {
     };
     const defs = svg("defs");
     const marker = svg("marker", { id: "arrow", viewBox: "0 0 8 8", refX: "7", refY: "4", markerWidth: "7", markerHeight: "7", orient: "auto-start-reverse" });
-    marker.append(svg("path", { d: "M0 0 L8 4 L0 8 z", fill: "#8E877B" }));
+    marker.append(svg("path", { d: "M0 0 L8 4 L0 8 z", fill: "#7C98A6" }));
     defs.append(marker);
     edgesEl.append(defs);
     edges.forEach((e) => {

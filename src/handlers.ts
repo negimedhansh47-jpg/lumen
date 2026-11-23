@@ -7,6 +7,7 @@ import concepts from "../public/concepts/concepts.json";
 import * as commitExplain from "./prompts/commitExplain.ts";
 import * as conceptExplain from "./prompts/conceptExplain.ts";
 import * as kickoff from "./prompts/kickoff.ts";
+import * as projectAsk from "./prompts/projectAsk.ts";
 import * as repoOverview from "./prompts/repoOverview.ts";
 import { spendLlmCall, type LimitEnv } from "./ratelimit.ts";
 import { HttpError, levelSchema, parseLevel, parseRepo, parseSha, readBody } from "./validate.ts";
@@ -148,6 +149,53 @@ export async function kickoffHandler(req: Request, env: Env): Promise<Response> 
   await spendLlmCall(env, req);
   const out = await callLLM(env, kickoff.build(idea, level));
   return Response.json({ restatement: out.restatement, decisions: out.decisions, firstSteps: out.firstSteps, claudeMd: kickoff.claudeMd(out) });
+}
+
+interface CachedOverview {
+  summary: string;
+  stack: string[];
+  modules: { id: string; name: string; role: string; whyItExists: string; paths: string[]; evidence: { path: string }[] }[];
+  edges: { from: string; to: string; label: string }[];
+}
+
+/** Newest cached map of a repo: a key-range lookup, so asking costs no GitHub calls. */
+async function latestOverview(db: D1Database, repo: string, level: string): Promise<CachedOverview | null> {
+  const prefix = `overview:${repo.toLowerCase()}@`;
+  const row = await db
+    .prepare("SELECT payload FROM analyses WHERE cache_key >= ? AND cache_key < ? AND cache_key LIKE ? ORDER BY created_at DESC LIMIT 1")
+    .bind(prefix, `${prefix}~`, `%:${level}`)
+    .first<{ payload: string }>();
+  return row ? (JSON.parse(row.payload) as CachedOverview) : null;
+}
+
+const askBody = z.object({
+  question: z.string().trim().min(3, "Type a question first.").max(600, "Keep the question under 600 characters."),
+  history: z.array(z.object({ role: z.enum(["user", "assistant"]), text: z.string().max(1500) })).max(6).default([]),
+  repo: z.string().optional(),
+  plan: z.object({ restatement: z.string().max(500), firstSteps: z.array(z.string().max(400)).max(12) }).optional(),
+  level: levelSchema,
+});
+
+/** POST /api/project/ask. Not cached, not stored: questions are private. */
+export async function askProject(req: Request, env: Env): Promise<Response> {
+  const body = await readBody(req, askBody);
+  if (!body.repo && !body.plan) throw new HttpError(400, "no_context", "Save a plan or track a repo first, then ask about it.");
+  const repo = body.repo ? parseRepo(body.repo) : undefined;
+  const map = repo ? await latestOverview(env.DB, repo, body.level) : null;
+  if (repo && !map && !body.plan) throw new HttpError(409, "no_map", "Open the map for this repo once on Explain a repo, then ask here.");
+
+  const parts: string[] = [];
+  if (map) {
+    parts.push(`Repo ${repo}: ${map.summary}\nStack: ${map.stack.join(", ")}`);
+    parts.push(...map.modules.map((m) => `Module ${m.name} (${m.paths.join(", ")}): ${m.role} Why: ${m.whyItExists}`));
+    parts.push(...map.edges.map((e) => `${e.from} -> ${e.to}: ${e.label}`));
+  }
+  if (body.plan) parts.push(`The person's plan: ${body.plan.restatement}\nSteps: ${body.plan.firstSteps.join(" | ")}`);
+
+  await spendLlmCall(env, req);
+  const out = await callLLM(env, projectAsk.build(parts.join("\n").slice(0, 9000), body.history, body.question, body.level));
+  const known = new Set(map?.modules.flatMap((m) => [...m.paths, ...m.evidence.map((e) => e.path)]));
+  return Response.json({ ...out, files: out.files.filter((f) => known.has(f)) }); // only files the map really has
 }
 
 /** POST /api/concept/explain {id, level}. No user text goes in, so the answer is shared and cached per concept and level. */

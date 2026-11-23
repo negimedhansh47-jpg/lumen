@@ -46,5 +46,15 @@ await check("AI: explain concept better", async () => {
   must(d.plainer && d.example && d.check?.question, "missing fields");
 });
 
+await check("ask: rejects no context", async () => must((await call("/api/project/ask", { question: "what is this?" })).status === 400, "not 400"));
+await check("ask: repo with no cached map is 409", async () => must((await call("/api/project/ask", { question: "what is this?", repo: "nobody-here/no-such-repo-xyz" })).status === 409, "not 409"));
+await check("AI: ask about a plan", async () => {
+  const plan = { restatement: "A habit tracker for students", firstSteps: ["Pick a stack", "Build the login page"] };
+  const res = await call("/api/project/ask", { question: "What should I do first?", plan, level: "beginner" });
+  const d = await res.json();
+  must(res.status === 200, `status ${res.status}: ${JSON.stringify(d)}`);
+  must(d.answer && Array.isArray(d.followUps), "missing answer");
+});
+
 console.log(results.join("\n"));
 process.exit(results.some((r) => r.startsWith("FAIL")) ? 1 : 0);

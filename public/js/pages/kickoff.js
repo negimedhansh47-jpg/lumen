@@ -2,7 +2,7 @@ import { api, demo } from "../api.js";
 import { conceptChips, loadConcepts } from "../concepts.js";
 import { load as loadProject, save as saveProject } from "../project-store.js";
 import { copyText, errorBox, focusResults, h, loading, nextSteps, para, setBusy, toast } from "../render.js";
-import { getLevel, mountShell } from "../shell.js";
+import { getLevel, guide, mountShell } from "../shell.js";
 
 mountShell("/kickoff");
 
@@ -91,5 +91,6 @@ form.addEventListener("submit", (e) => {
 document.getElementById("example").addEventListener("click", loadExample);
 box.addEventListener("input", () => (count.textContent = String(box.value.length)));
 
+guide({ input: box, button: run, results, min: 10, need: "Type your idea in the box above to turn this button on." });
 await loadConcepts();
 if (new URLSearchParams(location.search).has("example")) loadExample();

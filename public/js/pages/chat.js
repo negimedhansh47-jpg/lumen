@@ -1,7 +1,7 @@
 import { api, demo } from "../api.js";
 import { conceptChips, loadConcepts } from "../concepts.js";
 import { copyText, emptyBox, errorBox, focusResults, h, loading, nextSteps, para, setBusy } from "../render.js";
-import { getLevel, mountShell } from "../shell.js";
+import { getLevel, guide, mountShell } from "../shell.js";
 
 mountShell("/chat");
 
@@ -96,5 +96,6 @@ form.addEventListener("submit", (e) => {
 document.getElementById("example").addEventListener("click", loadExample);
 box.addEventListener("input", () => (count.textContent = box.value.length.toLocaleString()));
 
+guide({ input: box, button: run, results, min: 20, pressAt: 2, need: "Paste your chat in the box above to turn this button on." });
 await loadConcepts();
 if (new URLSearchParams(location.search).has("example")) loadExample();

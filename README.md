@@ -15,9 +15,10 @@ Lumen teaches software engineering to people who build with AI ("vibecoders"). I
 | **Plan an idea** | Describe an idea. Get 4 to 6 key decisions explained and a ready-made `CLAUDE.md` for your AI. |
 | **Concept cards** | 30 concept cards (analogy, when to use, trade-offs) open from any chip. "Explain this better" asks the AI to re-teach a card another way, with an example and a self-check question. |
 | **My project** | Learn as you build: save a plan or track a repo in your browser. Each visit shows commits that are new since last time (explainable), a checklist of your plan, and the concepts you have explored. Export/import as a file. |
+| **Ask about your project** | Chat with the AI about one project (a tracked repo or a saved plan). Answers use only what Lumen has seen; cited files are checked against the repo map. The conversation is never saved. |
 | **Examples** | Every page has an example that runs with zero model calls. |
 
-Level toggle (Beginner / Intermediate) changes explanation depth.
+The "Explain for" switch (Beginners / Some experience) changes explanation depth.
 
 ## How it avoids made-up answers
 - Every module must cite evidence. The server checks each cited path exists in the repo's file tree and drops modules it cannot ground.

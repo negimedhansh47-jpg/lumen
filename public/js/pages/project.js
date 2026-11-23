@@ -1,4 +1,5 @@
 import { commitRow, liveSource } from "../commits.js";
+import { askPanel } from "../ask.js";
 import { allConcepts, conceptChips, loadConcepts } from "../concepts.js";
 import { clean, clear, hasProject, load, save } from "../project-store.js";
 import { copyText, emptyBox, errorBox, h, loading, toast } from "../render.js";
@@ -175,7 +176,7 @@ function render() {
     results.replaceChildren(emptyState(), conceptsCard(p));
     return;
   }
-  results.replaceChildren(h("div", { class: "project-grid" }, h("div", { class: "stack" }, changesCard(p), planCard(p)), h("div", { class: "stack" }, conceptsCard(p), settingsCard(p))));
+  results.replaceChildren(h("div", { class: "project-grid" }, h("div", { class: "stack" }, askPanel(() => { const q = load(); return { repo: q.repo || undefined, plan: q.plan ? { restatement: q.plan.restatement, firstSteps: q.plan.firstSteps } : undefined }; }, { title: "Ask about your project" }), changesCard(p), planCard(p)), h("div", { class: "stack" }, conceptsCard(p), settingsCard(p))));
 }
 
 await loadConcepts();

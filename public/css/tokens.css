@@ -1,32 +1,35 @@
 :root {
-  /* Two main colours: ivory and ink. One accent, cobalt, used ONLY for things you can click to move forward. */
-  --bg: #F7F5F0;           /* ivory */
+  /* Palette: white + ink black, one blue family. Cerulean is the ONLY colour for things you click to move forward.
+     Fresh Sky is decoration only (glows, focus, active lines): it is too light for text. */
+  --bg: #F3F9FC;           /* white with a whisper of sky */
   --surface: #FFFFFF;
-  --ink: #141416;          /* ink: text, dark bands */
-  --ink-2: #2B2B31;
-  --muted: #5C5C66;        /* 6.3:1 on ivory */
-  --line: #E6E2D9;
-  --line-strong: #CFC9BC;
-  --accent: #2E4BFF;       /* cobalt: primary actions, links, active states. White text on it 5.9:1 */
-  --accent-hover: #1F36D6;
-  --accent-soft: #EAEEFF;
+  --ink: #00171F;          /* ink black: text */
+  --ink-2: #003459;        /* deep space blue */
+  --muted: #425C69;        /* 6.6:1 on --bg */
+  --line: #DCE8EE;
+  --line-strong: #B9CDD7;
+  --accent: #007EA7;       /* cerulean: primary actions, links, active states. White text on it 4.6:1 */
+  --accent-hover: #003459;
+  --accent-soft: #E1F3FA;
+  --sky: #00A7E1;          /* fresh sky: decoration only */
   --on-accent: #FFFFFF;
-  --dark: #121217;
-  --on-dark: #F2F0EA;
-  --on-dark-muted: #A6A6B0;
-  --dark-line: rgba(242, 240, 234, 0.12);
+  --dark: #003459;
+  --dark-deep: #00171F;
+  --on-dark: #F3F9FC;
+  --on-dark-muted: #A9C6D4;
+  --dark-line: rgba(243, 249, 252, 0.14);
 
   /* Meaning colours for before/after, used sparingly */
   --bad-soft: #FDEEEA;  --bad-line: #F3C9BC;  --bad-ink: #9A3412;
   --good-soft: #E8F5EC; --good-line: #BFE1CA; --good-ink: #1D6B3A;
-  --code-bg: #F0EDE6;
+  --code-bg: #EAF2F6;
 
   --tint-ui: #FFE6D9;
-  --tint-api: #DFE6FF;
+  --tint-api: #D6EEF8;
   --tint-logic: #ECE3FF;
   --tint-data: #DDF3E4;
   --tint-external: #FFF1C9;
-  --tint-config: #EEEAE2;
+  --tint-config: #E8EEF1;
 
   --font-display: "Instrument Serif", Georgia, "Times New Roman", serif;
   --font-head: "Space Grotesk", "Inter Tight", system-ui, sans-serif;
@@ -37,10 +40,10 @@
   --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px; --s8: 72px; --s9: 112px;
   --radius: 12px;
   --radius-lg: 20px;
-  --shadow-sm: 0 1px 2px rgba(20, 20, 22, 0.06);
-  --shadow: 0 1px 2px rgba(20, 20, 22, 0.05), 0 8px 24px -6px rgba(20, 20, 22, 0.10);
-  --shadow-lg: 0 2px 4px rgba(20, 20, 22, 0.04), 0 24px 60px -18px rgba(20, 20, 22, 0.22);
-  --ring: 0 0 0 4px rgba(46, 75, 255, 0.18);
+  --shadow-sm: 0 1px 2px rgba(0, 23, 31, 0.06);
+  --shadow: 0 1px 2px rgba(0, 23, 31, 0.05), 0 8px 24px -6px rgba(0, 23, 31, 0.10);
+  --shadow-lg: 0 2px 4px rgba(0, 23, 31, 0.04), 0 24px 60px -18px rgba(0, 52, 89, 0.28);
+  --ring: 0 0 0 4px rgba(0, 167, 225, 0.28);
   --ease: 220ms cubic-bezier(0.2, 0.7, 0.2, 1);
   --measure: 68ch;
   --page: 1160px;

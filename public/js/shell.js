@@ -54,6 +54,24 @@ export function reveal(root = document) {
   document.documentElement.classList.add("js");
 }
 
+/** Makes the next move obvious: lights up the 1-2-3 steps, and keeps the main button off (with a reason) until there is enough input. */
+export function guide({ input, button, results, min, need, pressAt = 1 }) {
+  const steps = [...document.querySelectorAll(".howto li")];
+  const hint = h("p", { class: "need", "aria-live": "polite" });
+  button.parentElement.after(hint);
+  const refresh = () => {
+    const ok = input.value.trim().length >= min;
+    const done = results.childElementCount > 0 && !results.querySelector(".skeleton, .alert");
+    const at = done ? 3 : ok ? pressAt : 0; // index of the step to do now
+    steps.forEach((li, i) => (li.className = i < at ? "done" : i === at ? "on" : ""));
+    button.disabled = button.dataset.busy === "1" || !ok;
+    hint.textContent = ok || button.dataset.busy === "1" ? "" : need;
+  };
+  input.addEventListener("input", refresh);
+  new MutationObserver(refresh).observe(results, { childList: true });
+  refresh();
+}
+
 export function mountShell(active) {
   const link = ([href, label]) => h("a", { href, "aria-current": href === active ? "page" : null }, label);
   document.body.prepend(
