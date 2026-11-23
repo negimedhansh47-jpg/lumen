@@ -8,7 +8,7 @@
   --muted: #425C69;        /* 6.6:1 on --bg */
   --line: #DCE8EE;
   --line-strong: #B9CDD7;
-  --accent: #007EA7;       /* cerulean: primary actions, links, active states. White text on it 4.6:1 */
+  --accent: #00739A;       /* cerulean, a shade deeper than #007EA7 for AA: 5.0:1 as text on --bg, 4.7:1 on --accent-soft, white on it 5.4:1 */
   --accent-hover: #003459;
   --accent-soft: #E1F3FA;
   --sky: #00A7E1;          /* fresh sky: decoration only */
