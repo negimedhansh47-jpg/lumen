@@ -17,6 +17,7 @@ const results = document.getElementById("results");
 const demoSource = (data) => ({
   commits: async () => data.commits,
   moduleCommits: async (m) => data.moduleCommits?.[m.id] ?? [],
+  canExplain: (sha) => Boolean(data.explanations?.[sha]),
   explain: async (sha) => {
     if (data.explanations?.[sha]) return data.explanations[sha];
     throw new ApiError("demo", "This example only includes explanations for a few commits. Analyze the repo live to explain any commit.");

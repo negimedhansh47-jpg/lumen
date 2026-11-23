@@ -42,11 +42,13 @@ export function commitRow(c, source, { mini = false, isNew = false } = {}) {
       setBusy(button, false, "Explain", "Explaining...");
     }
   });
+  // Examples ship only a few explanations: say so instead of offering a button that would fail.
+  const action = source.canExplain?.(c.sha) === false ? h("span", { class: "hint" }, "Not in this example") : button;
   const date = c.date ? new Date(c.date).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" }) : "";
   return h(
     "div",
     { class: mini ? "" : `commit${isNew ? " new" : ""}` },
-    h("div", { class: "commit-top" }, h("span", { class: "commit-msg" }, c.message), button),
+    h("div", { class: "commit-top" }, h("span", { class: "commit-msg" }, c.message), action),
     h("div", { class: "commit-meta" }, h("code", {}, c.sha.slice(0, 7)), ` · ${c.author} · ${date}`),
     slot,
   );
