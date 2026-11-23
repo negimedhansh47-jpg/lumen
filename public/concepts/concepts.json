@@ -153,7 +153,7 @@
     "id": "oauth",
     "name": "OAuth",
     "oneLine": "Letting a user grant your app limited access to another service without sharing their password.",
-    "explain": "With \"Sign in with GitHub\", the user is sent to GitHub, approves specific permissions, and GitHub gives your app a token limited to those permissions. Your app never sees the password. Tokens can be revoked and scoped narrowly, for example read-only access to chosen repositories. That is the safest way to access someone's data on another service.",
+    "explain": "With \"Sign in with GitHub\", the user is sent to GitHub, approves specific permissions, and GitHub gives your app a token limited to those permissions. Your app never sees the password. Tokens can be revoked and scoped narrowly, for example read-only access to chosen repositories. That is the standard, safer way to access someone's data on another service.",
     "analogy": "A valet key: it starts the car and parks it, but does not open the trunk.",
     "whenToUse": "When you need to act on a user's behalf at another service, or want to avoid handling passwords.",
     "tradeoffs": "More moving parts than a password form, and you depend on the provider being available.",

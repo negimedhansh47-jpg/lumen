@@ -14,7 +14,7 @@ async function gh(env: GhEnv, path: string, accept = "application/vnd.github+jso
       "x-github-api-version": "2022-11-28",
       ...(env.GITHUB_TOKEN ? { authorization: `Bearer ${env.GITHUB_TOKEN}` } : {}),
     },
-    signal: AbortSignal.timeout(10_000),
+    signal: AbortSignal.timeout(15_000),
   }).catch(() => {
     throw new HttpError(502, "github_error", "GitHub did not answer in time. Please try again.");
   });

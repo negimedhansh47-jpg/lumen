@@ -4,8 +4,8 @@ import { mkdirSync, writeFileSync } from "node:fs";
 
 const BASE = process.env.BASE ?? "http://localhost:8799";
 const REPOS = [
-  { id: "lumen", repo: "negimedhansh47-jpg/lumen", label: "Lumen (this project)", explain: 4 },
-  { id: "realworld", repo: "gothinkster/node-express-realworld-example-app", label: "Express blog API", explain: 3 },
+  { id: "lumen", repo: "negimedhansh47-jpg/lumen", label: "Lumen (this project)", explain: 6 },
+  { id: "realworld", repo: "gothinkster/node-express-realworld-example-app", label: "Express blog API", explain: 5 },
 ];
 const CHAT = `User: build me an app to track my expenses
 AI: Sure! I'll set up a simple expense tracker with React and a small Express server. Here is the code...

@@ -37,6 +37,7 @@ export async function reviewChat(req: Request, env: Env): Promise<Response> {
   const seen = new Set<string>();
   const items = out.items
     .filter((i) => i.excerpt.trim() && haystack.includes(norm(i.excerpt))) // drop excerpts the model made up
+    .filter((i) => norm(i.excerpt) !== norm(out.overview.strongest)) // the model's own best prompt is not a problem
     .filter((i) => !seen.has(norm(i.excerpt)) && seen.add(norm(i.excerpt))) // one finding per excerpt
     .slice(0, 8)
     .map((i, n) => ({ id: `item-${n + 1}`, ...i }));

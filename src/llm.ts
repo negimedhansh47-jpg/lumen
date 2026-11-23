@@ -10,7 +10,7 @@ export class LlmError extends Error {}
 
 const NIM_URL = "https://integrate.api.nvidia.com/v1/chat/completions";
 const FALLBACK_MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast";
-const TIMEOUT_MS = 25_000;
+const TIMEOUT_MS = 30_000; // big repo overviews legitimately take 20+ s
 
 export interface Call<T> {
   system: string;
@@ -76,11 +76,13 @@ async function attempt<T>(ask: () => Promise<string>, schema: z.ZodType<T>): Pro
 /** NIM, retry once, then Workers AI, then a friendly error. */
 export async function callLLM<T>(env: LlmEnv, call: Call<T>): Promise<T> {
   const providers = [() => nim(env, call), () => nim(env, call), () => workersAi(env, call)];
-  for (const ask of providers) {
+  const started = Date.now();
+  for (const [i, ask] of providers.entries()) {
+    if (i === 1 && Date.now() - started > TIMEOUT_MS / 2) continue; // NIM is slow, not flaky: retrying would only add another long wait
     try {
       return await attempt(ask, call.schema);
-    } catch {
-      // try the next provider
+    } catch (e) {
+      console.error(`llm attempt ${i} failed:`, String((e as Error).message).slice(0, 300)); // model/provider error only, never user content
     }
   }
   throw new LlmError("The explainer is busy right now. Please try again in a moment.");
