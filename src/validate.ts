@@ -16,6 +16,10 @@ export type Level = z.infer<typeof levelSchema>;
 const MAX_BODY = 64 * 1024;
 
 export async function readBody<T>(req: Request, schema: z.ZodType<T>): Promise<T> {
+  // A JSON content type forces a CORS preflight, so other websites cannot make visitors' browsers spend the AI budget.
+  if (!req.headers.get("content-type")?.includes("application/json")) {
+    throw new HttpError(415, "bad_type", "Send the request as JSON (content-type: application/json).");
+  }
   const text = await req.text();
   if (text.length > MAX_BODY) throw new HttpError(413, "too_large", "That input is too large. Try a shorter one.");
   let json: unknown;
@@ -34,14 +38,17 @@ export function parseRepo(input: string | null): string {
   const raw = (input ?? "").trim();
   const url = raw.match(/^(?:https?:\/\/)?(?:www\.)?github\.com\/([^/\s?#]+)\/([^/\s?#]+)/i);
   const slug = (url ? `${url[1]}/${url[2].replace(/\.git$/, "")}` : raw).replace(/\/$/, "");
-  if (!/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(slug)) {
+  // "." and ".." would be path segments: "../users" makes the URL api.github.com/users.
+  if (!/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(slug) || slug.split("/").some((s) => s === "." || s === "..")) {
     throw new HttpError(400, "bad_repo", "Enter a public GitHub repo as owner/name or a github.com link.");
   }
   return slug;
 }
 
 export function parseLevel(value: string | null): Level {
-  return levelSchema.parse(value ?? undefined);
+  const parsed = levelSchema.safeParse(value ?? undefined);
+  if (!parsed.success) throw new HttpError(400, "bad_level", "Level must be beginner or intermediate.");
+  return parsed.data;
 }
 
 export function parseSha(value: string): string {

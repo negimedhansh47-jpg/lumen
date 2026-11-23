@@ -29,6 +29,12 @@ async function gh(env: GhEnv, path: string, accept = "application/vnd.github+jso
   if (res.status === 404) {
     throw new HttpError(404, "repo_not_found", "That repo was not found, or it is private. Only public repos work without login.");
   }
+  if (res.status === 409) {
+    throw new HttpError(404, "repo_empty", "That repo is empty: it has no commits yet.");
+  }
+  if (res.status === 422) {
+    throw new HttpError(404, "not_found", "GitHub could not find that commit or path in this repo.");
+  }
   if (res.status === 403 || res.status === 429) {
     throw new HttpError(429, "github_limit", "GitHub's rate limit was reached. Try an example, or retry in a few minutes.");
   }

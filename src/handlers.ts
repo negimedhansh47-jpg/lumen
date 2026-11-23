@@ -30,7 +30,7 @@ export async function reviewChat(req: Request, env: Env): Promise<Response> {
   const { chat, level } = await readBody(
     req,
     z.object({
-      chat: z.string().min(20, "Paste a longer chat so there is something to review.").max(30_000, "That chat is over 30,000 characters. Paste a shorter part."),
+      chat: z.string().trim().min(20, "Paste a longer chat so there is something to review.").max(30_000, "That chat is over 30,000 characters. Paste a shorter part."),
       level: levelSchema,
     }),
   );
