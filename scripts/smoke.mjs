@@ -1,8 +1,11 @@
-// Smoke test: node scripts/smoke.mjs [base-url]. Exits 1 if any check fails.
-const base = (process.argv[2] ?? "http://localhost:8799").replace(/\/$/, "");
+// Smoke test: node scripts/smoke.mjs [base-url] [--no-ai]. Exits 1 if any check fails.
+// --no-ai skips the checks that spend model calls (use it on the live site).
+const base = (process.argv.slice(2).find((a) => !a.startsWith("--")) ?? "http://localhost:8799").replace(/\/$/, "");
+const noAi = process.argv.includes("--no-ai");
 const results = [];
 
 async function check(name, fn) {
+  if (noAi && name.startsWith("AI:")) return results.push(`SKIP ${name}`);
   const t = Date.now();
   try {
     await fn();
@@ -29,6 +32,7 @@ for (const type of ["text/plain", "text/plain; application/json"]) {
   await check(`content type "${type}" is 415`, async () => must((await fetch(base + "/api/chat/review", { method: "POST", headers: { "content-type": type }, body: JSON.stringify({ chat: "x".repeat(30) }) })).status === 415, "not 415"));
 }
 await check("dot-dot repo segment is 400", async () => must((await call("/api/repo/commits?repo=" + encodeURIComponent("../users"))).status === 400, "not 400"));
+await check("owner/name.git is accepted", async () => must((await call("/api/repo/commits?repo=expressjs/express.git")).status === 200, "not 200"));
 await check("unknown page is an HTML 404", async () => { const r = await call("/no-such-page"); must(r.status === 404 && r.headers.get("content-type")?.includes("text/html"), `${r.status} ${r.headers.get("content-type")}`); });
 await check("unknown API route stays JSON", async () => must((await call("/api/nope")).headers.get("content-type")?.includes("application/json"), "not JSON"));
 await check("AI: chat review", async () => {

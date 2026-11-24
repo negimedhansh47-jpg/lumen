@@ -205,7 +205,7 @@ async function load(repo) {
   focusResults(results);
   try {
     render(await api(`/api/repo/overview?repo=${encodeURIComponent(repo)}&level=${getLevel()}`), liveSource(repo), true);
-    history.replaceState(null, "", `/repo?repo=${encodeURIComponent(repo)}`);
+    history.replaceState(null, "", `/repo?repo=${encodeURIComponent(repo).replace("%2F", "/")}`);
   } catch (e) {
     results.replaceChildren(errorBox(e.message, "Could not map that repo"));
   } finally {

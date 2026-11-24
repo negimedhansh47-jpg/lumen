@@ -49,11 +49,11 @@ export function renderMap(modules, edges, onSelect) {
 
   let n = 0;
   const columns = ORDER.filter((l) => modules.some((m) => m.layer === l)).map((layer) =>
-    h("div", { class: "map-col" }, h("h4", {}, LABELS[layer]), modules.filter((m) => m.layer === layer).map((m) => makeNode(m, n++))),
+    h("div", { class: "map-col" }, h("h3", { class: "h4" }, LABELS[layer]), modules.filter((m) => m.layer === layer).map((m) => makeNode(m, n++))),
   );
   const config = modules.filter((m) => m.layer === "config");
   const colsEl = h("div", { class: "map-cols" }, columns);
-  const configEl = config.length ? h("div", { class: "map-config" }, h("h4", { class: "label" }, LABELS.config), h("div", { class: "nodes" }, config.map((m) => makeNode(m, n++)))) : null;
+  const configEl = config.length ? h("div", { class: "map-config" }, h("h3", { class: "h4 label" }, LABELS.config), h("div", { class: "nodes" }, config.map((m) => makeNode(m, n++)))) : null;
   const edgesEl = svg("svg", { class: "edges", "aria-hidden": "true" });
   const el = h("div", { class: "map" }, edgesEl, colsEl, configEl);
 

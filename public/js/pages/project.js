@@ -51,7 +51,7 @@ function changesCard(p) {
 
   return card(
     "What changed since your last visit",
-    h("div", { class: "row", style: "justify-content: space-between" }, h("a", { href: `/repo?repo=${encodeURIComponent(p.repo)}`, class: "chip" }, p.repo), h("div", { class: "row" }, caughtUp, h("a", { class: "btn small", href: `/repo?repo=${encodeURIComponent(p.repo)}` }, "Open the map"))),
+    h("div", { class: "row", style: "justify-content: space-between" }, h("a", { href: `/repo?repo=${encodeURIComponent(p.repo).replace("%2F", "/")}`, class: "chip" }, p.repo), h("div", { class: "row" }, caughtUp, h("a", { class: "btn small", href: `/repo?repo=${encodeURIComponent(p.repo).replace("%2F", "/")}` }, "Open the map"))),
     summary,
     list,
   );

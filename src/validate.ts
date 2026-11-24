@@ -38,7 +38,7 @@ export async function readBody<T>(req: Request, schema: z.ZodType<T>): Promise<T
 export function parseRepo(input: string | null): string {
   const raw = (input ?? "").trim();
   const url = raw.match(/^(?:https?:\/\/)?(?:www\.)?github\.com\/([^/\s?#]+)\/([^/\s?#]+)/i);
-  const slug = (url ? `${url[1]}/${url[2].replace(/\.git$/, "")}` : raw).replace(/\/$/, "");
+  const slug = (url ? `${url[1]}/${url[2]}` : raw).replace(/\/$/, "").replace(/\.git$/, "");
   // "." and ".." would be path segments: "../users" makes the URL api.github.com/users.
   if (!/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(slug) || slug.split("/").some((s) => s === "." || s === "..")) {
     throw new HttpError(400, "bad_repo", "Enter a public GitHub repo as owner/name or a github.com link.");

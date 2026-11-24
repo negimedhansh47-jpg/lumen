@@ -130,7 +130,7 @@ button.chip:hover::after { background: var(--on-accent); color: var(--accent); }
 .choice-card .icon { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); font-size: 1.3rem; margin-bottom: var(--s2); transition: background var(--ease), color var(--ease); }
 .choice-card:hover .icon { background: var(--accent); color: var(--on-accent); }
 .choice-card .have { font: 500 0.72rem var(--font-mono); text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); }
-.choice-card h3 { font: 400 2rem/1 var(--font-display); letter-spacing: -0.01em; }
+.choice-card h2 { font: 400 2rem/1 var(--font-display); letter-spacing: -0.01em; }
 .choice-card p { color: var(--muted); margin: 0; font-size: 0.97rem; }
 .choice-card .go { margin-top: var(--s3); font: 600 0.95rem var(--font-head); color: var(--on-accent); background: var(--accent); padding: 9px 16px; border-radius: 999px; width: fit-content; display: inline-flex; gap: var(--s2); transition: background var(--ease); }
 .choice-card:hover .go { background: var(--accent-hover); }
@@ -171,7 +171,7 @@ button.chip:hover::after { background: var(--on-accent); color: var(--accent); }
 .map { position: relative; display: grid; gap: var(--s6); padding: var(--s6); border-radius: var(--radius-lg); background: var(--surface) radial-gradient(circle at 1px 1px, rgba(0, 23, 31, 0.1) 1px, transparent 0) 0 0 / 22px 22px; border: 1px solid var(--line); box-shadow: var(--shadow-sm); }
 .map-cols { position: relative; display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: var(--s7); align-items: start; }
 .map-col { display: grid; gap: var(--s4); align-content: start; }
-.map-col h4 { margin: 0; }
+.map-col .h4 { margin: 0; }
 .map-config { display: grid; gap: var(--s3); }
 .map-config .nodes { display: flex; flex-wrap: wrap; gap: var(--s3); }
 .node { position: relative; z-index: 2; text-align: left; font: inherit; color: var(--ink); border: 1px solid rgba(0, 23, 31, 0.14); border-radius: var(--radius); padding: var(--s3) var(--s4); cursor: pointer; display: grid; gap: 2px; box-shadow: var(--shadow-sm); transition: transform var(--ease), box-shadow var(--ease), opacity var(--ease), border-color var(--ease); animation: pop 520ms cubic-bezier(0.2, 0.9, 0.3, 1.25) both; animation-delay: calc(var(--i, 0) * 70ms); }
