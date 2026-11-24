@@ -35,7 +35,7 @@ function geometry(a, b, layerA, layerB) {
   return { d: `M${p1.x} ${p1.y} C${p1.x + dx} ${p1.y} ${p2.x - dx} ${p2.y} ${p2.x} ${p2.y}`, label: { x: (p1.x + p2.x) / 2, y: (p1.y + p2.y) / 2 } };
 }
 
-/** Builds the map. Returns { el, select(id|null) }. */
+/** Builds the map. Returns { el, node(id), select(id|null) }. */
 export function renderMap(modules, edges, onSelect) {
   const byId = new Map(modules.map((m) => [m.id, m]));
   const nodeEls = new Map();
@@ -112,6 +112,7 @@ export function renderMap(modules, edges, onSelect) {
 
   return {
     el,
+    node: (id) => nodeEls.get(id),
     select(id) {
       selected = id;
       paint();

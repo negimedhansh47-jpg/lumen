@@ -1,47 +1,68 @@
 {
  "idea": "A website where my gym friends log workouts and see a weekly leaderboard",
  "result": {
-  "restatement": "A website where gym friends log workouts and see a weekly leaderboard.",
+  "restatement": "A website where gym friends log workouts and view a weekly leaderboard.",
   "decisions": [
    {
     "id": "frontend",
-    "question": "How will users view and interact with the website?",
-    "choice": "A single web page built with HTML, CSS, and JavaScript that loads once and updates without refreshing.",
-    "why": "Simple for beginners, runs in the browser, no build step required, and free to host on static platforms.",
-    "tradeoffs": "Less structure for large apps; all logic lives in the browser unless paired with a backend.",
+    "question": "How should the website be built and shown to users?",
+    "pick": "Next.js",
+    "choice": "A React framework that renders pages on the server and in the browser.",
+    "why": "It handles pages, API routes, and deployment in one tool, which keeps a beginner project simple.",
+    "tradeoffs": "More to learn than a plain HTML file, but less setup than separate frontend and backend projects.",
     "alternatives": [
-     "Next.js",
-     "React with Vite"
+     {
+      "name": "Vite + React",
+      "betterWhen": "You want a lightweight frontend only and will host a separate backend."
+     },
+     {
+      "name": "Plain HTML and JavaScript",
+      "betterWhen": "You want zero build tools and only need a single static page."
+     }
     ],
     "concepts": [
      "component",
-     "bundler"
+     "routing"
     ]
    },
    {
     "id": "backend",
-    "question": "Will the site have a server to store and process workout data?",
-    "choice": "Yes, a small server that receives workout logs and returns leaderboard data.",
-    "why": "Keeps data in one place so all friends see the same leaderboard and prevents users from editing each other's logs.",
-    "tradeoffs": "Requires hosting, uptime, and basic security; more moving parts than a static-only site.",
+    "question": "Where will the server code and API live?",
+    "pick": "Next.js API routes",
+    "choice": "Server-side functions inside the same Next.js project that answer browser requests.",
+    "why": "No separate server project is needed, so the workout log and leaderboard can share one codebase.",
+    "tradeoffs": "Less flexible than a standalone backend if the app grows very large.",
     "alternatives": [
-     "Firebase",
-     "Supabase"
+     {
+      "name": "Express",
+      "betterWhen": "You want a dedicated Node.js server separate from the frontend."
+     },
+     {
+      "name": "Supabase Edge Functions",
+      "betterWhen": "You prefer serverless functions hosted with your database."
+     }
     ],
     "concepts": [
-     "client-server",
-     "api-route"
+     "api-route",
+     "client-server"
     ]
    },
    {
     "id": "database",
-    "question": "Where will workout records and user info live?",
-    "choice": "A file-based database stored on the server.",
-    "why": "No separate database server to install or manage; good for a small group and low cost.",
-    "tradeoffs": "Not ideal for many simultaneous writers; harder to scale than a managed database.",
+    "question": "Where should workout data live?",
+    "pick": "PostgreSQL",
+    "choice": "A relational database that stores users, workouts, and leaderboard rows in tables.",
+    "why": "It fits structured workout records and is widely supported by low-cost hosts.",
+    "tradeoffs": "Requires defining a schema upfront, unlike a document database.",
     "alternatives": [
-     "PostgreSQL",
-     "MongoDB"
+     {
+      "name": "SQLite",
+      "betterWhen": "You want a single-file database with no separate server for local development."
+     },
+     {
+      "name": "MongoDB",
+      "betterWhen": "Your workout records have very different shapes and you want flexible documents."
+     }
     ],
     "concepts": [
      "database",
@@ -50,29 +71,43 @@
    },
    {
     "id": "auth",
-    "question": "How will friends prove who they are when logging workouts?",
-    "choice": "Email and password login with a session cookie stored in the browser.",
-    "why": "Straightforward to understand and implement; no third-party accounts required.",
-    "tradeoffs": "You must securely store passwords and protect the session cookie from theft.",
+    "question": "How will users sign in and stay signed in?",
+    "pick": "Email and password",
+    "choice": "Users register with an email and password, which is verified on sign-in.",
+    "why": "Simple to understand and does not require setting up external providers.",
+    "tradeoffs": "You must securely hash passwords and manage sessions yourself.",
     "alternatives": [
-     "Google OAuth",
-     "GitHub OAuth"
+     {
+      "name": "OAuth",
+      "betterWhen": "You want users to sign in with Google or Apple instead of creating a new password."
+     },
+     {
+      "name": "Supabase Auth",
+      "betterWhen": "You want ready-made sign-in pages and session handling without building them."
+     }
     ],
     "concepts": [
      "auth",
-     "session-cookie",
-     "hashing"
+     "hashing",
+     "session-cookie"
     ]
    },
    {
     "id": "hosting",
-    "question": "Where will the website and server run?",
-    "choice": "A low-cost platform that hosts both frontend and backend together.",
-    "why": "One place to deploy, often has a free tier, and handles SSL and domain basics.",
-    "tradeoffs": "Less control than managing your own server; may have limits on free tier.",
+    "question": "Where will the website be published?",
+    "pick": "Vercel",
+    "choice": "A platform that deploys Next.js projects with a git push and provides a free tier.",
+    "why": "It works well with Next.js and requires little configuration for a beginner.",
+    "tradeoffs": "Serverless functions have limits, which is fine for a small gym group.",
     "alternatives": [
-     "Vercel",
-     "Render"
+     {
+      "name": "Railway",
+      "betterWhen": "You need a separate backend server or database in the same deploy."
+     },
+     {
+      "name": "Netlify",
+      "betterWhen": "You prefer a similar git-based deploy platform with form handling."
+     }
     ],
     "concepts": [
      "ci-cd",
@@ -81,12 +116,13 @@
    }
   ],
   "firstSteps": [
-   "Create a folder for the project and initialize a git repository.",
-   "Build a simple HTML page with a form to enter a workout and a list to show past entries.",
-   "Set up a basic server with one route to save a workout and another to return the weekly leaderboard.",
-   "Add a login page so each workout is tied to a user.",
-   "Deploy to a hosting platform and share the link with friends."
+   "Create a GitHub repository for the project.",
+   "Run `npx create-next-app@latest` in an empty folder.",
+   "Add a PostgreSQL database on a free host and save its connection string in `.env.local`.",
+   "Create a `workouts` table with columns for user, exercise, sets, reps, weight, and date.",
+   "Build a page with a form to submit a workout and a page to show the weekly leaderboard.",
+   "Deploy to Vercel by connecting the GitHub repository."
   ],
-  "claudeMd": "# CLAUDE.md\n\n## What this is\nA website where gym friends log workouts and see a weekly leaderboard.\n\n## Stack\n- HTML/CSS/JavaScript\n- Node.js\n- SQLite\n- Express\n- Git\n\n## Structure\n- /public - frontend files\n- /src - server code\n- /data - database file\n\n## How to work\n- Build one small step at a time. Explain the plan before changing many files.\n- Commit after every working change with a clear message.\n- Ask before adding a dependency. Prefer none.\n- If something fails, say so plainly. Do not hide it.\n\n## Rules\n- Never log passwords or secrets to the console.\n- Validate all incoming workout data before saving.\n- Use environment variables for secrets, never hardcode them.\n- Return clear error messages without exposing internal details.\n- Keep frontend and server code in separate folders.\n\n## Security\n- Never commit secrets. Keep them in a gitignored env file and in the host's secret store.\n- Validate all input. Never put user text into the page with innerHTML.\n"
+  "agentsMd": "# AGENTS.md\n\n## What this is\nA website where gym friends log workouts and view a weekly leaderboard.\n\n## Stack\n- Next.js\n- React\n- PostgreSQL\n- Prisma\n- Vercel\n\n## Structure\n- /app - pages and API routes\n- /src/lib - database client and helpers\n- /src/components - reusable UI pieces\n- /prisma - database schema and migrations\n\n## How to work\n- Build one small step at a time. Explain the plan before changing many files.\n- Commit after every working change with a clear message.\n- Ask before adding a dependency. Prefer none.\n- If something fails, say so plainly. Do not hide it.\n\n## Rules\n- Never log passwords or connection strings to the console.\n- Validate workout inputs before saving to the database.\n- Use environment variables for database URLs and secrets.\n- Keep API routes in `/app/api` and UI components in `/src/components`.\n- Return clear error messages when a workout fails to save.\n\n## Security\n- Never commit secrets. Keep them in a gitignored env file and in the host's secret store.\n- Validate all input. Never put user text into the page with innerHTML.\n"
  }
 }

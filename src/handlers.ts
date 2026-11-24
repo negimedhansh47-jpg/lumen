@@ -148,7 +148,7 @@ export async function kickoffHandler(req: Request, env: Env): Promise<Response> 
   );
   await spendLlmCall(env, req);
   const out = await callLLM(env, kickoff.build(idea, level));
-  return Response.json({ restatement: out.restatement, decisions: out.decisions, firstSteps: out.firstSteps, claudeMd: kickoff.claudeMd(out) });
+  return Response.json({ restatement: out.restatement, decisions: out.decisions, firstSteps: out.firstSteps, agentsMd: kickoff.agentsMd(out) });
 }
 
 interface CachedOverview {

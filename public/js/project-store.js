@@ -6,7 +6,7 @@ const strs = (v, max, len) => (Array.isArray(v) ? v.filter((x) => typeof x === "
 /** Shape-checks anything read from storage or an imported file, so bad data cannot break the page. */
 export function clean(raw) {
   const r = raw && typeof raw === "object" ? raw : {};
-  const plan = r.plan && typeof r.plan === "object" ? { restatement: str(r.plan.restatement, 500), firstSteps: strs(r.plan.firstSteps, 12, 400), claudeMd: str(r.plan.claudeMd, 8000) } : null;
+  const plan = r.plan && typeof r.plan === "object" ? { restatement: str(r.plan.restatement, 500), firstSteps: strs(r.plan.firstSteps, 12, 400), agentsMd: str(r.plan.agentsMd ?? r.plan.claudeMd, 8000) } : null; // claudeMd: plans saved before 2026-11-24
   return {
     v: 1,
     name: str(r.name, 80),

@@ -1,7 +1,8 @@
 import { api, demo } from "../api.js";
-import { conceptChips, loadConcepts } from "../concepts.js";
+import { announceConcepts, conceptChips, loadConcepts } from "../concepts.js";
 import { copyText, emptyBox, errorBox, focusResults, h, loading, nextSteps, para, setBusy } from "../render.js";
 import { getLevel, guide, mountShell } from "../shell.js";
+import { quiz, shuffle, stepper } from "../steps.js";
 
 mountShell("/chat");
 
@@ -21,18 +22,26 @@ const PROBLEMS = {
 };
 
 function item(i) {
+  const ideas = i.concept ? [i.concept] : [];
+  const right = PROBLEMS[i.problem] ?? PROBLEMS.other;
+  const reveal = (mine) => {
+    announceConcepts(ideas);
+    const verdict = mine === null ? null : mine === right ? h("p", { class: "verdict good" }, "You spotted it.") : h("p", { class: "verdict" }, `Fair guess: several can apply. Lumen reads this one mostly as "${right}".`);
+    return [
+      verdict,
+      para(i.why),
+      h("div", { class: "said better" }, h("p", { class: "label" }, "Clearer version"), h("blockquote", {}, i.rewrite), h("div", {}, h("button", { type: "button", class: "btn ghost small", onclick: () => copyText(i.rewrite) }, "Copy rewrite"))),
+      conceptChips(ideas),
+    ];
+  };
+  const others = shuffle(Object.entries(PROBLEMS).filter(([k]) => k !== "other" && k !== i.problem).map(([, v]) => v)).slice(0, 2);
   return h(
     "article",
-    { class: "pair rise" },
-    h("div", { class: "before" }, h("span", { class: "badge" }, PROBLEMS[i.problem] ?? PROBLEMS.other), h("p", { class: "label" }, "You wrote"), h("blockquote", {}, i.excerpt)),
-    h(
-      "div",
-      { class: "after" },
-      h("p", { class: "label" }, "Clearer version"),
-      h("blockquote", {}, i.rewrite),
-      h("div", {}, h("button", { type: "button", class: "btn ghost small", onclick: () => copyText(i.rewrite) }, "Copy rewrite")),
-    ),
-    h("div", { class: "pair-foot" }, para(i.why), conceptChips(i.concept ? [i.concept] : [])),
+    { class: "card stack rise" },
+    h("div", { class: "said" }, h("p", { class: "label" }, "You wrote"), h("blockquote", {}, i.excerpt)),
+    i.problem === "other" // no clear category to guess, so show the answer straight away
+      ? [h("span", { class: "badge" }, right), ...reveal(null)]
+      : quiz({ prompt: "What would make this prompt clearer?", options: [right, ...others], answer: right, answerTag: "Lumen's read", reveal }),
   );
 }
 
@@ -49,14 +58,19 @@ function overview(o) {
 
 function render(result) {
   const n = result.items.length;
-  const nodes = [
-    h("div", { class: "section-head rise" }, h("p", { class: "eyebrow" }, "Your review"), h("h2", {}, n ? `${n} prompt${n === 1 ? "" : "s"} to improve` : "Your prompts look clear"), h("p", { class: "muted", style: "margin:0" }, n ? "Each one shows what you wrote, a clearer version you can copy, and why it works better. Click a blue idea to learn it." : "")),
-    overview(result.overview),
-  ];
-  if (n) nodes.push(...result.items.map(item));
-  else nodes.push(emptyBox("No specific prompts could be flagged in this chat. That usually means it was already clear."));
-  nodes.push(nextSteps("Use the clearer prompts in your next chat. Then see how the code your AI wrote fits together.", [["/repo", "Explain my repo"], ["/kickoff", "Plan a new idea"]]));
-  results.replaceChildren(...nodes);
+  const finish = () =>
+    results.append(
+      overview(result.overview),
+      nextSteps("Use the clearer prompts in your next chat. Then see how the code your AI wrote fits together.", [["/repo", "Explain my repo"], ["/kickoff", "Plan a new idea"]]),
+    );
+  results.replaceChildren(
+    h("div", { class: "section-head rise" }, h("p", { class: "eyebrow" }, "Your review"), h("h2", {}, n ? `${n} prompt${n === 1 ? "" : "s"} to improve` : "Your prompts look clear"), h("p", { class: "muted", style: "margin:0" }, n ? "One at a time: guess what is missing, then see a clearer version you can copy." : "")),
+  );
+  if (n) results.append(stepper(result.items.map((i) => () => item(i)), { noun: "Prompt", finishLabel: "See your overall patterns →", finish }));
+  else {
+    results.append(emptyBox("No specific prompts could be flagged in this chat. That usually means it was already clear."));
+    finish();
+  }
   focusResults(results);
 }
 

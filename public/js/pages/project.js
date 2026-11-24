@@ -88,7 +88,7 @@ function planCard(p) {
     bar,
     status,
     h("ul", { class: "checklist" }, items),
-    h("div", { class: "row" }, h("button", { type: "button", class: "btn ghost small", onclick: () => copyText(p.plan.claudeMd) }, "Copy CLAUDE.md")),
+    h("div", { class: "row" }, h("button", { type: "button", class: "btn ghost small", onclick: () => copyText(p.plan.agentsMd) }, "Copy AGENTS.md")),
   );
 }
 
@@ -104,6 +104,7 @@ function conceptsCard(p) {
     meter(learned.length, all.length),
     learned.length ? conceptChips(learned) : h("p", { class: "muted", style: "margin:0" }, "Open any concept chip anywhere on Lumen and it is collected here."),
     next.length ? h("div", { class: "stack", style: "gap: var(--s2)" }, h("p", { class: "label", style: "margin:0" }, "Try next"), conceptChips(next)) : null,
+    h("a", { class: "btn ghost small", href: "/concepts" }, "See all concept cards"),
   );
 }
 

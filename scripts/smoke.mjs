@@ -15,7 +15,7 @@ async function check(name, fn) {
 const must = (cond, msg) => { if (!cond) throw new Error(msg); };
 const call = (path, body) => fetch(base + path, body ? { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) } : {});
 
-for (const page of ["/", "/chat", "/repo", "/kickoff", "/project", "/js/project-store.js", "/js/commits.js", "/concepts/concepts.json", "/demo/index.json", "/css/components.css", "/js/shell.js"]) {
+for (const page of ["/", "/chat", "/repo", "/kickoff", "/project", "/concepts", "/js/steps.js", "/js/project-store.js", "/js/commits.js", "/concepts/concepts.json", "/demo/index.json", "/css/components.css", "/js/shell.js"]) {
   await check(`GET ${page}`, async () => must((await call(page)).status === 200, "not 200"));
 }
 await check("health", async () => must((await (await call("/api/health")).json()).ok === true, "ok not true"));
@@ -44,7 +44,8 @@ await check("AI: kickoff", async () => {
   const res = await call("/api/kickoff", { idea: "A habit tracker for students with weekly reminders", level: "beginner" });
   const d = await res.json();
   must(res.status === 200, `status ${res.status}: ${JSON.stringify(d)}`);
-  must(d.decisions?.length >= 3 && d.claudeMd, "missing decisions or claudeMd");
+  must(d.decisions?.length >= 3 && d.agentsMd?.startsWith("# AGENTS.md"), "missing decisions or agentsMd");
+  must(d.decisions.every((x) => !x.alternatives.some((a) => a.name.toLowerCase() === x.pick.toLowerCase())), "a pick is repeated as an alternative");
 });
 
 await check("rejects unknown concept", async () => must((await call("/api/concept/explain", { id: "nope", level: "beginner" })).status === 404, "not 404"));

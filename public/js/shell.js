@@ -87,6 +87,7 @@ export function mountShell(active) {
         { class: "page" },
         h("span", { class: "big", "aria-hidden": "true" }, "Lumen", h("span", {}, ".")),
         h("span", {}, "Lumen teaches you the engineering behind the code your AI writes."),
+        h("a", { href: "/concepts" }, "All concept cards"),
         h("a", { href: "https://github.com/negimedhansh47-jpg/lumen" }, "Source on GitHub"),
       ),
     ),

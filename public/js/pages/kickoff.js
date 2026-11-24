@@ -1,8 +1,9 @@
 import { api, demo } from "../api.js";
-import { conceptChips, loadConcepts } from "../concepts.js";
+import { announceConcepts, conceptChips, loadConcepts } from "../concepts.js";
 import { load as loadProject, save as saveProject } from "../project-store.js";
 import { copyText, errorBox, focusResults, h, loading, nextSteps, para, setBusy, toast } from "../render.js";
 import { getLevel, guide, mountShell } from "../shell.js";
+import { quiz, stepper } from "../steps.js";
 
 mountShell("/kickoff");
 
@@ -12,17 +13,59 @@ const results = document.getElementById("results");
 const run = document.getElementById("run");
 const count = document.getElementById("count");
 
+function verdict(d, mine) {
+  if (mine === null) return null;
+  if (mine === d.pick) return h("p", { class: "verdict good" }, "Same as Lumen. Here is why it fits.");
+  return h("p", { class: "verdict" }, `${mine} can work too. See below when it is the better choice.`);
+}
+
 function decision(d, n) {
-  const alternatives = d.alternatives.length ? h("div", {}, h("p", { class: "label" }, "Alternatives"), h("ul", {}, d.alternatives.map((a) => h("li", {}, a)))) : null;
+  const alternatives = d.alternatives.length
+    ? h("div", {}, h("p", { class: "label" }, "Other options, and when they win"), h("ul", {}, d.alternatives.map((a) => h("li", {}, h("b", {}, a.name), a.betterWhen ? `. ${a.betterWhen}` : ""))))
+    : null;
+  const reveal = (mine) => {
+    announceConcepts(d.concepts);
+    return [
+      verdict(d, mine),
+      h("div", { class: "choice" }, h("span", { class: "label" }, "Lumen's pick"), d.choice),
+      para(d.why),
+      h("div", { class: "decision-grid" }, h("div", {}, h("p", { class: "label" }, "Trade-offs"), para(d.tradeoffs)), alternatives),
+      conceptChips(d.concepts),
+    ];
+  };
+  const canGuess = d.pick && d.alternatives.length;
   return h(
     "article",
     { class: "card decision rise" },
     h("p", { class: "label" }, `Decision ${n + 1}`),
     h("p", { class: "q" }, d.question),
-    h("div", { class: "choice" }, d.choice),
-    para(d.why),
-    h("div", { class: "decision-grid" }, h("div", {}, h("p", { class: "label" }, "Trade-offs"), para(d.tradeoffs)), alternatives),
-    conceptChips(d.concepts),
+    canGuess ? quiz({ prompt: "What would you pick?", options: [d.pick, ...d.alternatives.map((a) => a.name)], answer: d.pick, answerTag: "Lumen's pick", reveal }) : reveal(null),
+  );
+}
+
+function recap(r) {
+  return h("section", { class: "card rise" }, h("h3", {}, "Your decisions"), h("ul", { class: "recap" }, r.decisions.map((d) => h("li", {}, h("span", { class: "muted" }, d.question), h("b", {}, d.pick || d.choice)))));
+}
+
+function download(text, filename) {
+  const a = h("a", { href: URL.createObjectURL(new Blob([text], { type: "text/markdown" })), download: filename });
+  document.body.append(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+
+function agentsFile(md) {
+  return h(
+    "section",
+    { class: "rise" },
+    h(
+      "div",
+      { class: "md-head" },
+      h("div", {}, h("h3", {}, "Your AGENTS.md"), h("p", { class: "hint", style: "margin:0" }, "Save it in your project's main folder and your coding AI follows these decisions. Codex, Cursor, GitHub Copilot's coding agent, Windsurf and Claude Code all read AGENTS.md (Claude Code when the project has no CLAUDE.md).")),
+      h("div", { class: "row" }, h("button", { type: "button", class: "btn small", onclick: () => copyText(md) }, "Copy"), h("button", { type: "button", class: "btn ghost small", onclick: () => download(md, "AGENTS.md") }, "Download AGENTS.md")),
+    ),
+    h("pre", {}, h("code", {}, md)),
   );
 }
 
@@ -30,7 +73,7 @@ function saveBar(r) {
   const button = h("button", { type: "button", class: "btn accent small" }, "Save as my project");
   button.addEventListener("click", () => {
     const p = loadProject();
-    saveProject({ plan: { restatement: r.restatement, firstSteps: r.firstSteps, claudeMd: r.claudeMd }, name: p.name || r.restatement.slice(0, 60), done: [] });
+    saveProject({ plan: { restatement: r.restatement, firstSteps: r.firstSteps, agentsMd: r.agentsMd }, name: p.name || r.restatement.slice(0, 60), done: [] });
     button.textContent = "Saved";
     button.disabled = true;
     toast("Plan saved. Tick off steps on My project as you build.");
@@ -39,19 +82,25 @@ function saveBar(r) {
 }
 
 function render(r) {
-  results.replaceChildren(
-    h("section", { class: "rise" }, h("p", { class: "eyebrow" }, "What you are building"), h("h2", {}, r.restatement)),
-    saveBar(r),
-    ...r.decisions.map(decision),
-    h("section", { class: "card rise" }, h("h3", {}, "Your first steps"), h("ol", { class: "firststeps" }, r.firstSteps.map((s) => h("li", {}, s)))),
-    h(
-      "section",
-      { class: "rise" },
-      h("div", { class: "md-head" }, h("div", {}, h("h3", {}, "Your CLAUDE.md"), h("p", { class: "hint", style: "margin:0" }, "Save this in your project folder so your AI follows your decisions.")), h("button", { type: "button", class: "btn small", onclick: () => copyText(r.claudeMd) }, "Copy CLAUDE.md")),
-      h("pre", {}, h("code", {}, r.claudeMd)),
-    ),
-    nextSteps("Save the plan, start building with your AI, then come back to My project to tick off steps and see your changes explained.", [["/project", "Go to My project"], ["/chat", "Review a chat"]]),
+  const finish = () =>
+    results.append(
+      recap(r),
+      h("section", { class: "card rise" }, h("h3", {}, "Your first steps"), h("ol", { class: "firststeps" }, r.firstSteps.map((s) => h("li", {}, s)))),
+      saveBar(r),
+      agentsFile(r.agentsMd),
+      nextSteps("Save the plan, start building with your AI, then come back to My project to tick off steps and see your changes explained.", [["/project", "Go to My project"], ["/chat", "Review a chat"]]),
+    );
+  const intro = h(
+    "section",
+    { class: "rise" },
+    h("p", { class: "eyebrow" }, "What you are building"),
+    h("h2", {}, r.restatement),
+    h("p", { class: "muted", style: "margin:0" }, `${r.decisions.length} decisions to make before you write code. Guess each one first, then see Lumen's pick and why.`),
   );
+  const steps = r.decisions.map((d, n) => () => decision(d, n));
+  results.replaceChildren(intro);
+  if (steps.length) results.append(stepper(steps, { noun: "Decision", finishLabel: "See your first steps →", finish }));
+  else finish();
   focusResults(results);
 }
 
