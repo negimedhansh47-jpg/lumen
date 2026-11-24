@@ -62,7 +62,7 @@ function agentsFile(md) {
     h(
       "div",
       { class: "md-head" },
-      h("div", {}, h("h3", {}, "Your AGENTS.md"), h("p", { class: "hint", style: "margin:0" }, "Save it in your project's main folder and your coding AI follows these decisions. Codex, Cursor, GitHub Copilot's coding agent, Windsurf and Claude Code all read AGENTS.md (Claude Code when the project has no CLAUDE.md).")),
+      h("div", {}, h("h3", {}, "Your AGENTS.md"), h("p", { class: "hint", style: "margin:0" }, "Save it in your project's main folder and your coding AI follows these decisions. Codex, Cursor, GitHub Copilot's coding agent and many other coding agents read AGENTS.md, and so does Claude Code when the project has no CLAUDE.md.")),
       h("div", { class: "row" }, h("button", { type: "button", class: "btn small", onclick: () => copyText(md) }, "Copy"), h("button", { type: "button", class: "btn ghost small", onclick: () => download(md, "AGENTS.md") }, "Download AGENTS.md")),
     ),
     h("pre", {}, h("code", {}, md)),

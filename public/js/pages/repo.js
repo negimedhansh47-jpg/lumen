@@ -2,7 +2,7 @@ import { ApiError, api, demo } from "../api.js";
 import { askPanel } from "../ask.js";
 import { fillCommits, liveSource, section } from "../commits.js";
 import { announceConcepts, conceptChips, loadConcepts } from "../concepts.js";
-import { renderMap } from "../map.js";
+import { isNarrow, renderMap } from "../map.js";
 import { load as loadProject, save as saveProject } from "../project-store.js";
 import { emptyBox, errorBox, focusResults, h, loading, nextSteps, para, setBusy, toast } from "../render.js";
 import { getLevel, guide, mountShell } from "../shell.js";
@@ -128,7 +128,7 @@ function render(o, source, live = false) {
     const outs = o.edges.filter((e) => e.from === m.id && e.to !== m.id);
     const linked = new Set(o.edges.flatMap((e) => (e.from === m.id ? [e.to] : e.to === m.id ? [e.from] : [])));
     const strangers = o.modules.filter((x) => x.id !== m.id && !linked.has(x.id));
-    if (asked.has(m.id) || !outs.length || strangers.length < 2) return null;
+    if (isNarrow() || asked.has(m.id) || !outs.length || strangers.length < 2) return null; // phones hide the arrows, so there is nothing to read
     asked.add(m.id);
     const edge = outs[Math.floor(Math.random() * outs.length)];
     const target = name(edge.to);
@@ -180,7 +180,7 @@ function render(o, source, live = false) {
   );
   const ask = live ? askPanel(() => ({ repo: o.meta.fullName }), { title: `Ask about ${o.meta.name ?? o.meta.fullName}` }) : null;
   ask?.addEventListener("submit", () => tour(3));
-  ask?.addEventListener("click", (e) => e.target.closest(".starters button") && tour(3));
+  ask?.addEventListener("click", (e) => e.target.closest(".starters button") && tour(3), true); // capture: a starter is replaced as soon as it is clicked
   later.push(
     ...[
       ask,

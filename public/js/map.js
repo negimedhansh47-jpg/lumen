@@ -10,7 +10,7 @@ const svg = (tag, attrs = {}) => {
   return el;
 };
 
-const isNarrow = () => matchMedia("(max-width: 720px)").matches;
+export const isNarrow = () => matchMedia("(max-width: 720px)").matches;
 
 function geometry(a, b, layerA, layerB) {
   const mid = (r) => ({ x: r.left + r.width / 2, y: r.top + r.height / 2 });

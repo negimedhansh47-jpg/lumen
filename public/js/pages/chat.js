@@ -41,7 +41,7 @@ function item(i) {
     h("div", { class: "said" }, h("p", { class: "label" }, "You wrote"), h("blockquote", {}, i.excerpt)),
     i.problem === "other" // no clear category to guess, so show the answer straight away
       ? [h("span", { class: "badge" }, right), ...reveal(null)]
-      : quiz({ prompt: "What would make this prompt clearer?", options: [right, ...others], answer: right, answerTag: "Lumen's read", reveal }),
+      : quiz({ prompt: "What is the main problem with this prompt?", options: [right, ...others], answer: right, answerTag: "Lumen's read", reveal }),
   );
 }
 

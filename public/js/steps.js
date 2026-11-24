@@ -9,7 +9,7 @@ export const shuffle = (list) => list.map((v) => [Math.random(), v]).sort((a, b)
  * Fires a bubbling "answered" event so a stepper knows it can offer Next.
  */
 export function quiz({ prompt, options, answer, answerTag, reveal }) {
-  const slot = h("div", { class: "quiz-reveal" });
+  const slot = h("div", { class: "quiz-reveal", tabindex: "-1" });
   const buttons = shuffle([...new Set(options)]).map((text) => h("button", { type: "button", class: "opt", "data-value": text }, text));
   const unsure = h("button", { type: "button", class: "opt unsure" }, "Not sure, show me");
   const el = h("div", { class: "quiz" }, h("p", { class: "quiz-q" }, prompt), h("div", { class: "opts", role: "group", "aria-label": prompt }, buttons, unsure), slot);
@@ -26,6 +26,7 @@ export function quiz({ prompt, options, answer, answerTag, reveal }) {
     }
     if (!quiet && choice === null) unsure.classList.add("mine");
     slot.replaceChildren(...[reveal(quiet ? null : choice)].flat().filter(Boolean));
+    if (!quiet) slot.focus({ preventScroll: true }); // the clicked button is now disabled; keep keyboard focus on the answer
     el.dispatchEvent(new CustomEvent("answered", { bubbles: true, detail: { quiet } }));
   }
   buttons.forEach((b) => b.addEventListener("click", () => pick(b.dataset.value)));
