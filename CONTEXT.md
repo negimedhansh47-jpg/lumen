@@ -3,8 +3,9 @@
 Read this first in every session, after CLAUDE.md. Update it at the end of any session that changes state.
 SPEC.md is the plan. This file is what is *true now*. Keep it short.
 
-## Current state (2026-11-23, night, after the full QA pass)
-Submittable. Full QA pass done (report: `scripts/out-qa/QA_REPORT.md`, gitignored, local only). All 6 major and 13 minor defects it found are fixed and deployed; smoke test now 29 checks (28/28 passed live before the last content-type fix, which was then checked live on its own). No known console errors, no secrets in the repo.
+## Current state (2026-11-24, interactive pass)
+Submittable. On 2026-11-24 the human asked for a less static, step-by-step site; built: Plan an idea and Review a chat reveal one item at a time with a guess first, Explain a repo has a tour and a "follow the arrows" question, concept cards slide in when an answer uses one you have not opened, `/concepts` lists all 30, the kickoff file is now AGENTS.md (not CLAUDE.md), and the home hero has a "Try a 1-minute example" button. Smoke test: 31 checks.
+Before that (2026-11-23): full QA pass (report: `scripts/out-qa/QA_REPORT.md`, gitignored, local only); all 6 major and 13 minor defects fixed and deployed. Readable copy of the concept cards for review: `scripts/out-qa/concepts-readable.md` (local only, generated from concepts.json).
 
 - Live: https://lumen-learn.lumen-learn.workers.dev
 - Repo: https://github.com/negimedhansh47-jpg/lumen (public, `main`). Last feature commit: "Design v4 (white/ink/cerulean), live step guidance, and Ask about your project chat".
@@ -16,7 +17,7 @@ Submittable. Full QA pass done (report: `scripts/out-qa/QA_REPORT.md`, gitignore
 
 ## MVP progress
 - SPEC.md MVP: all of it is built (chat review, repo map + drawer + commit explain, kickoff + CLAUDE.md, 30 concept cards, zero-LLM examples, rate limit, cache, grounding checks). About 100% of the SPEC MVP.
-- Added at the human's request, not in SPEC: Explain this better (concept cards), My project (browser-only save/track), Ask about your project (chat), design v4, live step guidance.
+- Added at the human's request, not in SPEC: Explain this better (concept cards), My project (browser-only save/track), Ask about your project (chat), design v4, live step guidance, step-by-step quizzes, concept slide-in, `/concepts` page, AGENTS.md instead of CLAUDE.md.
 - Not done by design: auth, private repos, MCP server, zip upload (see README future work).
 - Not done because it needs the human: see "Remaining (human)".
 
@@ -31,7 +32,7 @@ Nothing is blocking. Optional, only if asked:
 1. Read and correct `public/concepts/concepts.json` (30 cards) and `public/demo/*`. CLAUDE.md and the hackathon AI rule require a human review; `AI_USAGE.md` still says NOT reviewed. The QA report section 4 lists suggested corrections (database, env-vars, hashing, rate-limiting, oauth cards; demo concept tags such as OAuth on the LLM module and session-cookie on a JWT app). Update the AI_USAGE row when done.
 2. Choose and add a LICENSE (there is none).
 3. Check the Roxten rules and eligibility (video required? team size? links needed?).
-4. Edit `DEVPOST.md` into your own words; take the 7 screenshots listed at the bottom of it (after the QA fixes, so they show the new accent and no stray text).
+4. Edit `DEVPOST.md` into your own words; take the 7 screenshots listed at the bottom of it (after the 2026-11-24 interactive pass, so they show the quizzes). The kickoff example (`public/demo/kickoff.json`) was regenerated on 2026-11-24 and needs the same human read as the other demos.
 5. Choose the final name (Lumen is a working title; renaming touches README, DEVPOST, page titles, brand in shell.js, favicon, 404.html).
 6. Open the live site on a real phone, and once in Firefox or Safari, and click through each tool once (only Chromium was tested).
 7. Submit by 3 PM IST on Nov 25.
@@ -49,6 +50,10 @@ Nothing is blocking. Optional, only if asked:
 - Free-plan limits drive design: 50 subrequests per request, 10 ms CPU, 100k requests/day. Rate limit: 30 LLM calls per IP per hour, global daily cap 1500 (stress tests must not burn this on the live site). The per-IP counter is checked first and only allowed calls bump the global one, so one visitor cannot use up everyone's cap.
 - JSON API routes require `content-type: application/json` (415 otherwise): that forces a CORS preflight, so other sites cannot make visitors' browsers spend the AI budget.
 - Unknown pages get `public/404.html` (wrangler `not_found_handling: 404-page`); unknown `/api/*` routes still answer JSON.
+- Step-by-step results (`public/js/steps.js`): `quiz()` asks before it reveals, `stepper()` shows one item at a time with Next and "Show everything". Kickoff is framed as "What would you pick?" (no score: the model's choice is a recommendation, not a fact), chat as "What would make this clearer?" using the model's problem tag. The kickoff schema has a short `pick` and alternatives as `{name, betterWhen}`; the server drops alternatives that repeat the pick. Old plain-string alternatives still parse.
+- Repo tour: the most-connected box pulses; Ask, Track, commits and What next appear after the first box opens (or "Show everything"). The drawer asks "which box does X send its work to?" (one real arrow target + 2 unconnected boxes) once per box, not a layer quiz, because column headings already show the layer.
+- Concept slide-in (`announceConcepts` in `concepts.js`): only concepts not yet opened, max 3, never takes focus, hidden while the repo drawer or a card is open.
+- Kickoff file is AGENTS.md (the human chose AGENTS.md only). Saved plans keep working: the store reads the old `claudeMd` field.
 - Examples ship explanations for only some commits; the others show "Not in this example" (`canExplain` on the demo source) instead of an Explain button.
 - Examples (`public/demo/*.json`) are generated by `scripts/make-demo.mjs` against a local `wrangler dev` on :8799. Stop any preview server on 8799 first.
 

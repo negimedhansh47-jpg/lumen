@@ -9,10 +9,10 @@ Understand the code your AI writes.
 Millions of people now build software by prompting an AI. The code works, until it does not, and then they cannot tell what the AI built, why, or how to ask better. Tutorials teach syntax. Nobody teaches the engineering judgment behind the code the AI just wrote for you.
 
 ## What it does
-- **Review a chat:** paste a conversation with an AI. Lumen finds the vague prompts, shows each one beside a better rewrite, names the problem and links the engineering concept you were missing. Every quoted excerpt is checked to really exist in your chat.
+- **Review a chat:** paste a conversation with an AI. Lumen walks through the vague prompts one at a time: you guess what is missing, then see a better rewrite and the engineering concept you were missing. Every quoted excerpt is checked to really exist in your chat.
 - **Explain a repo:** point it at a public GitHub repo. It draws an interactive architecture map (modules, layers, connections). Click a box for its role, why it exists, evidence files and the commits that touched it. Any commit can be explained: what changed, why it matters, the trade-offs.
-- **Plan an idea:** describe an idea and get the key decisions (stack, data, auth, hosting) explained with trade-offs, first steps, and a ready-to-use CLAUDE.md for your AI tool.
-- **30 concept cards** open from any chip, each with an analogy, when to use it and the trade-offs. If a card does not click, "Explain this better" re-teaches it another way with an example and a self-check question.
+- **Plan an idea:** describe an idea and work through the key decisions (stack, data, auth, hosting) one at a time: pick what you would choose, then see the recommendation, the trade-offs and when the other options win. You end with first steps and an AGENTS.md that most coding agents read (Codex, Cursor, Copilot, Windsurf, Claude Code).
+- **30 concept cards** pop up when an answer uses an idea you have not met yet, and are all browsable on one page, each with an analogy, when to use it and the trade-offs. If a card does not click, "Explain this better" re-teaches it another way with an example and a self-check question.
 - **My project: learn as you build.** Save your plan or track your repo (stored only in your browser). Each time you come back, Lumen shows the commits that are new since your last visit, ready to explain, plus your plan checklist and the concepts you have explored.
 - **Ask about your project:** chat with the AI about your repo or plan. It is told to answer only from what Lumen has mapped, the files it cites are checked against the map, and nothing is saved.
 - Every tool has a one-click example that needs no AI call.
@@ -46,4 +46,4 @@ Built with Claude Code (Claude Sonnet, later Claude Opus) as a coding assistant,
 Cloudflare Workers, Cloudflare D1, Workers AI, NVIDIA NIM, TypeScript, zod, HTML, CSS, JavaScript.
 
 ## Screenshots to take (human)
-1. Landing hero with before/after card. 2. Chat review result. 3. Architecture map with the drawer open. 4. Commit explanation. 5. Kickoff with the CLAUDE.md block. 6. A concept card. 7. Mobile view.
+1. Landing hero with before/after card. 2. Chat review result. 3. Architecture map with the drawer open. 4. Commit explanation. 5. Kickoff quiz with a decision revealed, and the AGENTS.md block. 6. A concept card. 7. Mobile view.
