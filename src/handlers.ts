@@ -172,7 +172,13 @@ const askBody = z.object({
   question: z.string().trim().min(3, "Type a question first.").max(600, "Keep the question under 600 characters."),
   history: z.array(z.object({ role: z.enum(["user", "assistant"]), text: z.string().max(1500) })).max(6).default([]),
   repo: z.string().optional(),
-  plan: z.object({ restatement: z.string().max(500), firstSteps: z.array(z.string().max(400)).max(12) }).optional(),
+  plan: z
+    .object({
+      restatement: z.string().max(500),
+      firstSteps: z.array(z.string().max(400)).max(12),
+      decisions: z.array(z.object({ question: z.string().max(300), pick: z.string().max(300), why: z.string().max(600) })).max(6).default([]),
+    })
+    .optional(),
   level: levelSchema,
 });
 
@@ -190,7 +196,10 @@ export async function askProject(req: Request, env: Env): Promise<Response> {
     parts.push(...map.modules.map((m) => `Module ${m.name} (${m.paths.join(", ")}): ${m.role} Why: ${m.whyItExists}`));
     parts.push(...map.edges.map((e) => `${e.from} -> ${e.to}: ${e.label}`));
   }
-  if (body.plan) parts.push(`The person's plan: ${body.plan.restatement}\nSteps: ${body.plan.firstSteps.join(" | ")}`);
+  if (body.plan) {
+    parts.push(`The person's plan: ${body.plan.restatement}\nSteps: ${body.plan.firstSteps.join(" | ")}`);
+    parts.push(...body.plan.decisions.map((d, i) => `Decision ${i + 1}: ${d.question} Recommended: ${d.pick}. Why: ${d.why}`));
+  }
 
   await spendLlmCall(env, req);
   const out = await callLLM(env, projectAsk.build(parts.join("\n").slice(0, 9000), body.history, body.question, body.level));

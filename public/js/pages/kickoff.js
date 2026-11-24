@@ -1,4 +1,5 @@
 import { api, demo } from "../api.js";
+import { askPanel } from "../ask.js";
 import { announceConcepts, conceptChips, loadConcepts } from "../concepts.js";
 import { load as loadProject, save as saveProject } from "../project-store.js";
 import { copyText, errorBox, focusResults, h, loading, nextSteps, para, setBusy, toast } from "../render.js";
@@ -19,12 +20,16 @@ function verdict(d, mine) {
   return h("p", { class: "verdict" }, `${mine} can work too. See below when it is the better choice.`);
 }
 
-function decision(d, n) {
+function decision(d, n, ask) {
+  const pick = d.pick || d.choice;
+  ask.suggest([`Explain decision ${n + 1} in plain words`, `What do I need to know to choose in decision ${n + 1}?`]);
   const alternatives = d.alternatives.length
     ? h("div", {}, h("p", { class: "label" }, "Other options, and when they win"), h("ul", {}, d.alternatives.map((a) => h("li", {}, h("b", {}, a.name), a.betterWhen ? `. ${a.betterWhen}` : ""))))
     : null;
   const reveal = (mine) => {
     announceConcepts(d.concepts);
+    const [a, b] = d.alternatives.map((x) => x.name);
+    ask.suggest([a && `Why ${pick} over ${a} for my idea?`, b && `What would change if I chose ${b}?`, `What should I learn first to use ${pick}?`].filter(Boolean));
     return [
       verdict(d, mine),
       h("div", { class: "choice" }, h("span", { class: "label" }, "Lumen's pick"), d.choice),
@@ -97,10 +102,16 @@ function render(r) {
     h("h2", {}, r.restatement),
     h("p", { class: "muted", style: "margin:0" }, `${r.decisions.length} decisions to make before you write code. Guess each one first, then see Lumen's pick and why.`),
   );
-  const steps = r.decisions.map((d, n) => () => decision(d, n));
+  // Ask sends this plan with the question; nothing is stored. Limits match the server's.
+  const plan = { restatement: r.restatement.slice(0, 500), firstSteps: r.firstSteps.slice(0, 12).map((s) => s.slice(0, 400)), decisions: r.decisions.slice(0, 6).map((d) => ({ question: d.question.slice(0, 300), pick: (d.pick || d.choice).slice(0, 300), why: d.why.slice(0, 600) })) };
+  const ask = askPanel(() => ({ plan }), { title: "Questions about these decisions?", intro: "Ask anything: why a pick, how the options compare, what a word means. Answers use this plan and general engineering knowledge, so double-check anything important. This chat is not saved." });
+  const steps = r.decisions.map((d, n) => () => decision(d, n, ask));
   results.replaceChildren(intro);
-  if (steps.length) results.append(stepper(steps, { noun: "Decision", finishLabel: "See your first steps →", finish }));
-  else finish();
+  if (steps.length) results.append(stepper(steps, { noun: "Decision", finishLabel: "See your first steps →", finish }), ask);
+  else {
+    results.append(ask);
+    finish();
+  }
   focusResults(results);
 }
 

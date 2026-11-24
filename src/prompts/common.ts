@@ -5,13 +5,15 @@ export const CONCEPT_IDS = [
   "migration", "cache", "env-vars", "secrets", "auth", "session-cookie", "oauth", "hashing", "validation",
   "error-handling", "rate-limiting", "webhook", "queue", "state-management", "component", "bundler",
   "dependency", "testing", "ci-cd", "logging", "separation-of-concerns",
+  "llm-api", "tool-calling", "prompt-injection", "speech-io", "streaming",
 ] as const;
 
 const isConcept = (v: unknown): v is (typeof CONCEPT_IDS)[number] => (CONCEPT_IDS as readonly unknown[]).includes(v);
 
 /** Models sometimes invent concept ids; unknown ones are dropped rather than failing the response. */
 export const conceptOrNull = z.string().nullable().transform((v) => (isConcept(v) ? v : null));
-export const conceptList = z.array(z.string()).transform((vs) => vs.filter(isConcept).slice(0, 3));
+// null or a missing list means "no concepts"; rejecting it threw away an otherwise good answer and fell back to the weaker model
+export const conceptList = z.array(z.string()).nullish().transform((vs) => (vs ?? []).filter(isConcept).slice(0, 3));
 
 export type Level = "beginner" | "intermediate";
 

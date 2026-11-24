@@ -6,7 +6,7 @@ import { getLevel } from "./shell.js";
 const STARTERS = ["Where should I start reading this project?", "What should I build or fix next?", "Explain the riskiest part in plain words."];
 
 /** Chat about one project. The conversation lives in memory only; nothing is saved. `context()` returns {repo?, plan?} at send time. */
-export function askPanel(context, { title = "Ask about your project" } = {}) {
+export function askPanel(context, { title = "Ask about your project", intro, starters: first = STARTERS } = {}) {
   const history = [];
   const log = h("div", { class: "ask-log", role: "log", "aria-live": "polite" });
   const starters = h("div", { class: "starters" });
@@ -52,15 +52,17 @@ export function askPanel(context, { title = "Ask about your project" } = {}) {
   box.addEventListener("keydown", (e) => {
     if (e.key === "Enter" && !e.shiftKey) (e.preventDefault(), form.requestSubmit());
   });
-  setStarters(STARTERS);
+  setStarters(first);
 
-  return h(
+  const panel = h(
     "section",
     { class: "card stack ask rise" },
     h("h3", {}, title),
-    h("p", { class: "muted", style: "margin:0" }, "Pick a question below or type your own. Answers are based on what Lumen has seen of this project, so check the files it names. This chat is not saved."),
+    h("p", { class: "muted", style: "margin:0" }, intro ?? "Pick a question below or type your own. Answers are based on what Lumen has seen of this project, so check the files it names. This chat is not saved."),
     log,
     starters,
     form,
   );
+  panel.suggest = (list) => send.disabled || setStarters(list); // new starter questions, unless an answer is on its way
+  return panel;
 }
