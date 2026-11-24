@@ -3,7 +3,11 @@
 Read this first in every session, after CLAUDE.md. Update it at the end of any session that changes state.
 SPEC.md is the plan. This file is what is *true now*. Keep it short.
 
-## Current state (2026-11-24, late: pre-submission polish)
+## Current state (2026-11-24, night)
+- Rules read on Devpost: no video required. Mandatory: live URL, GitHub repo, description with key features, creator details (name, email, team), AI/library disclosure. Entry is open to registered workshop participants (human must confirm).
+- Examples hand-fixed for the known QA issues (see AI_USAGE). Remaining QA nits fixed: Ask line breaks, readable API type errors, map gap at 721-900 px. Footer, LICENSE, README and author meta credit Medhansh Negi.
+
+## Earlier (2026-11-24, late: pre-submission polish)
 - The human kept the name Lumen, chose MIT (`LICENSE` added) and approved all 35 concept cards as they are. A reference-only list of possible wording fixes is in `scripts/out-qa/CONCEPT_CORRECTIONS.md` (local only); none applied.
 - QA nits fixed: heading order (home cards h2, map columns h3 styled with `.h4`), `owner/name.git` accepted, `/repo?repo=owner/name` without `%2F`, text-only Open Graph tags on the 6 main pages. The concept dialog label already used the card's name.
 - `public/demo/kickoff.json` regenerated with kickoff prompt v3 (core decision first, real database). Not human-reviewed yet; small flaws listed in AI_USAGE.
@@ -40,7 +44,7 @@ Before that (2026-11-23): full QA pass (report: `scripts/out-qa/QA_REPORT.md`, g
 
 ## Remaining (Claude)
 Nothing is blocking. Optional, only if asked:
-- Nits from QA: the listed ones are fixed (2026-11-24 late). Still unfixed from the report's longer nit list: Shift+Enter newlines collapse in the Ask user bubble, raw zod messages on direct API calls, map columns cramped at 768-900 px.
+- Nits from QA: all fixed (2026-11-24).
 - The empty-repo message (GitHub 409) is changed but was never exercised: no empty public repo was available to test.
 - AI depth: maps of library repos (Express, Flask, Requests) are shallow and concept tags are sometimes wrong; Ask answer text is not verified (only its file chips). Prompt tuning was deliberately not done this close to the deadline.
 - Freeze features. No new features before submission.
