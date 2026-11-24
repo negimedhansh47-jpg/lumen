@@ -202,7 +202,7 @@ export async function askProject(req: Request, env: Env): Promise<Response> {
   }
 
   await spendLlmCall(env, req);
-  const out = await callLLM(env, projectAsk.build(parts.join("\n").slice(0, 9000), body.history, body.question, body.level));
+  const out = await callLLM(env, projectAsk.build(parts.join("\n").slice(0, 9000), body.history, body.question, body.level, Boolean(map)));
   const known = new Set(map?.modules.flatMap((m) => [...m.paths, ...m.evidence.map((e) => e.path)]));
   return Response.json({ ...out, files: out.files.filter((f) => known.has(f)) }); // only files the map really has
 }
