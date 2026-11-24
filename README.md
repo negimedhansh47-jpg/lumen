@@ -61,6 +61,9 @@ Check a running instance (local or deployed) with `node scripts/smoke.mjs <base-
 ## Platform limits it is designed around (Workers free plan)
 50 subrequests and 10 ms CPU per request. D1 queries count as subrequests. Analysis is split into small endpoints and the client orchestrates them. See [SPEC.md](SPEC.md).
 
+## License
+MIT. See [LICENSE](LICENSE).
+
 ## Future work
 - MCP server so an AI assistant can ask Lumen to explain its own changes.
 - Private repos via a read-only GitHub App.
