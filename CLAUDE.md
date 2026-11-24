@@ -14,6 +14,7 @@ The full plan is in SPEC.md. Read it before any task. It is the source of truth.
 - After each deploy, test on the LIVE URL, not only locally. Read browser console and Worker logs for errors.
 - If a step's check fails, say so plainly. Do not paper over it.
 - Ask before adding any dependency. Prefer none. Every library must be disclosed in README.
+- If anything is unclear, or a choice is mine to make (scope, content, design direction, wording that makes a claim), ask me before building it. Do not guess. Questions are welcome at any point in a task, not only at the start.
 
 ## Stack
 Cloudflare Workers with static assets. Frontend: plain HTML, CSS, ES modules in `/public`. API: TypeScript in `/src`. D1 for cache and rate limits only. LLM: NVIDIA NIM (OpenAI-compatible) with a Workers AI fallback.

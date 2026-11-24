@@ -3,7 +3,16 @@
 Read this first in every session, after CLAUDE.md. Update it at the end of any session that changes state.
 SPEC.md is the plan. This file is what is *true now*. Keep it short.
 
-## Current state (2026-11-24, interactive pass)
+## Current state (2026-11-24, evening: Jarvis-idea test pass)
+Tested Plan an idea with the human's idea "an agent harness with a Jarvis feel that can be set up on any device with onboarding" (outputs: `scripts/out-qa/jarvis.json`, script `scripts/out-qa/jarvis.mjs`, both local only). Found and fixed:
+- Decisions were a generic web-app template (frontend, DB, sign-in, deploy) and ignored the idea's core (model, voice, actions). Kickoff prompt v3: find what makes the idea special, at least half the decisions about it and first, skip sign-in for single-user tools, picks must meet the idea's constraints, stack/structure only from what the decisions picked.
+- One `concepts: null` in a model answer failed the whole schema and dropped to the weaker Workers AI fallback, which wrote a vague plan. `conceptList` now accepts null (all endpoints).
+- A plan could keep an AI key in a static site. Fixed in the fixed AGENTS.md template (keys only on a server or serverless function), not in the prompt: a prompt rule made the model put key storage first and drop voice.
+- No concept cards for AI agents: added 5 (`llm-api`, `tool-calling`, `prompt-injection`, `speech-io`, `streaming`), now 35. NOT human-reviewed.
+- New: Ask on Plan an idea. An Ask panel under the decisions sends the plan with its decisions (`plan.decisions`, max 6) and offers per-decision suggested questions. For plan questions the model may use general engineering knowledge; repo facts stay grounded.
+Still open: the same idea gives a different plan on each run (temperature is already 0.2); Ask is the user's way to question a pick. The kickoff example (gym leaderboard) was made with prompt v2 and was not regenerated.
+
+## Earlier state (2026-11-24, interactive pass)
 Submittable. On 2026-11-24 the human asked for a less static, step-by-step site; built: Plan an idea and Review a chat reveal one item at a time with a guess first, Explain a repo has a tour and a "follow the arrows" question, concept cards slide in when an answer uses one you have not opened, `/concepts` lists all 30, the kickoff file is now AGENTS.md (not CLAUDE.md), and the home hero has a "Try a 1-minute example" button. Smoke test: 31 checks.
 Before that (2026-11-23): full QA pass (report: `scripts/out-qa/QA_REPORT.md`, gitignored, local only); all 6 major and 13 minor defects fixed and deployed. Readable copy of the concept cards for review: `scripts/out-qa/concepts-readable.md` (local only, generated from concepts.json).
 
@@ -29,7 +38,7 @@ Nothing is blocking. Optional, only if asked:
 - Freeze features. No new features before submission.
 
 ## Remaining (human)
-1. Read and correct `public/concepts/concepts.json` (30 cards) and `public/demo/*`. CLAUDE.md and the hackathon AI rule require a human review; `AI_USAGE.md` still says NOT reviewed. The QA report section 4 lists suggested corrections (database, env-vars, hashing, rate-limiting, oauth cards; demo concept tags such as OAuth on the LLM module and session-cookie on a JWT app). Update the AI_USAGE row when done.
+1. Read and correct `public/concepts/concepts.json` (35 cards; 31 to 35 on AI agents are new on 2026-11-24; readable copy in `scripts/out-qa/concepts-readable.md`) and `public/demo/*`. CLAUDE.md and the hackathon AI rule require a human review; `AI_USAGE.md` still says NOT reviewed. The QA report section 4 lists suggested corrections (database, env-vars, hashing, rate-limiting, oauth cards; demo concept tags such as OAuth on the LLM module and session-cookie on a JWT app). Update the AI_USAGE row when done.
 2. Choose and add a LICENSE (there is none).
 3. Check the Roxten rules and eligibility (video required? team size? links needed?).
 4. Edit `DEVPOST.md` into your own words; take the 7 screenshots listed at the bottom of it (after the 2026-11-24 interactive pass, so they show the quizzes). The kickoff example (`public/demo/kickoff.json`) was regenerated on 2026-11-24 and needs the same human read as the other demos.
