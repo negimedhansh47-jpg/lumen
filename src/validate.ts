@@ -30,8 +30,16 @@ export async function readBody<T>(req: Request, schema: z.ZodType<T>): Promise<T
     throw new HttpError(400, "bad_json", "The request was not valid JSON.");
   }
   const parsed = schema.safeParse(json);
-  if (!parsed.success) throw new HttpError(400, "bad_input", parsed.error.issues[0]?.message ?? "Invalid input.");
+  if (!parsed.success) throw new HttpError(400, "bad_input", humanIssue(parsed.error.issues[0]));
   return parsed.data;
+}
+
+/** Our schemas carry human messages; only zod's own type errors ("expected string, received undefined") need rewording. */
+function humanIssue(issue: z.ZodIssue | undefined): string {
+  if (!issue) return "Invalid input.";
+  const field = issue.path.join(".");
+  if (issue.code === "invalid_type") return field ? `"${field}" is missing or has the wrong type.` : "The request body must be a JSON object.";
+  return issue.message;
 }
 
 /** Accepts owner/name or a github.com URL. Anything else is rejected (no other hosts, ever). */

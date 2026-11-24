@@ -8,7 +8,7 @@
     "does not explain how to reproduce",
     "changes goal mid-conversation"
    ],
-   "strongest": "ok add a database",
+   "strongest": "now it shows but when I add an expense and refresh it's gone",
    "weakest": "the page is blank. fix it"
   },
   "items": [
@@ -18,7 +18,7 @@
     "problem": "vague",
     "why": "No stack, features, or goal are given, so the AI must guess the whole design.",
     "rewrite": "Build an expense tracker using [React/Express/etc]. It should let me add, view, and delete expenses.",
-    "concept": "database"
+    "concept": null
    },
    {
     "id": "item-2",
@@ -42,7 +42,7 @@
     "problem": "too-big",
     "why": "Bundling a blank-page fix with charts, login, and dark mode makes it impossible to test or review one change at a time.",
     "rewrite": "First fix the blank page. After that works, add charts as a separate task.",
-    "concept": "state-management"
+    "concept": null
    },
    {
     "id": "item-5",

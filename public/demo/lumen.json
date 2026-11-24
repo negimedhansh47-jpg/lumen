@@ -138,7 +138,8 @@
     "role": "Calls NVIDIA NIM or Workers AI to generate explanations, prompt rewrites, and architecture maps.",
     "whyItExists": "Isolates model interaction behind a single interface so the app can switch providers or add fallback behavior without changing handlers.",
     "concepts": [
-     "oauth"
+     "llm-api",
+     "secrets"
     ],
     "evidence": [
      {
@@ -214,12 +215,7 @@
    {
     "from": "logic",
     "to": "data",
-    "label": "reads"
-   },
-   {
-    "from": "logic",
-    "to": "data",
-    "label": "writes"
+    "label": "reads and writes"
    }
   ]
  },

@@ -108,8 +108,7 @@
     "whyItExists": "Isolates identity and access concerns so other modules can require authentication through a shared auth middleware without duplicating token logic.",
     "concepts": [
      "auth",
-     "hashing",
-     "session-cookie"
+     "hashing"
     ],
     "evidence": [
      {
