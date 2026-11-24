@@ -2,7 +2,7 @@
 
 **Understand the code your AI writes.**
 
-Built for the Roxten Studios "Build Your Own Website" hackathon. Live: https://lumen-learn.lumen-learn.workers.dev
+Built by Medhansh Negi ([@negimedhansh47-jpg](https://github.com/negimedhansh47-jpg)) for the Roxten Studios "Build Your Own Website" hackathon. Live: https://lumen-learn.lumen-learn.workers.dev
 
 Lumen teaches software engineering to people who build with AI ("vibecoders"). It does not just document code. It teaches at the reader's level, per change, grounded in evidence from their own code, and it coaches the prompts that produced it.
 
