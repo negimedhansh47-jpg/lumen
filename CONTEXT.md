@@ -3,7 +3,13 @@
 Read this first in every session, after CLAUDE.md. Update it at the end of any session that changes state.
 SPEC.md is the plan. This file is what is *true now*. Keep it short.
 
-## Current state (2026-11-24, evening: Jarvis-idea test pass)
+## Current state (2026-11-24, late: pre-submission polish)
+- The human kept the name Lumen, chose MIT (`LICENSE` added) and approved all 35 concept cards as they are. A reference-only list of possible wording fixes is in `scripts/out-qa/CONCEPT_CORRECTIONS.md` (local only); none applied.
+- QA nits fixed: heading order (home cards h2, map columns h3 styled with `.h4`), `owner/name.git` accepted, `/repo?repo=owner/name` without `%2F`, text-only Open Graph tags on the 6 main pages. The concept dialog label already used the card's name.
+- `public/demo/kickoff.json` regenerated with kickoff prompt v3 (core decision first, real database). Not human-reviewed yet; small flaws listed in AI_USAGE.
+- Smoke test: `node scripts/smoke.mjs <url> --no-ai` skips the model-calling checks. Use `--no-ai` on live (the live AI budget is used up).
+
+## Earlier state (2026-11-24, evening: Jarvis-idea test pass)
 Tested Plan an idea with the human's idea "an agent harness with a Jarvis feel that can be set up on any device with onboarding" (outputs: `scripts/out-qa/jarvis.json`, script `scripts/out-qa/jarvis.mjs`, both local only). Found and fixed:
 - Decisions were a generic web-app template (frontend, DB, sign-in, deploy) and ignored the idea's core (model, voice, actions). Kickoff prompt v3: find what makes the idea special, at least half the decisions about it and first, skip sign-in for single-user tools, picks must meet the idea's constraints, stack/structure only from what the decisions picked.
 - One `concepts: null` in a model answer failed the whole schema and dropped to the weaker Workers AI fallback, which wrote a vague plan. `conceptList` now accepts null (all endpoints).
@@ -34,17 +40,17 @@ Before that (2026-11-23): full QA pass (report: `scripts/out-qa/QA_REPORT.md`, g
 
 ## Remaining (Claude)
 Nothing is blocking. Optional, only if asked:
-- Nits left from QA (see report): heading level skips, concept dialog labelled "Concept card" instead of its title, `%2F` in `/repo?repo=` URLs, `owner/name.git` without github.com is not stripped, no Open Graph tags.
+- Nits from QA: the listed ones are fixed (2026-11-24 late). Still unfixed from the report's longer nit list: Shift+Enter newlines collapse in the Ask user bubble, raw zod messages on direct API calls, map columns cramped at 768-900 px.
 - The empty-repo message (GitHub 409) is changed but was never exercised: no empty public repo was available to test.
 - AI depth: maps of library repos (Express, Flask, Requests) are shallow and concept tags are sometimes wrong; Ask answer text is not verified (only its file chips). Prompt tuning was deliberately not done this close to the deadline.
 - Freeze features. No new features before submission.
 
 ## Remaining (human)
-1. Read and correct `public/concepts/concepts.json` (35 cards; 31 to 35 on AI agents are new on 2026-11-24; readable copy in `scripts/out-qa/concepts-readable.md`) and `public/demo/*`. CLAUDE.md and the hackathon AI rule require a human review; `AI_USAGE.md` still says NOT reviewed. The QA report section 4 lists suggested corrections (database, env-vars, hashing, rate-limiting, oauth cards; demo concept tags such as OAuth on the LLM module and session-cookie on a JWT app). Update the AI_USAGE row when done.
-2. Choose and add a LICENSE (there is none).
+1. Concept cards: done (approved 2026-11-24). Still to read: `public/demo/*` (chat, lumen, realworld, and the v3 kickoff example); known issues are at the bottom of `scripts/out-qa/CONCEPT_CORRECTIONS.md`. Update the AI_USAGE demo row when done.
+2. LICENSE: done (MIT).
 3. Check the Roxten rules and eligibility (video required? team size? links needed?).
 4. Edit `DEVPOST.md` into your own words; take the 7 screenshots listed at the bottom of it (after the 2026-11-24 interactive pass, so they show the quizzes). The kickoff example (`public/demo/kickoff.json`) was regenerated on 2026-11-24 and needs the same human read as the other demos.
-5. Choose the final name (Lumen is a working title; renaming touches README, DEVPOST, page titles, brand in shell.js, favicon, 404.html).
+5. Name: done (keeping Lumen).
 6. Open the live site on a real phone, and once in Firefox or Safari, and click through each tool once (only Chromium was tested).
 7. Submit by 3 PM IST on Nov 25.
 
@@ -74,11 +80,10 @@ Nothing is blocking. Optional, only if asked:
 - Earlier: prompt injection ignored (chat review and Ask), Workers AI fallback works, large repos map live (`torvalds/linux`, `facebook/react`, `expressjs/express`). CSP and nosniff on all pages.
 
 ## Known gaps / risks
-- Concepts and demo outputs not human-reviewed (see Remaining, human).
+- Demo outputs not human-reviewed (see Remaining, human).
 - Untested: real phone, Firefox, Safari, Lighthouse, `wrangler tail` on live, empty/binary-heavy repos and 1 MB diffs.
 - Evidence checks prove a file exists, not that the claim about it is right (see Remaining, Claude: AI depth).
 - NVIDIA NIM free tier can be slow; the Workers AI fallback covers failures, examples need no AI call.
-- Product name is still "Lumen" (working title).
 
 ## Windows gotchas
 - Never `Get-Content | Set-Content` on source files: it corrupts UTF-8. Use the Edit/Write tools or .NET UTF-8 writes.

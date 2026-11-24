@@ -46,7 +46,7 @@ Instrument Serif (display), Space Grotesk (headings), Inter Tight (body), JetBra
 ## AI disclosure
 - **Claude Code (Claude Sonnet 5.5, later Claude Opus 5.5)** wrote the code, the concept library drafts and the example data under human direction, and ran the final QA pass.
 - **NVIDIA NIM** (Nemotron 3.5 Super) powers the live explanations; **Workers AI** is the fallback.
-- A human must review the concept library (`public/concepts/concepts.json`) because it is teaching content.
+- The concept library (`public/concepts/concepts.json`) is teaching content: AI-drafted, then reviewed and approved by a human. The example outputs (`public/demo/*`) are model output and not yet human-reviewed.
 - Full log with dates and what was reviewed: [AI_USAGE.md](AI_USAGE.md). Model comparison results are there too.
 
 ## Run locally

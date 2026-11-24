@@ -40,7 +40,7 @@ Choosing the model from measured runs (validity, latency) beat choosing by reput
 GitHub login for private repos, an in-editor extension, more concepts reviewed by teachers, and "explain this diff before you accept it" for AI pull requests.
 
 ## AI disclosure
-Built with Claude Code (Claude Sonnet, later Claude Opus) as a coding assistant, with the human directing and reviewing. The concept library and example outputs were AI-drafted and are marked for human review. Full log: `AI_USAGE.md`. Runtime AI: NVIDIA NIM and Cloudflare Workers AI.
+Built with Claude Code (Claude Sonnet, later Claude Opus) as a coding assistant, with the human directing and reviewing. The concept library was AI-drafted and then reviewed by the human; the example outputs are model output and are marked for human review. Full log: `AI_USAGE.md`. Runtime AI: NVIDIA NIM and Cloudflare Workers AI.
 
 ## Built with
 Cloudflare Workers, Cloudflare D1, Workers AI, NVIDIA NIM, TypeScript, zod, HTML, CSS, JavaScript.
