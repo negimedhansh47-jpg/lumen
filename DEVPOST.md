@@ -1,49 +1,47 @@
-# Devpost draft (edit before submitting)
+# Devpost submission text
 
-Name: **Lumen** (working title, not final). Live: https://lumen-learn.lumen-learn.workers.dev. Code: https://github.com/negimedhansh47-jpg/lumen
+Name: **Lumen**. Live: https://lumen-learn.lumen-learn.workers.dev. Code: https://github.com/negimedhansh47-jpg/lumen
 
-## Tagline
-Understand the code your AI writes.
+## Elevator pitch
+A tutor for people who build with AI. Paste a chat, a GitHub repo or an idea, and it explains what your AI made and why, using your own code as the example.
 
-## Inspiration
-Millions of people now build software by prompting an AI. The code works, until it does not, and then they cannot tell what the AI built, why, or how to ask better. Tutorials teach syntax. Nobody teaches the engineering judgment behind the code the AI just wrote for you.
+## About the project
+Built by Medhansh Negi.
 
-## What it does
-- **Review a chat:** paste a conversation with an AI. Lumen walks through the vague prompts one at a time: you guess what is missing, then see a better rewrite and the engineering concept you were missing. Every quoted excerpt is checked to really exist in your chat.
-- **Explain a repo:** point it at a public GitHub repo. It draws an interactive architecture map (modules, layers, connections). Click a box for its role, why it exists, evidence files and the commits that touched it. Any commit can be explained: what changed, why it matters, the trade-offs.
-- **Plan an idea:** describe an idea and work through the key decisions (stack, data, auth, hosting) one at a time: pick what you would choose, then see the recommendation, the trade-offs and when the other options win. You end with first steps and an AGENTS.md that most coding agents read (Codex, Cursor, GitHub Copilot's coding agent, and Claude Code when there is no CLAUDE.md).
-- **35 concept cards** (including AI agents: LLM API, tool calling, prompt injection, speech, streaming) pop up when an answer uses an idea you have not met yet, and are all browsable on one page, each with an analogy, when to use it and the trade-offs. If a card does not click, "Explain this better" re-teaches it another way with an example and a self-check question.
-- **My project: learn as you build.** Save your plan or track your repo (stored only in your browser). Each time you come back, Lumen shows the commits that are new since your last visit, ready to explain, plus your plan checklist and the concepts you have explored.
-- **Ask about your project:** chat with the AI about your repo or plan, including right next to each decision while you plan an idea ("Why this over that for my idea?"). For repo facts it is told to answer only from what Lumen has mapped, the files it cites are checked against the map, and nothing is saved.
-- Every tool has a one-click example that needs no AI call.
+### Why I built this
+A lot of people now build apps by asking an AI to write the code. It usually works, but when something breaks it's hard to tell what the AI actually did or why it chose that setup. Tutorials explain general examples, not your own project. I wanted a tool that explains the code you already have, and also tells you when your prompts were the problem.
 
-## How we built it
-Cloudflare Workers with static assets (plain HTML, CSS and ES modules, no framework or bundler), D1 for cache and rate limits only, NVIDIA NIM (Nemotron 3.5 Super) as the model with a Workers AI fallback. One runtime dependency: zod.
+### What it does
+There are three main tools. Each one has a ready-made example, so you can try it without typing anything.
 
-## Technical choices worth knowing
-- **The model is untrusted.** Output is schema-validated. Evidence file paths are verified against the repo's real file tree, line ranges against the text actually fetched, chat excerpts must be verbatim substrings, and unknown concepts are dropped. Ungrounded claims are removed rather than shown.
-- **Prompt injection:** user content is fenced and treated as data. We tested a chat that told the model to ignore its instructions; it was ignored.
-- **Privacy:** chats and ideas are never stored. Only public-repo analyses are cached.
-- **Free-plan engineering:** the whole thing runs inside Workers' free limits (subrequest, CPU, D1 budgets); the design avoids per-commit GitHub calls for that reason.
-- **Abuse protection:** per-visitor hourly limit (hashed IP) and a global daily cap, with friendly messages that point to the examples.
+- Plan an idea: describe a project idea and it goes through the big decisions one by one (database, hosting, sign-in and so on). You guess first, then see what it recommends and when another option would be better. At the end you get first steps and an AGENTS.md file to give your coding AI.
+- Review a chat: paste a conversation you had with an AI. It points out the prompts that were too vague, explains what was missing, and shows a clearer version.
+- Explain a repo: paste a public GitHub link and you get a map of how the project is split up. Click a box to see what it does, why it's there, which files it comes from and which commits changed it. Any commit can be explained in plain English.
 
-## Challenges
-Reasoning models spent the whole token budget "thinking" and returned nothing, so we turn thinking off. Model JSON was often wrapped in text or had invalid escapes, so we parse the first balanced object and validate. Big repos needed key-file selection to stay inside limits.
+Also:
+- 35 short concept cards (caching, auth, APIs, prompt injection and more). If an explanation uses an idea you haven't opened yet, a card pops up.
+- My project: save a plan or a repo in your browser, and next time it shows what changed since your last visit.
+- Ask: follow-up questions about your repo or plan.
+- A switch to explain things for beginners or for people with some experience.
 
-## Accomplishments
-A grounded, verifiable explanation layer: what Lumen shows can be traced to files and quotes, not vibes.
+### How I built it
+It runs on Cloudflare Workers. The frontend is plain HTML, CSS and JavaScript with no framework. The backend is TypeScript, and Cloudflare D1 is only used for caching and rate limits. The AI model is NVIDIA NIM (Nemotron), with Workers AI as a backup if it fails.
 
-## What we learned
-Choosing the model from measured runs (validity, latency) beat choosing by reputation. Most of the quality came from validating and grounding the output, not from the prompt.
+I didn't want the site to make things up, so the server checks the model's answer before showing it: file paths have to exist in the repo, quotes from a chat have to really be in the chat, and anything that fails is dropped. Chats and ideas are never saved.
 
-## What's next
-GitHub login for private repos, an in-editor extension, more concepts reviewed by teachers, and "explain this diff before you accept it" for AI pull requests.
+### Challenges
+- Some models spent all their tokens "thinking" and returned empty answers, so I turned thinking off.
+- The model's JSON was often broken or had extra text around it, so it has to be parsed carefully and every field validated.
+- The free Cloudflare plan only allows a small number of network calls per request, so big repos needed a way to pick only the important files.
 
-## AI disclosure
-Built with Claude Code (Claude Sonnet, later Claude Opus) as a coding assistant, with the human directing and reviewing. The concept library was AI-drafted and then reviewed by the human; the example outputs are model output and are marked for human review. Full log: `AI_USAGE.md`. Runtime AI: NVIDIA NIM and Cloudflare Workers AI.
+### What I learned
+Checking the AI's output mattered more than writing a clever prompt.
+
+### What's next
+Private repos with a GitHub login, and an editor extension that explains a change before you accept it.
+
+### AI use and credits
+I used Claude Code (Claude Sonnet, then Claude Opus) as a coding assistant. I decided what to build, reviewed the changes and tested the site. The concept cards were drafted with AI and reviewed by me. The live explanations come from NVIDIA NIM and Cloudflare Workers AI. Library: zod. Fonts: Instrument Serif, Space Grotesk, Inter Tight and JetBrains Mono (Google Fonts). The full AI log is AI_USAGE.md in the repo. License: MIT.
 
 ## Built with
-Cloudflare Workers, Cloudflare D1, Workers AI, NVIDIA NIM, TypeScript, zod, HTML, CSS, JavaScript.
-
-## Screenshots to take (human)
-1. Landing hero with before/after card. 2. Chat review result. 3. Architecture map with the drawer open. 4. Commit explanation. 5. Kickoff quiz with a decision revealed, and the AGENTS.md block. 6. A concept card. 7. Mobile view.
+cloudflare-workers, cloudflare-d1, workers-ai, nvidia-nim, typescript, javascript, html5, css3, zod
