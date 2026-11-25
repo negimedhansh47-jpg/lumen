@@ -3,7 +3,10 @@
 Read this first in every session, after CLAUDE.md. Update it at the end of any session that changes state.
 SPEC.md is the plan. This file is what is *true now*. Keep it short.
 
-## Current state (2026-11-24, night)
+## Submitted (2026-11-25)
+Submitted on Devpost by the human before the deadline, with screenshots and a demo video (edited from the human's screen recording; local only in the gitignored `screenshots/`). Judging is on 2026-11-29. Until then: keep the live site stable, no feature work, and be careful with live AI calls (NIM free tier).
+
+## Earlier (2026-11-24, night)
 - Rules read on Devpost: no video required. Mandatory: live URL, GitHub repo, description with key features, creator details (name, email, team), AI/library disclosure. Entry is open to registered workshop participants (human must confirm).
 - Examples hand-fixed for the known QA issues (see AI_USAGE). Remaining QA nits fixed: Ask line breaks, readable API type errors, map gap at 721-900 px. Footer, LICENSE, README and author meta credit Medhansh Negi.
 
