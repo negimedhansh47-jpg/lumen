@@ -7,3 +7,4 @@ scripts/out
 .claude/
 scripts/out*
 screenshots/
+.playwright-mcp/
